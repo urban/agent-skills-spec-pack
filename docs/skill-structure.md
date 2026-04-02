@@ -8,13 +8,13 @@ The canonical package layout is:
 
 - `skills/<skill-name>/`
 
-Every package skill lives under `skills/`. Use `metadata.layer` to declare whether it is foundational, role, or workflow.
+Every package skill lives under `skills/`. Use `metadata.layer` to declare whether it is foundational, role, or orchestration.
 
 Choose one layer only:
 
 - foundational for reusable contracts, templates, validators, and naming rules
 - role for one role-specific entry skill that applies foundational contracts
-- workflow for orchestration that depends on role skills only
+- orchestration for a coordinating skill that depends on role skills only
 
 Each skill lives in its own directory:
 
@@ -62,7 +62,7 @@ metadata:
 
 - foundational skills must not depend on other skills
 - role skills may depend only on foundational skills
-- workflow skills may depend only on role skills
+- orchestration skills may depend only on role skills
 
 ## Validation Expectations
 

@@ -4,14 +4,14 @@
 
 This package contains composable skills for a reversible specification system.
 
-All skills in this package live under `skills/`. Use `metadata.layer` to declare whether a skill is foundational, role, or workflow.
+All skills in this package live under `skills/`. Use `metadata.layer` to declare whether a skill is foundational, role, or orchestration.
 
 Optimize for these outcomes:
 
 - preserve reversibility between authored and derived/reconstructed spec packs
 - keep shared artifact contracts in foundational skills
 - keep role entry skills narrow and single-purpose
-- keep workflow orchestration separate from role and contract logic
+- keep orchestration separate from role and contract logic
 
 ## Layer Rules
 
@@ -19,13 +19,13 @@ New or changed skills must fit exactly one layer:
 
 - foundational skills define reusable contracts, templates, validators, or naming rules
 - role skills apply foundational contracts within one role or domain boundary
-- workflow skills orchestrate multiple role skills to complete a larger flow
+- orchestration skills orchestrate multiple role skills to complete a larger flow
 
 Dependency direction is strict:
 
 - foundational -> no required skill dependencies
 - roles -> foundational only
-- workflows -> roles only
+- orchestrations -> roles only
 
 If a proposed skill crosses layers, split it before adding or moving it.
 
@@ -87,7 +87,7 @@ When uncertain, prefer:
 
 - foundational reuse over restating rules
 - one bounded role skill over a multi-purpose role
-- workflow orchestration over cross-role coupling
+- orchestration over cross-role coupling
 - explicit validation
 - explicit uncertainty
 - composition over duplication

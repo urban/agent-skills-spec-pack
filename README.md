@@ -6,7 +6,7 @@ It provides:
 
 - foundational skills for shared artifact contracts, templates, validators, and naming
 - role skills that apply those contracts within one authoring, planning, design, or reconstruction responsibility
-- workflow skills that orchestrate multiple role skills into a full specification flow
+- orchestration skills that orchestrate multiple role skills into a full specification flow
 
 ## Package Boundary
 
@@ -25,7 +25,7 @@ Dependency direction for the layer model:
 
 - foundational skills do not depend on other skills
 - role skills may depend only on foundational skills
-- workflow skills may depend only on role skills
+- orchestration skills may depend only on role skills
 
 ## Current Skill Inventory
 
@@ -71,7 +71,7 @@ Dependency direction for the layer model:
 - `derive-technical-design`
   Reconstruction role for `docs/research/<project-name>/technical-design.md` by default.
 
-### Workflows
+### Orchestrations
 
 - `specification-authoring`
   Orchestrates `charter -> user-story-authoring -> requirements -> technical-design`.
@@ -90,7 +90,7 @@ Each layer has one job:
   Define reusable contracts. No required skill dependencies.
 - role
   Apply one foundational contract set inside one bounded responsibility.
-- workflow
+- orchestration
   Coordinate multiple role skills without restating foundational rules.
 
 Reversibility depends on authoring and reconstruction roles targeting the same foundational contracts for shared artifact types.

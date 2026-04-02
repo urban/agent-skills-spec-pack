@@ -70,7 +70,7 @@ Inputs:
 - approved requirements or repository evidence for derived design
 - known architecture boundaries, integrations, operational concerns, and implementation constraints
 - visual explanation needs such as context, interactions, state behavior, persona flow, or persistent entity relationships when diagrams would add clarity
-- root workflow context needed to stamp `generated_by`
+- root orchestration context needed to stamp `generated_by`
 
 Output:
 

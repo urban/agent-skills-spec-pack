@@ -3,7 +3,7 @@ name: specification-reconstruction
 description: Orchestrate reconstruction of a specification pack from an existing codebase. Use when a user wants charter, user stories, requirements, and technical design recovered from implemented software.
 metadata:
   version: 0.1.0
-  layer: workflow
+  layer: orchestration
   dependencies:
     - derive-charter
     - derive-user-stories
@@ -24,7 +24,7 @@ metadata:
 
 - This workflow coordinates reconstruction; it does not replace underlying role or foundational contracts.
 - Final output must include reconstructed charter, user stories, requirements, and technical design.
-- Workflow dependencies stay limited to role entry skills; do not name foundational contract skills here.
+- Orchestration dependencies stay limited to role entry skills; do not name foundational contract skills here.
 - If a user asks for a reconstructed execution plan, frame it as current-state guidance rather than pretending to recover the original authored plan.
 
 ## Requirements
@@ -108,7 +108,7 @@ Out of scope:
 
 - default workflow output paths match the reconstruction role defaults when the user does not override them
 - derived charter, user stories, requirements, and technical design artifacts all exist at the chosen destinations
-- workflow dependencies stay limited to role entry skills
+- orchestration dependencies stay limited to role entry skills
 - derived charter and stories reflect observed behavior rather than desired future intent
 - derived requirements and design are supported by repository evidence
 - weakly supported conclusions are marked explicitly with `TODO: Confirm`

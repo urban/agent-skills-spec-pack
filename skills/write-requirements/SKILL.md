@@ -57,7 +57,7 @@ Inputs:
 
 - approved product framing, approved stories, repository evidence, or other source material defining the behavior and constraints
 - known constraints, integrations, data rules, and dependencies
-- root workflow context needed to stamp `generated_by`
+- root orchestration context needed to stamp `generated_by`
 
 Output:
 

@@ -7,7 +7,7 @@ Use this document when deciding whether a new skill should exist and which layer
 Create a new skill only when at least one of these is true:
 
 - a new artifact needs its own stable contract or validator
-- a workflow is reusable across multiple repositories or multiple parent skills
+- an orchestration skill is reusable across multiple repositories or multiple parent skills
 - a current skill is doing more than one job and should be split
 - a missing layer prevents the pack from staying reversible or composable
 
@@ -61,7 +61,7 @@ Role skills should:
 - declare `metadata.archetype` and `metadata.domain`
 - keep optional routing guidance in local `references/`
 
-### Workflow
+### Orchestration
 
 Use this layer when the skill coordinates multiple role entry skills into one larger flow.
 
@@ -71,7 +71,7 @@ Examples:
 - `specification-to-execution`
 - `specification-reconstruction`
 
-Workflow skills should:
+Orchestration skills should:
 
 - depend only on role skills
 - preserve one end-to-end flow
@@ -91,6 +91,6 @@ Before creating the skill, confirm:
 Split a skill instead of expanding it when:
 
 - it both defines a reusable contract and performs role-specific execution
-- it needs dependencies from both foundational and workflow layers
+- it needs dependencies from both foundational and orchestration layers
 - it tries to own multiple artifact types
 - it mixes authoring, reconstruction, and planning sources of truth

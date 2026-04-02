@@ -11,7 +11,7 @@ It does that with a layered skill system stored under `skills/`:
   Shared contracts, naming rules, templates, and validators.
 - role skills
   Authoring, reconstruction, and planning entry points that apply those contracts.
-- workflow skills
+- orchestration skills
   Orchestration across multiple role skills.
 
 Each skill declares its layer with `metadata.layer`.

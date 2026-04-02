@@ -8,7 +8,7 @@ Every skill should fit exactly one layer:
 
 - foundational
 - role
-- workflow
+- orchestration
 
 Store every skill under `skills/<skill-name>/` and declare the layer with `metadata.layer`.
 
@@ -39,7 +39,7 @@ Do not blur these responsibilities:
 
 - foundational skills define shared artifact contracts
 - role skills own one bounded authoring, planning, or reconstruction responsibility
-- workflow skills orchestrate role entry skills only
+- orchestration skills orchestrate role entry skills only
 
 If a skill mixes those roles, the outputs get harder to trust and harder to compose.
 
@@ -49,7 +49,7 @@ Follow the package dependency rules:
 
 - foundational -> no required skill dependencies
 - roles -> foundational only
-- workflows -> roles only
+- orchestrations -> roles only
 
 If a skill needs behavior from a lower layer, declare the dependency. If it needs guidance from another package or an optional follow-on path, prefer a local reference doc over a required dependency.
 
@@ -76,7 +76,7 @@ A precise unknown is more useful than a confident guess.
 
 Each skill should do one thing well.
 
-Prefer adding a small composable foundational contract or role skill over making one workflow absorb unrelated responsibilities.
+Prefer adding a small composable foundational contract or role skill over making one orchestration skill absorb unrelated responsibilities.
 
 ## Keep Repository Workflow In Mind
 

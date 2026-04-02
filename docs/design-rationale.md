@@ -8,7 +8,7 @@ Each layer has one responsibility:
 
 - foundational skills define reusable contracts, templates, validators, and naming rules
 - role skills apply those contracts inside one bounded responsibility
-- workflow skills orchestrate multiple role skills without restating lower-layer rules
+- orchestration skills orchestrate multiple role skills without restating lower-layer rules
 
 The layers are conceptual. Every skill is stored under `skills/<skill-name>/` and declares its layer in `metadata.layer`.
 

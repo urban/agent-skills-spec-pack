@@ -3,7 +3,7 @@ name: specification-authoring
 description: Orchestrate an authored specification pack for a new product or major feature. Use when a user wants charter, user-story, requirements, and technical-design artifacts created before downstream coordination or implementation.
 metadata:
   version: 0.1.0
-  layer: workflow
+  layer: orchestration
   dependencies:
     - charter
     - user-story-authoring
@@ -28,7 +28,7 @@ metadata:
 
 - This workflow coordinates artifacts; it does not replace underlying role or foundational contracts.
 - Final output must include charter, user stories, requirements, and technical design.
-- Workflow dependencies stay limited to role entry skills; do not name foundational contract skills here.
+- Orchestration dependencies stay limited to role entry skills; do not name foundational contract skills here.
 - Every authored artifact must carry deterministic provenance rooted in this workflow plus artifact-specific `source_artifacts` lineage.
 - Never author the full specification pack in one uninterrupted pass unless the user explicitly waives stage-by-stage approval.
 - Do not start downstream coordination or implementation from this workflow unless the user explicitly asks for that next phase.

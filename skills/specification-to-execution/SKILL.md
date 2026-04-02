@@ -3,7 +3,7 @@ name: specification-to-execution
 description: Orchestrate execution coordination artifacts from an approved specification pack. Use when a user wants an execution plan and local task tracking created from approved charter, user stories, requirements, and technical design.
 metadata:
   version: 0.1.0
-  layer: workflow
+  layer: orchestration
   dependencies:
     - execution-planning
     - task-generation
@@ -23,7 +23,7 @@ metadata:
 
 - This workflow coordinates execution artifacts; it does not replace underlying role or foundational contracts.
 - Final output must include an execution plan and a local task-tracking artifact.
-- Workflow dependencies stay limited to role entry skills; do not name foundational contract skills here.
+- Orchestration dependencies stay limited to role entry skills; do not name foundational contract skills here.
 - Every execution artifact must carry deterministic provenance rooted in this workflow plus artifact-specific `source_artifacts` lineage.
 - Do not rewrite the approved specification pack inside this workflow.
 
@@ -93,7 +93,7 @@ Out of scope:
 
 ## Validation Checklist
 
-- workflow dependencies stay limited to role entry skills
+- orchestration dependencies stay limited to role entry skills
 - approved charter, user stories, requirements, and technical design were used as the execution source of truth
 - execution plan exists at `docs/plans/<project-name>-plan.md`
 - local task-tracking artifact exists at `docs/tasks/<project-name>-tasks.md`

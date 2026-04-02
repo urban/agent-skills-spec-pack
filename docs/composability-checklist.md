@@ -21,7 +21,7 @@ Confirm the skill keeps these responsibilities separate:
 
 - foundational skills define shared contracts and validation
 - role skills apply those contracts within one bounded responsibility
-- workflow skills orchestrate role entry skills without restating contract rules
+- orchestration skills orchestrate role entry skills without restating contract rules
 
 Planning must not redefine requirements.
 Requirements must not become technical design.
@@ -45,7 +45,7 @@ Confirm:
 - the foundational skill has one clear responsibility
 - the owned output is explicit
 - install-time dependencies are declared instead of inlined when packaging truly requires them
-- another workflow could reuse it without modification
+- another orchestration could reuse it without modification
 
 Do not use `metadata.dependencies` to force runtime composition. Runtime composition should come from skill descriptions and clear scope.
 
