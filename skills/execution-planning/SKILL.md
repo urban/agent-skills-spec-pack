@@ -3,7 +3,7 @@ name: execution-planning
 description: Produce execution-plan artifacts from approved charter, user stories, requirements, and technical design. Use when a user wants implementation coordination documented before coding starts.
 metadata:
   version: 0.1.0
-  layer: role
+  layer: expertise
   archetype: planning
   domain: implementation-planning
   dependencies:

@@ -20,8 +20,8 @@ Avoid using install-time dependencies as runtime routing hints.
 Confirm the skill keeps these responsibilities separate:
 
 - foundational skills define shared contracts and validation
-- role skills apply those contracts within one bounded responsibility
-- orchestration skills orchestrate role entry skills without restating contract rules
+- expertise skills apply those contracts within one bounded responsibility
+- orchestration skills orchestrate expertise entry skills without restating contract rules
 
 Planning must not redefine requirements.
 Requirements must not become technical design.

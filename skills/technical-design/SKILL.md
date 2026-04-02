@@ -3,7 +3,7 @@ name: technical-design
 description: Produce technical design artifacts from approved charter, requirements, and repository evidence. Use when a user wants architecture, boundaries, and implementation strategy defined before coding.
 metadata:
   version: 0.1.0
-  layer: role
+  layer: expertise
   archetype: design
   domain: specification-authoring
   dependencies:

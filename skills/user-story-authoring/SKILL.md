@@ -3,7 +3,7 @@ name: user-story-authoring
 description: Produce user-story artifacts from approved product framing and repository context. Use when a user wants canonical user stories authored before detailed requirements, design, or execution planning.
 metadata:
   version: 0.1.0
-  layer: role
+  layer: expertise
   archetype: planning
   domain: specification-authoring
   dependencies:

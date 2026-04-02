@@ -13,10 +13,10 @@ metadata:
 
 ## Rules
 
-- Keep this workflow at the orchestration layer because role skills own artifact-specific contracts and validation.
+- Keep this workflow at the orchestration layer because expertise skills own artifact-specific contracts and validation.
 - Resolve one stable `<project-name>` early and preserve it across every authored artifact because path drift breaks downstream alignment.
 - Establish `generated_by.root_skill` as `specification-authoring` for every artifact emitted from this workflow.
-- Run role entry skills in order because charter sets scope and success, stories define user-visible outcomes, requirements define product obligations, and design explains the solution.
+- Run expertise entry skills in order because charter sets scope and success, stories define user-visible outcomes, requirements define product obligations, and design explains the solution.
 - Do not start `user-story-authoring` until the user explicitly approves `docs/specs/<project-name>/charter.md`.
 - Do not start `requirements` until the user explicitly approves `docs/specs/<project-name>/user-stories.md`.
 - Do not start `technical-design` until the user explicitly approves `docs/specs/<project-name>/requirements.md`.
@@ -26,9 +26,9 @@ metadata:
 
 ## Constraints
 
-- This workflow coordinates artifacts; it does not replace underlying role or foundational contracts.
+- This workflow coordinates artifacts; it does not replace underlying expertise or foundational contracts.
 - Final output must include charter, user stories, requirements, and technical design.
-- Orchestration dependencies stay limited to role entry skills; do not name foundational contract skills here.
+- Orchestration dependencies stay limited to expertise entry skills; do not name foundational contract skills here.
 - Every authored artifact must carry deterministic provenance rooted in this workflow plus artifact-specific `source_artifacts` lineage.
 - Never author the full specification pack in one uninterrupted pass unless the user explicitly waives stage-by-stage approval.
 - Do not start downstream coordination or implementation from this workflow unless the user explicitly asks for that next phase.
@@ -52,14 +52,14 @@ Outputs:
 
 In scope:
 
-- orchestrating role entry skills in authored order
+- orchestrating expertise entry skills in authored order
 - preserving pack-wide naming and scope consistency
 - establishing root workflow provenance for every authored artifact
 - checking that artifacts map cleanly from charter through design
 
 Out of scope:
 
-- redefining role-level artifact contracts in this workflow
+- redefining expertise-level artifact contracts in this workflow
 - producing execution coordination artifacts
 - doing implementation work
 - hiding unresolved scope or intent behind polished prose

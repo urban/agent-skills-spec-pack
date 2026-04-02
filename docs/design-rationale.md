@@ -7,8 +7,8 @@ The skill pack uses a contract-first layer model because the same artifact shape
 Each layer has one responsibility:
 
 - foundational skills define reusable contracts, templates, validators, and naming rules
-- role skills apply those contracts inside one bounded responsibility
-- orchestration skills orchestrate multiple role skills without restating lower-layer rules
+- expertise skills apply those contracts inside one bounded responsibility
+- orchestration skills orchestrate multiple expertise skills without restating lower-layer rules
 
 The layers are conceptual. Every skill is stored under `skills/<skill-name>/` and declares its layer in `metadata.layer`.
 
@@ -49,7 +49,7 @@ If one skill mixes those responsibilities, downstream users cannot tell whether 
 
 Execution planning and task tracking are downstream coordination artifacts, not substitutes for requirements or technical design.
 
-They stay in this package because they depend on specification artifacts, but they remain role-level consumers of foundational contracts instead of becoming their own ad hoc process model.
+They stay in this package because they depend on specification artifacts, but they remain expertise-level consumers of foundational contracts instead of becoming their own ad hoc process model.
 
 This separation prevents:
 

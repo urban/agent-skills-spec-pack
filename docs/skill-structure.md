@@ -8,13 +8,13 @@ The canonical package layout is:
 
 - `skills/<skill-name>/`
 
-Every package skill lives under `skills/`. Use `metadata.layer` to declare whether it is foundational, role, or orchestration.
+Every package skill lives under `skills/`. Use `metadata.layer` to declare whether it is foundational, expertise, or orchestration.
 
 Choose one layer only:
 
 - foundational for reusable contracts, templates, validators, and naming rules
-- role for one role-specific entry skill that applies foundational contracts
-- orchestration for a coordinating skill that depends on role skills only
+- expertise for one expertise-specific entry skill that applies foundational contracts
+- orchestration for a coordinating skill that depends on expertise skills only
 
 Each skill lives in its own directory:
 
@@ -42,7 +42,7 @@ Every `SKILL.md` must define:
 
 Add `metadata.dependencies` when the skill composes other skills or relies on shared contracts.
 
-Add `metadata.archetype` and `metadata.domain` only for role skills.
+Add `metadata.archetype` and `metadata.domain` only for expertise skills.
 
 Example:
 
@@ -61,8 +61,8 @@ metadata:
 ## Dependency Direction Rules
 
 - foundational skills must not depend on other skills
-- role skills may depend only on foundational skills
-- orchestration skills may depend only on role skills
+- expertise skills may depend only on foundational skills
+- orchestration skills may depend only on expertise skills
 
 ## Validation Expectations
 

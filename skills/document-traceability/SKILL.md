@@ -41,12 +41,12 @@ For charter artifacts, use `source_artifacts: {}`.
 ## Provenance Assembly
 
 - `root_skill` is the orchestration skill that initiated authored generation.
-- `producing_skill` is the direct role skill responsible for the artifact.
+- `producing_skill` is the direct expertise skill responsible for the artifact.
 - `skills_used` is the ordered, deduplicated skill list from the producing branch only.
 - `skill_graph` is the adjacency map derived from each participating skill's declared `metadata.dependencies`.
 - traversal order is deterministic: root skill first, then depth-first traversal in declared dependency order.
 - include participating foundational skills such as `artifact-naming`, `document-traceability`, and the relevant `write-*` contract skill.
-- exclude sibling role branches that did not participate in the specific artifact.
+- exclude sibling expertise branches that did not participate in the specific artifact.
 - fail closed on missing skill files, missing declared dependencies, malformed metadata, or dependency cycles.
 
 ## Source Artifact Roles

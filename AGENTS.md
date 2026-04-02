@@ -4,37 +4,37 @@
 
 This package contains composable skills for a reversible specification system.
 
-All skills in this package live under `skills/`. Use `metadata.layer` to declare whether a skill is foundational, role, or orchestration.
+All skills in this package live under `skills/`. Use `metadata.layer` to declare whether a skill is foundational, expertise, or orchestration.
 
 Optimize for these outcomes:
 
 - preserve reversibility between authored and derived/reconstructed spec packs
 - keep shared artifact contracts in foundational skills
-- keep role entry skills narrow and single-purpose
-- keep orchestration separate from role and contract logic
+- keep expertise entry skills narrow and single-purpose
+- keep orchestration separate from expertise and contract logic
 
 ## Layer Rules
 
 New or changed skills must fit exactly one layer:
 
 - foundational skills define reusable contracts, templates, validators, or naming rules
-- role skills apply foundational contracts within one role or domain boundary
-- orchestration skills orchestrate multiple role skills to complete a larger flow
+- expertise skills apply foundational contracts within one role or domain boundary
+- orchestration skills orchestrate multiple expertise skills to complete a larger flow
 
 Dependency direction is strict:
 
 - foundational -> no required skill dependencies
-- roles -> foundational only
-- orchestrations -> roles only
+- expertise -> foundational only
+- orchestrations -> expertise only
 
 If a proposed skill crosses layers, split it before adding or moving it.
 
-Role skills must define:
+Expertise skills must define:
 
 - `metadata.archetype`
 - `metadata.domain`
 
-Use role-local `references/` for situational routing guidance.
+Use expertise-local `references/` for situational routing guidance.
 
 Skill-local support files stay inside the owning skill directory:
 
@@ -72,7 +72,7 @@ Load only what matches the current task:
 
 | Task                                  | Read first                                                             |
 | ------------------------------------- | ---------------------------------------------------------------------- |
-| Decide whether to add a new skill     | [`docs/skill-role-selection.md`](./docs/skill-role-selection.md)       |
+| Decide whether to add a new skill     | [`docs/skill-expertise-selection.md`](./docs/skill-expertise-selection.md)       |
 | Create or update `SKILL.md` structure | [`docs/skill-structure.md`](./docs/skill-structure.md)                 |
 | Preserve composability and reuse      | [`docs/composability-checklist.md`](./docs/composability-checklist.md) |
 | Split guidance across files well      | [`docs/progressive-disclosure.md`](./docs/progressive-disclosure.md)   |
@@ -86,8 +86,8 @@ Use [`docs/skill-structure.md`](./docs/skill-structure.md) for the canonical `sk
 When uncertain, prefer:
 
 - foundational reuse over restating rules
-- one bounded role skill over a multi-purpose role
-- orchestration over cross-role coupling
+- one bounded expertise skill over a multi-purpose layer entry
+- orchestration over cross-expertise coupling
 - explicit validation
 - explicit uncertainty
 - composition over duplication

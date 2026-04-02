@@ -3,7 +3,7 @@ name: derive-requirements
 description: Reconstruct software requirements artifacts from repository code and tests. Use when a user wants implemented product behavior documented as requirements for an existing project.
 metadata:
   version: 0.1.0
-  layer: role
+  layer: expertise
   archetype: research
   domain: specification-reconstruction
   dependencies:

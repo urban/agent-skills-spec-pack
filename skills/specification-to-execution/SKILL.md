@@ -12,18 +12,18 @@ metadata:
 ## Rules
 
 - Treat the approved specification pack as the source of truth because this workflow coordinates execution rather than redefining scope.
-- Keep this workflow at the orchestration layer because role skills own the execution-plan and task-tracking contracts.
+- Keep this workflow at the orchestration layer because expertise skills own the execution-plan and task-tracking contracts.
 - Establish `generated_by.root_skill` as `specification-to-execution` for every artifact emitted from this workflow.
-- Run role entry skills in order because task generation depends on an approved execution plan.
+- Run expertise entry skills in order because task generation depends on an approved execution plan.
 - Keep traceability explicit from charter, stories, requirements, and design into plan streams and local tasks.
 - When source artifacts describe an operator-facing runtime edge, preserve that behavior into plan streams and tasks instead of weakening it into package bootstrap only.
 - If missing detail changes task boundaries, sequencing, or validation, ask or mark `TODO: Confirm` instead of inventing certainty.
 
 ## Constraints
 
-- This workflow coordinates execution artifacts; it does not replace underlying role or foundational contracts.
+- This workflow coordinates execution artifacts; it does not replace underlying expertise or foundational contracts.
 - Final output must include an execution plan and a local task-tracking artifact.
-- Orchestration dependencies stay limited to role entry skills; do not name foundational contract skills here.
+- Orchestration dependencies stay limited to expertise entry skills; do not name foundational contract skills here.
 - Every execution artifact must carry deterministic provenance rooted in this workflow plus artifact-specific `source_artifacts` lineage.
 - Do not rewrite the approved specification pack inside this workflow.
 
@@ -46,7 +46,7 @@ Outputs:
 
 In scope:
 
-- orchestrating role entry skills from execution planning through task generation
+- orchestrating expertise entry skills from execution planning through task generation
 - preserving one stable `<project-name>` across execution artifacts
 - establishing root workflow provenance for plan and tasks
 - checking that tasks trace back to the execution plan and approved spec pack
@@ -93,7 +93,7 @@ Out of scope:
 
 ## Validation Checklist
 
-- orchestration dependencies stay limited to role entry skills
+- orchestration dependencies stay limited to expertise entry skills
 - approved charter, user stories, requirements, and technical design were used as the execution source of truth
 - execution plan exists at `docs/plans/<project-name>-plan.md`
 - local task-tracking artifact exists at `docs/tasks/<project-name>-tasks.md`

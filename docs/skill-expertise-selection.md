@@ -1,4 +1,4 @@
-# Skill Role Selection
+# Skill Expertise Selection
 
 Use this document when deciding whether a new skill should exist and which layer it belongs in.
 
@@ -38,7 +38,7 @@ Examples:
 - `write-task-tracking`
 - `gray-box-modules`
 
-### Role
+### Expertise
 
 Use this layer when the skill applies foundational contracts within one bounded responsibility.
 
@@ -54,7 +54,7 @@ Examples:
 - `execution-planning`
 - `task-generation`
 
-Role skills should:
+Expertise skills should:
 
 - own one output or one bounded analysis/planning responsibility
 - depend only on foundational skills
@@ -63,7 +63,7 @@ Role skills should:
 
 ### Orchestration
 
-Use this layer when the skill coordinates multiple role entry skills into one larger flow.
+Use this layer when the skill coordinates multiple expertise entry skills into one larger flow.
 
 Examples:
 
@@ -73,7 +73,7 @@ Examples:
 
 Orchestration skills should:
 
-- depend only on role skills
+- depend only on expertise skills
 - preserve one end-to-end flow
 - avoid restating foundational contract rules
 
@@ -90,7 +90,7 @@ Before creating the skill, confirm:
 
 Split a skill instead of expanding it when:
 
-- it both defines a reusable contract and performs role-specific execution
+- it both defines a reusable contract and performs expertise-specific execution
 - it needs dependencies from both foundational and orchestration layers
 - it tries to own multiple artifact types
 - it mixes authoring, reconstruction, and planning sources of truth

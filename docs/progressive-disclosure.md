@@ -25,7 +25,7 @@ It should hold:
 
 - pack-wide invariants
 - non-negotiable boundaries
-- the skill-role model
+- the skill-expertise model
 - routing to deeper documents
 
 It should not hold every situational authoring rule or every example.
@@ -56,7 +56,7 @@ Move detail into `docs/` or `references/` when it is:
 
 Examples:
 
-- role-selection guidance
+- expertise-selection guidance
 - skill-structure conventions
 - composability review criteria
 - progressive disclosure rules themselves

@@ -3,7 +3,7 @@ name: task-generation
 description: Break an execution plan into grouped tracer-bullet tasks with explicit dependencies and local tracking. Use when a user wants an approved implementation plan decomposed into execution-ready tasks.
 metadata:
   version: 0.1.0
-  layer: role
+  layer: expertise
   archetype: planning
   domain: implementation-planning
   dependencies:

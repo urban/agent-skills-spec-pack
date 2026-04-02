@@ -9,10 +9,10 @@ It does that with a layered skill system stored under `skills/`:
 
 - foundational skills
   Shared contracts, naming rules, templates, and validators.
-- role skills
+- expertise skills
   Authoring, reconstruction, and planning entry points that apply those contracts.
 - orchestration skills
-  Orchestration across multiple role skills.
+  Orchestration across multiple expertise skills.
 
 Each skill declares its layer with `metadata.layer`.
 

@@ -3,7 +3,7 @@ name: requirements
 description: Produce implementation-ready requirements artifacts from an approved charter, user stories, and repository evidence. Use when a user wants product obligations, constraints, and dependencies defined before design or coding.
 metadata:
   version: 0.1.0
-  layer: role
+  layer: expertise
   archetype: planning
   domain: specification-authoring
   dependencies:

@@ -3,7 +3,7 @@ name: derive-user-stories
 description: Reconstruct evidence-based user stories, epic groupings, and stakeholder narratives from an existing codebase. Use when a user wants implemented user-facing outcomes inferred from repository code and tests.
 metadata:
   version: 0.1.0
-  layer: role
+  layer: expertise
   archetype: research
   domain: specification-reconstruction
   dependencies:

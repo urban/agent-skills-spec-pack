@@ -5,8 +5,8 @@ This package contains a contract-first skill pack for software specification wor
 It provides:
 
 - foundational skills for shared artifact contracts, templates, validators, and naming
-- role skills that apply those contracts within one authoring, planning, design, or reconstruction responsibility
-- orchestration skills that orchestrate multiple role skills into a full specification flow
+- expertise skills that apply those contracts within one authoring, planning, design, or reconstruction responsibility
+- orchestration skills that orchestrate multiple expertise skills into a full specification flow
 
 ## Package Boundary
 
@@ -24,8 +24,8 @@ Each skill keeps its own `assets/`, `scripts/`, and `references/` directories un
 Dependency direction for the layer model:
 
 - foundational skills do not depend on other skills
-- role skills may depend only on foundational skills
-- orchestration skills may depend only on role skills
+- expertise skills may depend only on foundational skills
+- orchestration skills may depend only on expertise skills
 
 ## Current Skill Inventory
 
@@ -48,28 +48,28 @@ Dependency direction for the layer model:
 - `gray-box-modules`
   Canonical bounded-capability contract for reusable module seams in technical design artifacts.
 
-### Roles
+### Expertise
 
 - `charter`
-  Authoring role for `docs/specs/<project-name>/charter.md`.
+  Authoring expertise skill for `docs/specs/<project-name>/charter.md`.
 - `user-story-authoring`
-  Authoring role for `docs/specs/<project-name>/user-stories.md`.
+  Authoring expertise skill for `docs/specs/<project-name>/user-stories.md`.
 - `requirements`
-  Authoring role for `docs/specs/<project-name>/requirements.md`.
+  Authoring expertise skill for `docs/specs/<project-name>/requirements.md`.
 - `technical-design`
-  Design role for `docs/specs/<project-name>/technical-design.md`.
+  Design expertise skill for `docs/specs/<project-name>/technical-design.md`.
 - `execution-planning`
-  Planning role for `docs/plans/<project-name>-plan.md`.
+  Planning expertise skill for `docs/plans/<project-name>-plan.md`.
 - `task-generation`
-  Planning role for `docs/tasks/<project-name>-tasks.md`.
+  Planning expertise skill for `docs/tasks/<project-name>-tasks.md`.
 - `derive-charter`
-  Reconstruction role for `docs/research/<project-name>/charter.md` by default.
+  Reconstruction expertise skill for `docs/research/<project-name>/charter.md` by default.
 - `derive-user-stories`
-  Reconstruction role for `docs/research/<project-name>/user-stories.md` by default.
+  Reconstruction expertise skill for `docs/research/<project-name>/user-stories.md` by default.
 - `derive-requirements`
-  Reconstruction role for `docs/research/<project-name>/requirements.md` by default.
+  Reconstruction expertise skill for `docs/research/<project-name>/requirements.md` by default.
 - `derive-technical-design`
-  Reconstruction role for `docs/research/<project-name>/technical-design.md` by default.
+  Reconstruction expertise skill for `docs/research/<project-name>/technical-design.md` by default.
 
 ### Orchestrations
 
@@ -88,12 +88,12 @@ Each layer has one job:
 
 - foundational
   Define reusable contracts. No required skill dependencies.
-- role
+- expertise
   Apply one foundational contract set inside one bounded responsibility.
 - orchestration
-  Coordinate multiple role skills without restating foundational rules.
+  Coordinate multiple expertise skills without restating foundational rules.
 
-Reversibility depends on authoring and reconstruction roles targeting the same foundational contracts for shared artifact types.
+Reversibility depends on authoring and reconstruction expertise skills targeting the same foundational contracts for shared artifact types.
 
 ## Artifact Flow
 
@@ -139,7 +139,7 @@ Typical greenfield workflow:
 Typical reverse-engineering workflow:
 
 1. Use `specification-reconstruction` against an existing codebase.
-   By default it writes `docs/research/<project-name>/charter.md`, `docs/research/<project-name>/user-stories.md`, `docs/research/<project-name>/requirements.md`, and `docs/research/<project-name>/technical-design.md`, but roles may honor explicit user-provided destinations.
+   By default it writes `docs/research/<project-name>/charter.md`, `docs/research/<project-name>/user-stories.md`, `docs/research/<project-name>/requirements.md`, and `docs/research/<project-name>/technical-design.md`, but expertise skills may honor explicit user-provided destinations.
    When evidence shows a real bounded capability, let `derive-technical-design` apply the package's foundational `gray-box-modules` contract and mark uncertainty explicitly when the seam is weak.
 2. Review the reconstructed charter, user stories, requirements, and technical design.
 3. Use `specification-to-execution` if you want the full execution-coordination pack, or `execution-planning` if you only need a fresh plan for follow-on work.
@@ -152,7 +152,7 @@ Read these docs when changing the pack:
 - [`docs/purpose.md`](./docs/purpose.md)
 - [`docs/design-rationale.md`](./docs/design-rationale.md)
 - [`docs/development-principles.md`](./docs/development-principles.md)
-- [`docs/skill-role-selection.md`](./docs/skill-role-selection.md)
+- [`docs/skill-expertise-selection.md`](./docs/skill-expertise-selection.md)
 - [`docs/skill-structure.md`](./docs/skill-structure.md)
 - [`docs/composability-checklist.md`](./docs/composability-checklist.md)
 - [`docs/progressive-disclosure.md`](./docs/progressive-disclosure.md)

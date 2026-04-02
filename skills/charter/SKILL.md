@@ -3,7 +3,7 @@ name: charter
 description: Produce charter artifacts from product intent and repository context. Use when a user wants a scope baseline with goals, non-goals, personas, and success criteria.
 metadata:
   version: 0.1.0
-  layer: role
+  layer: expertise
   archetype: planning
   domain: specification-authoring
   dependencies:

@@ -9,10 +9,10 @@ Start here:
 - [purpose.md](./purpose.md)
   What problem the skill pack solves and what artifacts it owns.
 - [design-rationale.md](./design-rationale.md)
-  Why the pack separates foundational contracts, role entry skills, and orchestration skills.
+  Why the pack separates foundational contracts, expertise entry skills, and orchestration skills.
 - [development-principles.md](./development-principles.md)
   The rules for extending the pack without breaking reversibility or layer boundaries.
-- [skill-role-selection.md](./skill-role-selection.md)
+- [skill-expertise-selection.md](./skill-expertise-selection.md)
   When a new skill should exist and which layer it should belong to.
 - [skill-structure.md](./skill-structure.md)
   How to structure a skill directory and `SKILL.md` under `skills/`.

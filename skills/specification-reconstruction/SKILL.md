@@ -14,7 +14,7 @@ metadata:
 ## Rules
 
 - Treat repository evidence as the primary source of truth because this workflow reconstructs implemented reality, not intended history.
-- Keep this workflow at the orchestration layer because role skills own artifact-specific reconstruction methods and validation.
+- Keep this workflow at the orchestration layer because expertise skills own artifact-specific reconstruction methods and validation.
 - Use default research output locations unless the user provides explicit destinations.
 - Keep uncertainty explicit with `TODO: Confirm` whenever the codebase cannot prove original intent.
 - Run reconstruction in order because derived charter captures recoverable framing, derived stories capture user-visible behavior, derived requirements capture the contract, and derived design explains the implementation.
@@ -22,9 +22,9 @@ metadata:
 
 ## Constraints
 
-- This workflow coordinates reconstruction; it does not replace underlying role or foundational contracts.
+- This workflow coordinates reconstruction; it does not replace underlying expertise or foundational contracts.
 - Final output must include reconstructed charter, user stories, requirements, and technical design.
-- Orchestration dependencies stay limited to role entry skills; do not name foundational contract skills here.
+- Orchestration dependencies stay limited to expertise entry skills; do not name foundational contract skills here.
 - If a user asks for a reconstructed execution plan, frame it as current-state guidance rather than pretending to recover the original authored plan.
 
 ## Requirements
@@ -51,7 +51,7 @@ Additional outputs:
 
 In scope:
 
-- orchestrating role entry skills for reconstruction
+- orchestrating expertise entry skills for reconstruction
 - preserving consistent `<project-name>` defaults across derived artifacts
 - checking that derived artifacts support each other
 - routing bounded gray-box follow-on discovery when needed
@@ -60,7 +60,7 @@ Out of scope:
 
 - inventing business intent the repository does not support
 - presenting guesses as recovered facts
-- replacing role-level reconstruction contracts with workflow prose
+- replacing expertise-level reconstruction contracts with workflow prose
 - treating current-state recommendations as the original plan
 
 ## Workflow
@@ -108,7 +108,7 @@ Out of scope:
 
 - default workflow output paths match the reconstruction role defaults when the user does not override them
 - derived charter, user stories, requirements, and technical design artifacts all exist at the chosen destinations
-- orchestration dependencies stay limited to role entry skills
+- orchestration dependencies stay limited to expertise entry skills
 - derived charter and stories reflect observed behavior rather than desired future intent
 - derived requirements and design are supported by repository evidence
 - weakly supported conclusions are marked explicitly with `TODO: Confirm`
