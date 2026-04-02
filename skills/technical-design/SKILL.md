@@ -29,7 +29,7 @@ metadata:
 
 ## Constraints
 
-- Output must be one Markdown artifact at `docs/specs/<project-name>/technical-design.md`.
+- Output must be one Markdown artifact at `.specs/<project-name>/technical-design.md`.
 - The artifact must stay compatible with the `write-technical-design` contract.
 - The artifact must record `source_artifacts.charter`, `source_artifacts.user_stories`, and `source_artifacts.requirements`.
 - Include architecture, interfaces, data flow, operational concerns, implementation strategy, and testing strategy.
@@ -50,7 +50,7 @@ Inputs:
 
 Output:
 
-- one complete technical design artifact at `docs/specs/<project-name>/technical-design.md`
+- one complete technical design artifact at `.specs/<project-name>/technical-design.md`
 
 In scope:
 
@@ -77,10 +77,10 @@ Out of scope:
 6. If the target system uses Effect, load `../effect-technical-design/SKILL.md` before finalizing boundaries so decomposition, recomposition, and abstraction choices stay consistent with the shared Effect guidance.
 7. Use `visual-diagramming` to fill the four required diagram slots with either the expected Mermaid diagram, a `Not needed:` rationale, or `TODO: Confirm` when applicability is unresolved.
 8. Apply `gray-box-modules` only to capabilities with durable caller-visible boundaries; otherwise describe the observed structure without forcing the pattern.
-9. Draft `docs/specs/<project-name>/technical-design.md` using the `write-technical-design` contract.
+9. Draft `.specs/<project-name>/technical-design.md` using the `write-technical-design` contract.
 10. Stamp canonical provenance with `source_artifacts.charter`, `source_artifacts.user_stories`, and `source_artifacts.requirements`.
 11. Record implementation strategy, testing strategy, risks, tradeoffs, and `TODO: Confirm` markers for unresolved high-impact design decisions.
-12. Validate with `bash ../write-technical-design/scripts/validate_technical_design.sh docs/specs/<project-name>/technical-design.md`.
+12. Validate with `bash ../write-technical-design/scripts/validate_technical_design.sh .specs/<project-name>/technical-design.md`.
 13. Deliver the draft and request approval before implementation proceeds.
 
 ## Gotchas
@@ -96,7 +96,7 @@ Out of scope:
 
 ## Deliverables
 
-- `docs/specs/<project-name>/technical-design.md`
+- `.specs/<project-name>/technical-design.md`
 - architecture aligned to approved charter, user stories, and requirements
 - explicit components, interfaces, data flow, implementation strategy, testing strategy, risks, and tradeoffs
 - deterministic provenance plus required source-artifact lineage
@@ -105,7 +105,7 @@ Out of scope:
 
 ## Validation Checklist
 
-- artifact path is `docs/specs/<project-name>/technical-design.md`
+- artifact path is `.specs/<project-name>/technical-design.md`
 - section order follows the `write-technical-design` contract
 - required source-artifact roles are present
 - architecture and implementation strategy are both present
@@ -116,4 +116,4 @@ Out of scope:
 
 ## Deterministic Validation
 
-- `bash ../write-technical-design/scripts/validate_technical_design.sh docs/specs/<project-name>/technical-design.md`
+- `bash ../write-technical-design/scripts/validate_technical_design.sh .specs/<project-name>/technical-design.md`

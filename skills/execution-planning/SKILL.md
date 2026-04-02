@@ -26,7 +26,7 @@ Turn an approved specification pack into an execution-oriented plan.
 
 ## Constraints
 
-- Output must be one Markdown artifact at `docs/plans/<project-name>-plan.md`.
+- Output must be one Markdown artifact at `.specs/<project-name>/execution-plan.md`.
 - The artifact must stay compatible with the `write-execution-plan` contract.
 - The artifact must record `source_artifacts.charter`, `source_artifacts.user_stories`, `source_artifacts.requirements`, and `source_artifacts.technical_design`.
 - `Scope Alignment` must reference the companion charter, user stories, requirements, and technical design artifacts.
@@ -47,7 +47,7 @@ Inputs:
 
 Output:
 
-- one complete execution plan at `docs/plans/<project-name>-plan.md`
+- one complete execution plan at `.specs/<project-name>/execution-plan.md`
 
 In scope:
 
@@ -73,10 +73,10 @@ Out of scope:
 6. Translate the approved scope into a small number of meaningful implementation streams.
 7. Group work under those streams instead of outputting a flat task dump.
 8. Preserve runtime-edge behavior in both work breakdown and validation checkpoints when upstream artifacts describe it.
-9. Draft `docs/plans/<project-name>-plan.md` using the `write-execution-plan` contract.
+9. Draft `.specs/<project-name>/execution-plan.md` using the `write-execution-plan` contract.
 10. Stamp canonical provenance plus required source-artifact lineage.
 11. Mark unresolved high-impact execution details as `TODO: Confirm`.
-12. Validate with `bash ../write-execution-plan/scripts/validate_plan.sh docs/plans/<project-name>-plan.md`.
+12. Validate with `bash ../write-execution-plan/scripts/validate_plan.sh .specs/<project-name>/execution-plan.md`.
 13. Deliver the plan as the implementation coordination artifact.
 
 ## Gotchas
@@ -91,7 +91,7 @@ Out of scope:
 
 ## Deliverables
 
-- `docs/plans/<project-name>-plan.md`
+- `.specs/<project-name>/execution-plan.md`
 - explicit scope alignment references to charter, user stories, requirements, and technical design
 - named implementation streams with grouped work breakdown
 - explicit runtime-edge obligations field with preserved operator-facing behavior or `None in approved spec`
@@ -100,7 +100,7 @@ Out of scope:
 
 ## Validation Checklist
 
-- artifact path is `docs/plans/<project-name>-plan.md`
+- artifact path is `.specs/<project-name>/execution-plan.md`
 - section order follows the `write-execution-plan` contract
 - required source-artifact roles are present
 - `Scope Alignment` references charter, user stories, requirements, and technical design
@@ -111,4 +111,4 @@ Out of scope:
 
 ## Deterministic Validation
 
-- `bash ../write-execution-plan/scripts/validate_plan.sh docs/plans/<project-name>-plan.md`
+- `bash ../write-execution-plan/scripts/validate_plan.sh .specs/<project-name>/execution-plan.md`

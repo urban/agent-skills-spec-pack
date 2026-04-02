@@ -10,12 +10,12 @@ generated_by:
   skill_graph:
     [TODO: skill-name]: []
 source_artifacts:
-  plan: docs/plans/[TODO: artifact-name]-plan.md
+  plan: .specs/[TODO: artifact-name]/execution-plan.md
 ---
 
 ## Task Summary
 
-- Parent plan: `docs/plans/[TODO: artifact-name]-plan.md`
+- Parent plan: `.specs/[TODO: artifact-name]/execution-plan.md`
 - Scope: [TODO: summarize the implementation slice covered by these tasks]
 - Tracking intent: [TODO: describe how this document should be used during implementation]
 - Runtime-edge obligations: [TODO: preserved operator-facing runtime behavior or `None in parent plan`]

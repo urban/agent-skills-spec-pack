@@ -22,7 +22,7 @@ metadata:
 
 ## Constraints
 
-- Output must be one Markdown report at the user-specified destination or, by default, `docs/research/<project-name>/requirements.md`.
+- Output must be one Markdown report at the user-specified destination or, by default, `.specs/<project-name>-research/requirements.md`.
 - The artifact must stay compatible with the `write-requirements` contract.
 - When produced through the canonical reconstruction workflow, the artifact must record `generated_by.root_skill = specification-reconstruction`, `generated_by.producing_skill = derive-requirements`, `source_artifacts.charter`, and `source_artifacts.user_stories`.
 - If the destination file already exists, create a timestamped backup before overwrite.
@@ -40,7 +40,7 @@ Inputs:
 
 Output:
 
-- one derived requirements report at the user-specified destination or, when no destination is provided, `docs/research/<project-name>/requirements.md`
+- one derived requirements report at the user-specified destination or, when no destination is provided, `.specs/<project-name>-research/requirements.md`
 
 In scope:
 
@@ -61,7 +61,7 @@ Out of scope:
 1. Confirm analysis scope, defaulting to the full repository when the user does not narrow it.
 2. Inventory user-visible behaviors, interfaces, constraints, and dependencies from code and tests.
 3. Infer missing rationale only as far as the evidence supports and mark weak points as `TODO: Confirm`.
-4. Resolve the destination path from user input when provided; otherwise resolve `<project-name>` from the nearest package or repository name and use `docs/research/<project-name>/requirements.md`.
+4. Resolve the destination path from user input when provided; otherwise resolve `<project-name>` from the nearest package or repository name and use `.specs/<project-name>-research/requirements.md`.
 5. If the destination report already exists, create a timestamped backup in the same directory before overwrite.
 6. Capture `root_skill` from the active reconstruction workflow and set `producing_skill = derive-requirements`.
 7. Draft the chosen destination with the `write-requirements` contract.
@@ -89,7 +89,7 @@ Out of scope:
 
 ## Validation Checklist
 
-- report path is the user-specified destination or the default `docs/research/<project-name>/requirements.md`
+- report path is the user-specified destination or the default `.specs/<project-name>-research/requirements.md`
 - existing report backup is created before overwrite when needed
 - section order and numbering follow the `write-requirements` contract
 - canonical provenance is present and required source-artifact roles are recorded

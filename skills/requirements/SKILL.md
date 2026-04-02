@@ -24,10 +24,10 @@ metadata:
 
 ## Constraints
 
-- Output must be one Markdown artifact at `docs/specs/<project-name>/requirements.md`.
+- Output must be one Markdown artifact at `.specs/<project-name>/requirements.md`.
 - The artifact must stay compatible with the `write-requirements` contract.
 - The artifact must record `source_artifacts.charter` and `source_artifacts.user_stories`.
-- Do not restate goals, non-goals, personas, or success criteria already owned by `docs/specs/<project-name>/charter.md` except when a short traceability note is required.
+- Do not restate goals, non-goals, personas, or success criteria already owned by `.specs/<project-name>/charter.md` except when a short traceability note is required.
 - Do not mix implementation strategy, file-level design, or execution sequencing into the requirements artifact.
 - Keep unresolved high-impact details explicit as `TODO: Confirm` instead of inventing certainty.
 
@@ -42,7 +42,7 @@ Inputs:
 
 Output:
 
-- one complete requirements artifact at `docs/specs/<project-name>/requirements.md`
+- one complete requirements artifact at `.specs/<project-name>/requirements.md`
 
 In scope:
 
@@ -65,12 +65,12 @@ Out of scope:
 3. Capture `root_skill` from the active authored workflow and set `producing_skill = requirements`.
 4. Gather the approved charter, approved user stories, constraints, integrations, data rules, dependencies, and success boundaries that the requirements must satisfy.
 5. Inspect the repository only when existing code, integrations, or platform boundaries materially affect the requirements.
-6. Draft `docs/specs/<project-name>/requirements.md` using the `write-requirements` contract rather than inventing a new structure.
+6. Draft `.specs/<project-name>/requirements.md` using the `write-requirements` contract rather than inventing a new structure.
 7. Stamp canonical provenance with `source_artifacts.charter` and `source_artifacts.user_stories`.
 8. Keep requirements externally meaningful and verifiable; move implementation ideas out of the artifact.
 9. Keep the artifact on obligations and constraints; push repeated goals, persona summaries, and success-criterion restatements back to the charter unless traceability would be lost.
 10. Mark unresolved high-impact details as `TODO: Confirm`.
-11. Validate with `bash ../write-requirements/scripts/validate_requirements.sh docs/specs/<project-name>/requirements.md`.
+11. Validate with `bash ../write-requirements/scripts/validate_requirements.sh .specs/<project-name>/requirements.md`.
 12. Deliver the draft and request approval before downstream design or implementation work.
 
 ## Gotchas
@@ -85,7 +85,7 @@ Out of scope:
 
 ## Deliverables
 
-- `docs/specs/<project-name>/requirements.md`
+- `.specs/<project-name>/requirements.md`
 - explicit functional requirements, non-functional requirements, technical constraints, data requirements, integration requirements, and dependencies
 - deterministic provenance plus `source_artifacts.charter` and `source_artifacts.user_stories`
 - validation passing via the shared requirements validator
@@ -93,7 +93,7 @@ Out of scope:
 
 ## Validation Checklist
 
-- artifact path is `docs/specs/<project-name>/requirements.md`
+- artifact path is `.specs/<project-name>/requirements.md`
 - section order and numbering follow the `write-requirements` contract
 - `source_artifacts.charter` and `source_artifacts.user_stories` are present
 - at least one functional requirement exists
@@ -102,4 +102,4 @@ Out of scope:
 
 ## Deterministic Validation
 
-- `bash ../write-requirements/scripts/validate_requirements.sh docs/specs/<project-name>/requirements.md`
+- `bash ../write-requirements/scripts/validate_requirements.sh .specs/<project-name>/requirements.md`

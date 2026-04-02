@@ -10,9 +10,9 @@ generated_by:
   skill_graph:
     [TODO: skill-name]: []
 source_artifacts:
-  charter: docs/specs/[TODO: artifact-name]/charter.md
-  user_stories: docs/specs/[TODO: artifact-name]/user-stories.md
-  requirements: docs/specs/[TODO: artifact-name]/requirements.md
+  charter: .specs/[TODO: artifact-name]/charter.md
+  user_stories: .specs/[TODO: artifact-name]/user-stories.md
+  requirements: .specs/[TODO: artifact-name]/requirements.md
 ---
 
 ## Architecture Summary

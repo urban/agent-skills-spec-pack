@@ -24,9 +24,9 @@ metadata:
 
 ## Constraints
 
-- Output must be one Markdown artifact at `docs/tasks/<project-name>-tasks.md`.
+- Output must be one Markdown artifact at `.specs/<project-name>/execution-tasks.md`.
 - The artifact must stay compatible with the `write-task-tracking` contract.
-- The artifact must record `source_artifacts.plan = docs/plans/<project-name>-plan.md`.
+- The artifact must record `source_artifacts.plan = .specs/<project-name>/execution-plan.md`.
 - Every task must include a stable identifier, status, dependency field, and plan references.
 - Tasks must remain local tracking artifacts; do not create GitHub issues or external tickets.
 - Do not create layer-only tasks that deliver no verifiable end-to-end behavior.
@@ -35,13 +35,13 @@ metadata:
 
 Inputs:
 
-- an approved execution plan at `docs/plans/<project-name>-plan.md` or equivalent
+- an approved execution plan at `.specs/<project-name>/execution-plan.md` or equivalent
 - companion charter, user stories, requirements, and technical design when needed to clarify task boundaries
 - repository context when needed to find real seams or sequencing constraints
 
 Output:
 
-- one local task-tracking artifact at `docs/tasks/<project-name>-tasks.md`
+- one local task-tracking artifact at `.specs/<project-name>/execution-tasks.md`
 
 In scope:
 
@@ -67,10 +67,10 @@ Out of scope:
 6. Slice the work into thin tracer-bullet tasks grouped by stream.
 7. Assign stable task IDs, explicit dependencies, statuses, and plan references.
 8. For runtime-edge work, include both structural and behavior-verifying acceptance criteria instead of only bootstrap steps.
-9. Draft `docs/tasks/<project-name>-tasks.md` using the `write-task-tracking` contract.
+9. Draft `.specs/<project-name>/execution-tasks.md` using the `write-task-tracking` contract.
 10. Stamp canonical provenance with `source_artifacts.plan`.
 11. Mark unresolved high-impact task-boundary or dependency ambiguity as `TODO: Confirm`.
-12. Validate with `bash ../write-task-tracking/scripts/validate_tasks.sh docs/tasks/<project-name>-tasks.md`.
+12. Validate with `bash ../write-task-tracking/scripts/validate_tasks.sh .specs/<project-name>/execution-tasks.md`.
 13. Deliver the local task-tracking artifact for execution.
 
 ## Gotchas
@@ -85,7 +85,7 @@ Out of scope:
 
 ## Deliverables
 
-- `docs/tasks/<project-name>-tasks.md`
+- `.specs/<project-name>/execution-tasks.md`
 - grouped tracer-bullet tasks with stable identifiers, statuses, dependencies, and plan references
 - explicit `source_artifacts.plan` lineage and deterministic provenance
 - local tracking structure suitable for iterative implementation updates
@@ -97,7 +97,7 @@ Out of scope:
 
 ## Validation Checklist
 
-- artifact path is `docs/tasks/<project-name>-tasks.md`
+- artifact path is `.specs/<project-name>/execution-tasks.md`
 - parent execution plan was used as the source of truth
 - `source_artifacts.plan` points to the approved plan
 - at least one implementation stream group exists
@@ -108,4 +108,4 @@ Out of scope:
 
 ## Deterministic Validation
 
-- `bash ../write-task-tracking/scripts/validate_tasks.sh docs/tasks/<project-name>-tasks.md`
+- `bash ../write-task-tracking/scripts/validate_tasks.sh .specs/<project-name>/execution-tasks.md`

@@ -22,7 +22,7 @@ metadata:
 
 ## Constraints
 
-- Output must be one Markdown report at the user-specified destination or, by default, `docs/research/<project-name>/charter.md`.
+- Output must be one Markdown report at the user-specified destination or, by default, `.specs/<project-name>-research/charter.md`.
 - The artifact must stay compatible with the `write-charter` contract.
 - The artifact must record deterministic provenance with `generated_by.root_skill = specification-reconstruction`, `generated_by.producing_skill = derive-charter`, and `source_artifacts: {}` when produced through the canonical reconstruction workflow.
 - If the destination file already exists, create a timestamped backup before overwrite.
@@ -40,7 +40,7 @@ Inputs:
 
 Output:
 
-- one derived charter report at the user-specified destination or, when no destination is provided, `docs/research/<project-name>/charter.md`
+- one derived charter report at the user-specified destination or, when no destination is provided, `.specs/<project-name>-research/charter.md`
 
 In scope:
 
@@ -60,7 +60,7 @@ Out of scope:
 1. Confirm analysis scope, defaulting to the full repository when the user does not narrow it.
 2. Inventory user-visible surfaces, constraints, role boundaries, and measurable outcomes from code and tests.
 3. Infer candidate goals, non-goals, personas, and success criteria only as far as the evidence supports and mark weak conclusions as `TODO: Confirm`.
-4. Resolve the destination path from user input when provided; otherwise resolve `<project-name>` from the nearest package or repository name and use `docs/research/<project-name>/charter.md`.
+4. Resolve the destination path from user input when provided; otherwise resolve `<project-name>` from the nearest package or repository name and use `.specs/<project-name>-research/charter.md`.
 5. If the destination report already exists, create a timestamped backup in the same directory before overwrite.
 6. Capture `root_skill` from the active reconstruction workflow and set `producing_skill = derive-charter`.
 7. Draft the chosen destination with the `write-charter` contract.
@@ -88,7 +88,7 @@ Out of scope:
 
 ## Validation Checklist
 
-- report path is the user-specified destination or the default `docs/research/<project-name>/charter.md`
+- report path is the user-specified destination or the default `.specs/<project-name>-research/charter.md`
 - existing report backup is created before overwrite when needed
 - section order follows the `write-charter` contract
 - canonical provenance is present and `source_artifacts: {}` is used

@@ -10,7 +10,7 @@ generated_by:
   skill_graph:
     [TODO: skill-name]: []
 source_artifacts:
-  charter: docs/research/[TODO: artifact-name]/charter.md
+  charter: .specs/[TODO: artifact-name]-research/charter.md
 ---
 
 # [TODO: Project name] Derived User Stories

@@ -10,10 +10,10 @@ generated_by:
   skill_graph:
     [TODO: skill-name]: []
 source_artifacts:
-  charter: docs/specs/[TODO: artifact-name]/charter.md
-  user_stories: docs/specs/[TODO: artifact-name]/user-stories.md
-  requirements: docs/specs/[TODO: artifact-name]/requirements.md
-  technical_design: docs/specs/[TODO: artifact-name]/technical-design.md
+  charter: .specs/[TODO: artifact-name]/charter.md
+  user_stories: .specs/[TODO: artifact-name]/user-stories.md
+  requirements: .specs/[TODO: artifact-name]/requirements.md
+  technical_design: .specs/[TODO: artifact-name]/technical-design.md
 ---
 
 ## Execution Summary
@@ -22,10 +22,10 @@ source_artifacts:
 
 ## Scope Alignment
 
-- Charter: `docs/specs/[TODO: artifact-name]/charter.md`
-- User Stories: `docs/specs/[TODO: artifact-name]/user-stories.md`
-- Requirements: `docs/specs/[TODO: artifact-name]/requirements.md`
-- Technical Design: `docs/specs/[TODO: artifact-name]/technical-design.md`
+- Charter: `.specs/[TODO: artifact-name]/charter.md`
+- User Stories: `.specs/[TODO: artifact-name]/user-stories.md`
+- Requirements: `.specs/[TODO: artifact-name]/requirements.md`
+- Technical Design: `.specs/[TODO: artifact-name]/technical-design.md`
 - Runtime-edge obligations: [TODO: preserved operator-facing runtime behavior or `None in approved spec`]
 - In-scope implementation objective: [TODO: describe what part of the approved spec pack this plan coordinates]
 

@@ -41,10 +41,10 @@ Inputs:
 
 Default outputs when the user does not provide explicit destinations:
 
-- `docs/research/<project-name>/charter.md`
-- `docs/research/<project-name>/user-stories.md`
-- `docs/research/<project-name>/requirements.md`
-- `docs/research/<project-name>/technical-design.md`
+- `.specs/<project-name>-research/charter.md`
+- `.specs/<project-name>-research/user-stories.md`
+- `.specs/<project-name>-research/requirements.md`
+- `.specs/<project-name>-research/technical-design.md`
 
 Additional outputs:
 
@@ -94,7 +94,7 @@ Out of scope:
 - If requirements are reconstructed from naming conventions alone, they sound plausible while drifting from real system guarantees. Tie each important requirement back to concrete repository evidence.
 - If you hide uncertainty to make the pack read cleanly, future teams cannot tell which parts are proven and which are inferred. Keep `TODO: Confirm` markers where evidence is weak or conflicting.
 - If technical design explanation outruns what the codebase shows, architecture diagrams become fiction with the credibility of recovered documentation. Stop at the evidence boundary and label hypotheses.
-- If you write defaults as if they were mandatory output paths, users lose the ability to direct reconstruction where they need it. Treat the listed `docs/research/...` locations as defaults only.
+- If you write defaults as if they were mandatory output paths, users lose the ability to direct reconstruction where they need it. Treat the listed `.specs/...-research/` locations as defaults only.
 - If you skip the consistency pass, contradictions between inferred charter, stories, requirements, and design survive until someone tries to use the pack for change planning. Reconcile or surface those conflicts before delivery.
 - If gray-box discovery turns into a substitute for careful repository reading, the workflow becomes an excuse to speculate about architecture. Use the gray-box handoff only for bounded seams that the main reconstruction pass cannot explain confidently.
 

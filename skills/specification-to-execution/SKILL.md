@@ -40,8 +40,8 @@ Inputs:
 
 Outputs:
 
-- `docs/plans/<project-name>-plan.md`
-- `docs/tasks/<project-name>-tasks.md`
+- `.specs/<project-name>/execution-plan.md`
+- `.specs/<project-name>/execution-tasks.md`
 - one execution coordination pack aligned to the approved specification artifacts
 
 In scope:
@@ -84,8 +84,8 @@ Out of scope:
 
 ## Deliverables
 
-- `docs/plans/<project-name>-plan.md`
-- `docs/tasks/<project-name>-tasks.md`
+- `.specs/<project-name>/execution-plan.md`
+- `.specs/<project-name>/execution-tasks.md`
 - explicit traceability from approved specification artifacts through plan and tasks
 - deterministic provenance and source-artifact lineage on both execution artifacts
 - explicit `TODO: Confirm` markers for unresolved execution ambiguity
@@ -95,8 +95,8 @@ Out of scope:
 
 - orchestration dependencies stay limited to expertise entry skills
 - approved charter, user stories, requirements, and technical design were used as the execution source of truth
-- execution plan exists at `docs/plans/<project-name>-plan.md`
-- local task-tracking artifact exists at `docs/tasks/<project-name>-tasks.md`
+- execution plan exists at `.specs/<project-name>/execution-plan.md`
+- local task-tracking artifact exists at `.specs/<project-name>/execution-tasks.md`
 - both execution artifacts record `generated_by.root_skill = specification-to-execution`
 - plan references the companion specification artifacts
 - tasks reference the execution plan and preserve grouped execution structure

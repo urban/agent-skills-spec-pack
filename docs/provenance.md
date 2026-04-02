@@ -146,9 +146,9 @@ Most `write-*` validators in the pack already invoke this shared provenance vali
 
 Provenance and traceability should be applied across:
 
-- authored specification artifacts under `docs/specs/`
-- execution coordination artifacts under `docs/plans/` and `docs/tasks/`
-- reconstructed research artifacts under `docs/research/` whenever they are created through the pack's canonical artifact contracts
+- authored specification artifacts under `.specs/<project-name>/`
+- execution coordination artifacts under `.specs/<project-name>/`
+- reconstructed research artifacts under `.specs/<project-name>-research/` whenever they are created through the pack's canonical artifact contracts
 
 If a skill creates one of these artifacts, it should either:
 

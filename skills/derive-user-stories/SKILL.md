@@ -23,7 +23,7 @@ metadata:
 
 ## Constraints
 
-- Output must be one Markdown report at the user-specified destination or, by default, `docs/research/<project-name>/user-stories.md`.
+- Output must be one Markdown report at the user-specified destination or, by default, `.specs/<project-name>-research/user-stories.md`.
 - Always draft from `./assets/report-template.md`.
 - When produced through the canonical reconstruction workflow, the artifact must record `generated_by.root_skill = specification-reconstruction`, `generated_by.producing_skill = derive-user-stories`, and `source_artifacts.charter`.
 - If the destination file already exists, create a timestamped backup before overwrite.
@@ -41,7 +41,7 @@ Inputs:
 
 Output:
 
-- one derived user-stories report at the user-specified destination or, when no destination is provided, `docs/research/<project-name>/user-stories.md`
+- one derived user-stories report at the user-specified destination or, when no destination is provided, `.specs/<project-name>-research/user-stories.md`
 
 Required report sections, in order:
 
@@ -85,7 +85,7 @@ Out of scope:
 7. Write one canonical story per user-visible outcome and use `TODO: Confirm` for unsupported actor, action, or benefit fields.
 8. Assign `High`, `Medium`, or `Low` confidence based on evidence strength and completeness.
 9. Record non-mapped code areas in `Coverage Gaps` and unresolved ambiguity in `Additional Notes`.
-10. Resolve the destination path from user input when provided; otherwise resolve `<project-name>` from user input, the nearest relevant `package.json`, or the repository directory name, normalize it to lowercase kebab-case, and use `docs/research/<project-name>/user-stories.md`.
+10. Resolve the destination path from user input when provided; otherwise resolve `<project-name>` from user input, the nearest relevant `package.json`, or the repository directory name, normalize it to lowercase kebab-case, and use `.specs/<project-name>-research/user-stories.md`.
 11. If the destination report already exists, create a timestamped backup in the same directory before overwrite.
 12. Capture `root_skill` from the active reconstruction workflow and set `producing_skill = derive-user-stories`.
 13. Stamp canonical provenance with `source_artifacts.charter`, pointing to the reconstructed or user-provided charter artifact for the same analysis run.
@@ -113,7 +113,7 @@ Out of scope:
 
 ## Validation Checklist
 
-- report path is the user-specified destination or the default `docs/research/<project-name>/user-stories.md`
+- report path is the user-specified destination or the default `.specs/<project-name>-research/user-stories.md`
 - existing report backup is created before overwrite when needed
 - canonical provenance is present and `source_artifacts.charter` points to the reconstructed or supplied charter artifact
 - all five required sections exist in order

@@ -23,7 +23,7 @@ metadata:
 
 ## Constraints
 
-- Output must be one Markdown artifact at `docs/specs/<project-name>/charter.md`.
+- Output must be one Markdown artifact at `.specs/<project-name>/charter.md`.
 - The artifact must stay compatible with the `write-charter` contract.
 - The artifact must record `generated_by.root_skill = specification-authoring`, `generated_by.producing_skill = charter`, and `source_artifacts: {}` when authored through the canonical workflow.
 - Do not mix detailed functional requirements, technical design, or execution sequencing into the artifact.
@@ -41,7 +41,7 @@ Inputs:
 
 Output:
 
-- one complete charter artifact at `docs/specs/<project-name>/charter.md`
+- one complete charter artifact at `.specs/<project-name>/charter.md`
 
 In scope:
 
@@ -66,11 +66,11 @@ Out of scope:
 3. Capture `root_skill` from the active authored workflow and set `producing_skill = charter`.
 4. Gather desired outcomes, goals, non-goals, personas / actors, and success signals.
 5. Inspect the repository only when existing code, integrations, or platform boundaries materially affect scope or success criteria.
-6. Draft `docs/specs/<project-name>/charter.md` using the `write-charter` contract rather than inventing a new structure.
+6. Draft `.specs/<project-name>/charter.md` using the `write-charter` contract rather than inventing a new structure.
 7. Stamp canonical provenance with `source_artifacts: {}`.
 8. Keep the artifact on the approved scope baseline; move user-visible behaviors, detailed requirements, and design ideas out of the document.
 9. Mark unresolved high-impact details as `TODO: Confirm`.
-10. Validate with `bash ../write-charter/scripts/validate_charter.sh docs/specs/<project-name>/charter.md`.
+10. Validate with `bash ../write-charter/scripts/validate_charter.sh .specs/<project-name>/charter.md`.
 11. Deliver the draft and request approval before user stories, requirements, or technical design proceed.
 
 ## Gotchas
@@ -85,7 +85,7 @@ Out of scope:
 
 ## Deliverables
 
-- `docs/specs/<project-name>/charter.md`
+- `.specs/<project-name>/charter.md`
 - explicit goals, non-goals, personas / actors, and success criteria
 - deterministic provenance with `source_artifacts: {}`
 - validation passing via the shared charter validator
@@ -93,7 +93,7 @@ Out of scope:
 
 ## Validation Checklist
 
-- artifact path is `docs/specs/<project-name>/charter.md`
+- artifact path is `.specs/<project-name>/charter.md`
 - section order follows the `write-charter` contract
 - `generated_by.root_skill` and `generated_by.producing_skill` are correct for the authored run
 - `source_artifacts: {}` is present
@@ -104,4 +104,4 @@ Out of scope:
 
 ## Deterministic Validation
 
-- `bash ../write-charter/scripts/validate_charter.sh docs/specs/<project-name>/charter.md`
+- `bash ../write-charter/scripts/validate_charter.sh .specs/<project-name>/charter.md`

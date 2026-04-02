@@ -25,7 +25,7 @@ metadata:
 
 ## Constraints
 
-- Output must be one Markdown report at the user-specified destination or, by default, `docs/research/<project-name>/technical-design.md`.
+- Output must be one Markdown report at the user-specified destination or, by default, `.specs/<project-name>-research/technical-design.md`.
 - The artifact must stay compatible with the `write-technical-design` contract.
 - When produced through the canonical reconstruction workflow, the artifact must record `generated_by.root_skill = specification-reconstruction`, `generated_by.producing_skill = derive-technical-design`, and the required upstream `source_artifacts` roles.
 - The artifact must explicitly address the four required diagram slots from `write-technical-design`: context flowchart, behavior state diagram, entity relationship diagram, and interaction diagram.
@@ -46,7 +46,7 @@ Inputs:
 
 Output:
 
-- one derived technical design report at the user-specified destination or, when no destination is provided, `docs/research/<project-name>/technical-design.md`
+- one derived technical design report at the user-specified destination or, when no destination is provided, `.specs/<project-name>-research/technical-design.md`
 
 In scope:
 
@@ -70,7 +70,7 @@ Out of scope:
 4. Evaluate whether any bounded capability meets the gray-box evidence threshold before documenting it as a module boundary.
 5. Use `visual-diagramming` to fill the four required diagram slots with either the expected Mermaid diagram, a `Not needed:` rationale, or `TODO: Confirm` when applicability is unresolved, while avoiding claims the evidence cannot support.
 6. Load `references/diagram-evidence.md` when diagram wording, slot applicability, or evidence thresholds are unclear.
-7. Resolve the destination path from user input when provided; otherwise resolve `<project-name>` from the nearest package or repository name and use `docs/research/<project-name>/technical-design.md`.
+7. Resolve the destination path from user input when provided; otherwise resolve `<project-name>` from the nearest package or repository name and use `.specs/<project-name>-research/technical-design.md`.
 8. If the destination report already exists, create a timestamped backup in the same directory before overwrite.
 9. Capture `root_skill` from the active reconstruction workflow and set `producing_skill = derive-technical-design`.
 10. Draft the chosen destination with the `write-technical-design` contract.
@@ -105,7 +105,7 @@ Out of scope:
 
 ## Validation Checklist
 
-- report path is the user-specified destination or the default `docs/research/<project-name>/technical-design.md`
+- report path is the user-specified destination or the default `.specs/<project-name>-research/technical-design.md`
 - existing report backup is created before overwrite when needed
 - section order follows the `write-technical-design` contract
 - canonical provenance is present and required source-artifact roles are recorded
