@@ -45,10 +45,10 @@ Do not blur these roles:
 - expertise skills own one bounded job
 - orchestration skills coordinate expertise skills only
 
-For path ownership:
+For path and lineage ownership:
 
 - foundational owns `<project-name>` derivation and normalization
-- orchestration owns spec-pack root selection
+- orchestration owns spec-pack root selection and canonical `source_artifacts` lineage expectations
 - expertise owns artifact filenames and same-pack dependency guidance
 
 ## Keep dependency direction strict
@@ -82,6 +82,7 @@ Prefer:
 - relocatable spec packs when workflows need alternate output roots
 
 Do not duplicate `<project-name>` derivation outside foundational naming contracts.
+Keep canonical `source_artifacts` lineage expectations in orchestration rather than foundational or expertise skills.
 
 ## Prefer explicit uncertainty
 

@@ -32,9 +32,20 @@ metadata:
 - This workflow coordinates artifacts; it does not replace underlying expertise or foundational contracts.
 - Final output must include `charter.md`, `user-stories.md`, `requirements.md`, and `technical-design.md` in one authored spec pack.
 - Orchestration must use expertise skills for artifact-producing work and may use `artifact-naming` only for workflow-wide naming and placement coordination.
-- Every authored artifact must carry deterministic provenance rooted in this workflow plus artifact-specific `source_artifacts` lineage.
+- Every authored artifact must carry deterministic provenance rooted in this workflow plus the canonical `source_artifacts` lineage required by this workflow.
 - Never author the full specification pack in one uninterrupted pass unless the user explicitly waives stage-by-stage approval.
 - Do not start downstream coordination or implementation from this workflow unless the user explicitly asks for that next phase.
+
+## Source Artifact Lineage
+
+Use exactly these `source_artifacts` roles in this workflow:
+
+- `charter.md` -> `{}`
+- `user-stories.md` -> `charter`
+- `requirements.md` -> `charter`, `user_stories`
+- `technical-design.md` -> `charter`, `user_stories`, `requirements`
+
+Do not add extra lineage roles casually.
 
 ## Requirements
 
@@ -61,7 +72,7 @@ In scope:
 - selecting and preserving one authored spec-pack root for the workflow
 - orchestrating expertise entry skills in authored order
 - preserving pack-wide placement and scope consistency
-- establishing root workflow provenance for every authored artifact
+- establishing root workflow provenance and canonical `source_artifacts` lineage for every authored artifact
 - checking that artifacts map cleanly from charter through design
 
 Out of scope:
@@ -93,7 +104,7 @@ Out of scope:
 - user-visible requirements map to approved stories
 - `requirements.md` does not re-own goals, non-goals, personas, or success criteria from `charter.md`
 - `requirements.md` maps to `technical-design.md`
-- every artifact carries canonical provenance and the correct `source_artifacts` roles
+- every artifact carries canonical provenance and the `source_artifacts` roles required by this workflow
 - unresolved items stay explicit as `TODO: Confirm`
 
 15. Deliver the authored specification pack for approval or downstream coordination.
@@ -132,7 +143,7 @@ Out of scope:
 - one stable authored spec-pack root is reused across the full pack
 - `charter.md`, `user-stories.md`, `requirements.md`, and `technical-design.md` all exist in the chosen authored spec-pack root
 - every authored artifact records `generated_by.root_skill = specification-authoring`
-- every authored artifact records the correct `source_artifacts` roles for its kind
+- every authored artifact records the `source_artifacts` roles required by this workflow
 - the user explicitly approved `charter.md` before `user-stories.md` was authored, unless the user explicitly waived stage-by-stage approval
 - the user explicitly approved `user-stories.md` before `requirements.md` was authored, unless the user explicitly waived stage-by-stage approval
 - the user explicitly approved `requirements.md` before `technical-design.md` was authored, unless the user explicitly waived stage-by-stage approval

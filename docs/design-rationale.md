@@ -55,6 +55,9 @@ When an expertise skill refers to same-pack dependencies, it should describe the
 
 This keeps artifact identity stable even when a workflow chooses a different spec-pack root.
 
+Expertise may describe local same-pack context, but it should not define canonical `source_artifacts` lineage expectations for the workflow.
+Those expectations belong to orchestration because they describe cross-artifact coordination rather than one leaf artifact contract.
+
 ## Why `<project-name>` remains foundational
 
 `<project-name>` resolution and normalization are shared naming concerns.

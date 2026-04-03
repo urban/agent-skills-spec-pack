@@ -60,16 +60,15 @@ Keep these separate:
 
 Skill contracts may describe same-pack dependencies using pack-relative paths, but canonical provenance must continue recording resolved artifact paths in `source_artifacts`.
 
-## Required lineage by artifact kind
+## Required lineage ownership
 
-Use exactly these `source_artifacts` roles:
+Canonical provenance must record the exact `source_artifacts` roles required by the active orchestration workflow.
 
-- `charter` -> `{}`
-- `user-stories` -> `charter`
-- `requirements` -> `charter`, `user_stories`
-- `technical-design` -> `charter`, `user_stories`, `requirements`
-- `plan` -> `charter`, `user_stories`, `requirements`, `technical_design`
-- `tasks` -> `plan`
+Use these rules:
+
+- orchestration owns canonical lineage expectations for artifacts in its workflow
+- expertise may use same-pack sibling artifacts as local context, but should not define workflow-level lineage policy
+- foundational provenance defines the metadata shape and validation flow, not which artifact kinds require which lineage roles
 
 Do not add extra lineage roles casually.
 

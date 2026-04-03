@@ -63,6 +63,7 @@ Expertise skills must:
 - keep optional routing guidance in local `references/`
 
 Expertise skills should own the artifact filename for that output and describe same-pack dependency expectations relative to the spec-pack root when appropriate.
+Expertise skills should not define workflow-level `source_artifacts` lineage policy.
 
 ### Orchestration
 
@@ -88,7 +89,7 @@ Examples include:
 - provenance assembly support
 
 Orchestration skills must not use foundational dependencies to replace expertise artifact contracts.
-Orchestration skills may own workflow-wide spec-pack root selection and destination overrides for a run, but should not redefine expertise-owned artifact filenames.
+Orchestration skills may own workflow-wide spec-pack root selection, destination overrides for a run, and canonical `source_artifacts` lineage expectations for artifacts in that workflow, but should not redefine expertise-owned artifact filenames.
 
 ## Selection checks
 

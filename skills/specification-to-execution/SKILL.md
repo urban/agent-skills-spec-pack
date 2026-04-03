@@ -27,8 +27,17 @@ metadata:
 - This workflow coordinates execution artifacts; it does not replace underlying expertise or foundational contracts.
 - Final output must include `execution-plan.md` and `execution-tasks.md`.
 - Orchestration must use expertise skills for artifact-producing work and may use `artifact-naming` only for workflow-wide naming and placement coordination.
-- Every execution artifact must carry deterministic provenance rooted in this workflow plus artifact-specific `source_artifacts` lineage.
+- Every execution artifact must carry deterministic provenance rooted in this workflow plus the canonical `source_artifacts` lineage required by this workflow.
 - Do not rewrite the approved specification pack inside this workflow.
+
+## Source Artifact Lineage
+
+Use exactly these `source_artifacts` roles in this workflow:
+
+- `execution-plan.md` -> `charter`, `user_stories`, `requirements`, `technical_design`
+- `execution-tasks.md` -> `plan`
+
+Do not add extra lineage roles casually.
 
 ## Requirements
 
@@ -54,7 +63,7 @@ In scope:
 - resolving one workflow-wide `<project-name>` with `artifact-naming`
 - selecting and preserving one execution spec-pack root for the workflow
 - orchestrating expertise entry skills from execution planning through task generation
-- establishing root workflow provenance for plan and tasks
+- establishing root workflow provenance and canonical `source_artifacts` lineage for plan and tasks
 - checking that tasks trace back to the execution plan and approved spec pack
 - surfacing blockers or ambiguity that affect sequencing or task boundaries
 
@@ -105,6 +114,7 @@ Out of scope:
 - execution plan exists at `<spec-pack-root>/execution-plan.md`
 - local task-tracking artifact exists at `<spec-pack-root>/execution-tasks.md`
 - both execution artifacts record `generated_by.root_skill = specification-to-execution`
+- both execution artifacts record the `source_artifacts` roles required by this workflow
 - plan references the companion specification artifacts
 - tasks reference the execution plan and preserve grouped execution structure
 - runtime-edge obligations are either preserved explicitly or recorded as `None in approved spec`

@@ -29,7 +29,18 @@ metadata:
 - Final output must include reconstructed `charter.md`, `user-stories.md`, `requirements.md`, and `technical-design.md`.
 - Orchestration must use expertise skills for artifact-producing work and may use `artifact-naming` only for workflow-wide naming and placement coordination.
 - If a user asks for a reconstructed execution plan, frame it as current-state guidance rather than pretending to recover the original authored plan.
-- Every reconstructed artifact must carry deterministic provenance rooted in this workflow plus artifact-specific `source_artifacts` lineage.
+- Every reconstructed artifact must carry deterministic provenance rooted in this workflow plus the canonical `source_artifacts` lineage required by this workflow.
+
+## Source Artifact Lineage
+
+Use exactly these `source_artifacts` roles in this workflow:
+
+- `charter.md` -> `{}`
+- `user-stories.md` -> `charter`
+- `requirements.md` -> `charter`, `user_stories`
+- `technical-design.md` -> `charter`, `user_stories`, `requirements`
+
+Do not add extra lineage roles casually.
 
 ## Requirements
 
@@ -60,7 +71,7 @@ In scope:
 - selecting and preserving one reconstruction spec-pack root for the workflow
 - orchestrating expertise entry skills for reconstruction
 - checking that derived artifacts support each other
-- establishing root workflow provenance for every reconstructed artifact
+- establishing root workflow provenance and canonical `source_artifacts` lineage for every reconstructed artifact
 - routing bounded gray-box follow-on discovery when needed
 
 Out of scope:
@@ -87,7 +98,7 @@ Out of scope:
    - derived `user-stories.md` fits the derived personas and implied scope boundaries
    - derived `requirements.md` is supported by repository evidence and aligns to derived stories
    - derived `technical-design.md` explains the implemented system
-   - every reconstructed artifact carries canonical provenance and the correct `source_artifacts` roles
+   - every reconstructed artifact carries canonical provenance and the `source_artifacts` roles required by this workflow
    - weakly supported conclusions remain marked `TODO: Confirm`
 12. Deliver the reconstructed pack for documentation recovery, planning, or future implementation work.
 
@@ -122,6 +133,7 @@ Out of scope:
 - default workflow output paths match the reconstruction role defaults when the user does not override them
 - derived `charter.md`, `user-stories.md`, `requirements.md`, and `technical-design.md` all exist at the chosen destinations
 - every reconstructed artifact records `generated_by.root_skill = specification-reconstruction`
+- every reconstructed artifact records the `source_artifacts` roles required by this workflow
 - derived charter and stories reflect observed behavior rather than desired future intent
 - derived requirements and design are supported by repository evidence
 - weakly supported conclusions are marked explicitly with `TODO: Confirm`

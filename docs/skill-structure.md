@@ -86,8 +86,10 @@ Apply these rules:
 
 - foundational skills may define naming and normalization rules for `<project-name>`, but not workflow-specific spec-pack roots
 - orchestration skills may choose or override one spec-pack root for a run, but should not redefine expertise-owned artifact filenames
+- orchestration skills own canonical `source_artifacts` lineage expectations for artifacts in their workflow
 - expertise skills should define the filename of the artifact they produce
 - when expertise skills refer to sibling artifacts in the same spec pack, they should use pack-relative paths such as `./charter.md`
+- expertise skills may describe same-pack context, but should not define workflow-level lineage policy
 - validators may still operate on fully resolved runtime paths, but the skill contract should describe pack-local placement when appropriate
 
 Use this split when writing or revising path guidance in `SKILL.md` files.
