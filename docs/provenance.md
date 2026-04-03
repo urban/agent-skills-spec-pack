@@ -1,6 +1,6 @@
 # Provenance and traceability
 
-Provenance and traceability are core parts of `@urban/agent-skills-pack`.
+Provenance and traceability are core parts of `agent-skills-pack`.
 
 The pack only stays reversible when every created artifact says:
 

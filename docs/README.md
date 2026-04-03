@@ -1,6 +1,6 @@
 # Docs overview
 
-These docs explain what `@urban/agent-skills-pack` owns and how to change it safely.
+These docs explain what `agent-skills-pack` owns and how to change it safely.
 
 Core rules:
 

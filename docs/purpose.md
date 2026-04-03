@@ -1,6 +1,6 @@
 # Purpose
 
-`@urban/agent-skills-pack` makes software specification artifacts usable in both directions:
+`agent-skills-pack` makes software specification artifacts usable in both directions:
 
 - from product intent to implementation
 - from an implemented system back to reusable specification artifacts

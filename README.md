@@ -1,6 +1,6 @@
 # Agent skills for software development
 
-`@urban/agent-skills-pack` is a contract-first skill pack for software specification work.
+`agent-skills-pack` is a contract-first skill pack for software specification work.
 
 It supports both directions:
 
