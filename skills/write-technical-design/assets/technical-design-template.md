@@ -10,18 +10,17 @@ generated_by:
   skill_graph:
     [TODO: skill-name]: []
 source_artifacts:
-  charter: .specs/[TODO: artifact-name]/charter.md
-  user_stories: .specs/[TODO: artifact-name]/user-stories.md
-  requirements: .specs/[TODO: artifact-name]/requirements.md
+  [TODO: workflow-owned lineage key]: [TODO: resolved artifact path]
 ---
 
 ## Architecture Summary
 
-[TODO: summarize the system shape and the main architectural approach.]
+[TODO: summarize the system shape, the main architectural approach, and the user-visible behaviors the design must support.]
 
 ## System Context
 
 - [TODO: upstream system, user surface, runtime environment, or external boundary]
+- Story/requirements traceability: [TODO: relevant capability areas, story titles, or requirement IDs]
 
 ### Context Flowchart
 
@@ -52,11 +51,13 @@ Or:
 - Responsibility: [TODO: owned behavior]
 - Inputs: [TODO: upstream inputs]
 - Outputs: [TODO: downstream outputs]
+- Story impact: [TODO: relevant story behavior or requirement IDs]
 
 ## Data Model and Data Flow
 
 - Entities: [TODO: main entities or records]
 - Flow: [TODO: how data moves through the system]
+- Observation support: [TODO: how visible outcomes, feedback, or state signals are produced]
 
 ### Entity Relationship Diagram
 
@@ -72,6 +73,7 @@ Or:
 ## Interfaces and Contracts
 
 - [TODO: API, service, event, storage, or module contract]
+- Trigger and boundary conditions: [TODO: relevant situations, preconditions, or edge cases]
 
 ### Interaction Diagram
 
@@ -92,6 +94,7 @@ Or:
 ## Failure and Recovery Strategy
 
 - [TODO: failure mode and handling strategy]
+- Boundary behavior: [TODO: visible failure conditions, degraded modes, or recovery observations]
 
 ## Security, Reliability, and Performance
 
@@ -104,6 +107,7 @@ Or:
 ## Testing Strategy
 
 - [TODO: unit, integration, end-to-end, or contract testing approach]
+- Verification focus: [TODO: how key outcomes and observations will be verified]
 
 ## Risks and Tradeoffs
 
