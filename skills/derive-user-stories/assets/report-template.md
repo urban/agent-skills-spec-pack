@@ -10,10 +10,10 @@ generated_by:
   skill_graph:
     [TODO: skill-name]: []
 source_artifacts:
-  charter: .specs/[TODO: artifact-name]-reconstructed/charter.md
+  [TODO: workflow-owned lineage key]: [TODO: resolved artifact path]
 ---
 
-# [TODO: Project name] Derived User Stories
+# User Stories
 
 ## Executive Summary
 
@@ -29,18 +29,18 @@ source_artifacts:
 - What value is delivered: [TODO: delivered value]
 - Supporting capabilities: [TODO: supporting capabilities]
 
-## Epic Map
+## Capability Map
 
-### Epic: [TODO: Epic name]
+## Capability Area: [TODO: capability area name]
 
-Objective: [TODO: high-level goal]
-
-#### Story [TODO: ID]
-
-As a [TODO: actor], I want [TODO: action], so that [TODO: benefit].
-
+### Story: [TODO: short title]
+- Actor: [TODO: clear actor or `TODO: Confirm`]
+- Situation: [TODO: concrete trigger, context, or precondition]
+- Action: [TODO: one meaningful user-visible behavior]
+- Outcome: [TODO: why the behavior matters]
+- Observation: [TODO: visible sign that success or failure occurred]
 - Confidence: [TODO: High|Medium|Low]
-- Rationale: [TODO: Explain the confidence in 1-2 sentences.]
+- Rationale: [TODO: explain the confidence in 1-2 sentences]
 - Code Evidence:
   - [TODO: path:line]
 - Test Evidence:

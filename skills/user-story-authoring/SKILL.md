@@ -1,36 +1,38 @@
 ---
 name: user-story-authoring
-description: Produce user-story artifacts from approved product framing and repository context. Use when a user wants canonical user stories authored before detailed requirements, design, or execution planning.
+description: Produce actor-first user-stories artifacts from approved product framing and relevant repository context. Use when a user wants high-discipline user stories authored before detailed requirements, design, or execution planning.
 metadata:
-  version: 0.1.0
+  version: 0.2.0
   layer: specialist
   archetype: planning
   domain: specification-authoring
   dependencies:
-    - document-traceability
-    - visual-diagramming
     - write-user-stories
+    - visual-diagramming
 ---
 
 ## Rules
 
-- Keep this role focused on user-visible outcomes because requirements, design, and planning belong downstream.
+- Keep this role focused on user-visible behavior and value because requirements, design, and implementation planning belong downstream.
 - Produce the artifact as `user-stories.md`.
-- Use `document-traceability` to stamp canonical provenance and `source_artifacts.charter` because this artifact depends on the approved charter.
-- Use the `write-user-stories` contract for artifact frontmatter, sentence shape, and uncertainty handling because downstream skills rely on canonical stories.
-- Use approved charter context from `./charter.md` when it exists because goals, actors, and success criteria should shape the story set.
-- Use `visual-diagramming` when persona journeys, actor touchpoints, or branching user paths will communicate story context faster than prose alone.
-- Ask for clarification when missing detail changes actor, action, benefit, or scope; otherwise continue and mark `TODO: Confirm`.
-- Inspect repository context only when existing behavior or integrations materially shape the stories.
+- Start from actors, not features.
+- Use the `write-user-stories` contract for the canonical artifact structure, story fields, quality checks, anti-pattern review, and validation.
+- Use approved charter context from `./charter.md` when it exists because goals, actors, boundaries, and success framing should shape the story set.
+- Ask for clarification when missing detail materially changes actors, situations, actions, outcomes, observations, or scope; otherwise continue and mark uncertainty as `TODO: Confirm`.
+- Inspect repository context only when existing behavior, integrations, or constraints materially shape the authored stories.
+- Use `visual-diagramming` only when persona journeys, actor touchpoints, or branching paths are clearer in a diagram than in prose.
+- Do not turn functional requirements, technical constraints, engineering tasks, or architecture decisions into user stories.
 
 ## Constraints
 
 - Output must be one Markdown artifact named `user-stories.md`.
 - Every final story must stay compatible with the `write-user-stories` contract.
-- The artifact must record `source_artifacts.charter` for the approved charter.
-- Keep grouping concise and readable, but do not replace story sentences with summaries.
-- When diagrams are used, keep the stories canonical and use the diagram to add actor context rather than replace the story contract.
-- Do not mix charter-level scope framing, detailed requirements, architecture, task breakdowns, or implementation notes into the artifact.
+- Group stories by capability area.
+- Every final story must include `Actor`, `Situation`, `Action`, `Outcome`, and `Observation`.
+- Include happy-path stories and relevant boundary or failure stories.
+- Keep stories small enough to map cleanly to acceptance criteria and implementation slices.
+- Do not restate charter scope framing, detailed requirements, architecture, or task breakdowns inside the stories artifact.
+- Do not define workflow-wide `source_artifacts` lineage policy here.
 
 ## Requirements
 
@@ -43,64 +45,74 @@ Inputs:
 
 Output:
 
-- one complete user-story artifact named `user-stories.md`
+- one complete user-stories artifact named `user-stories.md`
 
 In scope:
 
-- identifying user-visible outcomes
-- writing canonical actor-action-benefit stories
-- grouping related stories under concise headings when useful
+- determining system purpose from approved framing
+- identifying and prioritizing primary, secondary, operational, and system actors when useful
+- identifying user-visible capability areas
+- drafting canonical stories with `Actor`, `Situation`, `Action`, `Outcome`, and `Observation`
+- splitting oversized stories into buildable slices
+- adding boundary and failure stories for visible errors, forbidden actions, review boundaries, safety boundaries, and controllability boundaries
+- grouping stories by capability area
 - adding persona or actor diagrams when they clarify stages, touchpoints, or branching paths
-- stamping deterministic provenance and source-artifact lineage
-- preserving explicit uncertainty markers where story fields are unresolved
+- preserving explicit uncertainty markers where story details remain unresolved
 
 Out of scope:
 
 - redefining goals, non-goals, personas, or success criteria already owned by the charter
-- detailed technical requirements
+- detailed functional requirements
 - technical design
-- implementation planning or code changes
+- engineering tasks
+- code changes
 
 ## Workflow
 
-1. Confirm the user wants user stories authored after product framing and before detailed requirements, design, or implementation work.
-2. Gather approved charter context, outcomes, actors, goals, non-goals, and scope boundaries from available inputs and `./charter.md` when present.
-3. Inspect the repository only when existing behavior, integrations, or constraints materially shape user-visible outcomes.
-4. Identify distinct user-visible outcomes and split bundled requests into separate stories when needed.
-5. Use `visual-diagramming` to decide whether a journey or flowchart would clarify personas, actor touchpoints, or branching user paths.
-6. Draft `user-stories.md` using the `write-user-stories` contract.
-7. Stamp canonical provenance with `source_artifacts.charter`.
-8. Mark unresolved actor, action, or benefit fields as `TODO: Confirm` instead of guessing.
-9. Validate the artifact with `bash ../write-user-stories/scripts/validate_user_stories.sh <resolved-user-stories-path>` and use `bash ../write-user-stories/scripts/validate_story.sh '<story>'` for sentence-level debugging when needed.
-10. Deliver the draft and request approval before requirements, design, or planning proceeds.
+1. Confirm the user wants user stories authored after product framing and before requirements, design, or implementation work.
+2. Gather approved framing from available inputs and `./charter.md` when present.
+3. Determine the system purpose in user-facing terms.
+4. Identify and prioritize real actors before drafting any stories.
+5. Identify user-visible capability areas.
+6. Inspect the repository only when existing behavior or integrations materially change the authored story set.
+7. Draft stories in `user-stories.md` using the `write-user-stories` template and five-field schema.
+8. Split oversized or multi-behavior stories.
+9. Add boundary and failure stories for invalid inputs, visible errors, forbidden writes, review gates, provenance needs, controllability limits, and other visible trust boundaries when relevant.
+10. For AI-assisted systems, keep human agency primary when possible and include stories for reviewability, provenance, controllability, and human-authored versus machine-generated boundaries.
+11. Use `visual-diagramming` only when a journey or actor-flow diagram clarifies the capability set.
+12. Review the draft against `../write-user-stories/references/story-quality-checklist.md` and `../write-user-stories/references/anti-patterns.md`.
+13. Validate with `bash ../write-user-stories/scripts/validate_user_stories.sh <resolved-user-stories-path>` and use `bash ../write-user-stories/scripts/validate_story.sh <story-file>` for story-level debugging when needed.
+14. Deliver the draft and request approval before downstream requirements, design, or planning proceeds.
 
 ## Gotchas
 
-- If stories describe technical tasks, later requirements inherit engineering chores instead of user value. Rewrite them around what a user or stakeholder experiences.
-- If one story bundles multiple outcomes, downstream planning cannot tell what should be sliced first. Split independent user-visible outcomes into separate stories.
-- If you guess the actor or benefit to make the sentence read smoothly, the whole spec pack gets built on invented intent. Use `TODO: Confirm` inline when a story field is uncertain.
-- If grouping headings replace the canonical story sentences, the artifact reads fine to humans but breaks contract compatibility for downstream skills. Treat headings as wrappers, not substitutes.
-- If you add a persona diagram and then repeat its stages in prose, the artifact grows without adding insight. Use supporting text for constraints, exceptions, or unresolved questions only.
-- If repository behavior already constrains the story set and you ignore it, the stories overpromise against the actual product surface. Inspect the code when current behavior materially matters.
-- If the benefit clause is vague filler, the story passes syntax checks while still hiding the real value. State the concrete benefit or mark it `TODO: Confirm`.
-- If stories restate goals, non-goals, or success criteria as prose instead of turning them into user-visible outcomes, they duplicate the charter artifact and blur pack boundaries. Keep stories on outcomes.
-- If `source_artifacts.charter` is missing, downstream requirements cannot prove which approved framing shaped the stories. Keep the lineage explicit.
+- If stories begin from feature buckets instead of actors, they look organized but still miss why anyone cares. Start from actors and situations.
+- If the system becomes the default actor, human value and control boundaries disappear. Use system actors only when they are genuinely the right frame.
+- If a story omits `Observation`, the behavior cannot be verified cleanly. Make success or failure externally visible.
+- If one story contains multiple actions or outcomes, downstream work inherits an epic disguised as a story. Split it.
+- If implementation details dominate, the artifact stops being user-story authoring and starts leaking requirements or design. Rewrite in user-visible language.
+- If only happy paths are captured, safety, trust, and failure behavior stay implicit until too late. Add explicit boundary and failure stories.
+- If grouping headings replace canonical story blocks, the artifact becomes readable but contract-incompatible. Keep headings as wrappers only.
+- If AI-assisted stories imply vague autonomy, they hide authorship and review boundaries. Prefer controllable assistance and explicit human checkpoints.
 
 ## Deliverables
 
 - `user-stories.md`
-- canonical user stories aligned to the shared actor-action-benefit contract
-- explicit `TODO: Confirm` markers for unresolved story fields
-- deterministic provenance plus `source_artifacts.charter`
-- optional persona or actor diagrams that add context without replacing canonical story sentences
-- a draft ready for user review before downstream artifact work
+- canonical user stories grouped by capability area
+- happy-path and boundary/failure stories where relevant
+- explicit `TODO: Confirm` markers for unresolved story details
+- optional persona or actor diagrams that add context without replacing canonical story blocks
+- a draft ready for review before downstream artifact work
 
 ## Validation Checklist
 
 - artifact filename is `user-stories.md`
-- every final story uses the canonical actor-action-benefit contract
-- `source_artifacts.charter` points to the approved charter
-- unresolved story fields are marked `TODO: Confirm`
+- stories are grouped by capability area
+- every final story uses the canonical five-field contract
+- stories are actor-first, behavior-focused, and value-bearing
+- stories include observable results
+- oversized stories are split into buildable slices
+- relevant boundary and failure stories are included
 - implementation strategy is not mixed into the artifact
 - the artifact passes the shared user-stories validator
 

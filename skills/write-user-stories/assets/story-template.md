@@ -1,6 +1,9 @@
-As a [TODO: actor], I want [TODO: action], so that [TODO: benefit].
-
-- Actor: [TODO: who receives the value]
-- Action: [TODO: user-visible capability or outcome]
-- Benefit: [TODO: why it matters]
-- TODO: Confirm: [TODO: unknown actor/action/benefit detail, if any, or `None`]
+### Story: [TODO: short title]
+- Actor: [TODO: clear actor or `TODO: Confirm`]
+- Situation: [TODO: concrete trigger, context, or precondition]
+- Action: [TODO: one meaningful user-visible behavior]
+- Outcome: [TODO: why the behavior matters]
+- Observation: [TODO: visible sign that success or failure occurred]
+- Rationale: [optional]
+- Related constraints: [optional]
+- Traceability links: [optional]

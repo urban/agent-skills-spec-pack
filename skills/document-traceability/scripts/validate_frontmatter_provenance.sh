@@ -10,23 +10,7 @@ artifact_kind="$1"
 artifact_file="$2"
 
 case "$artifact_kind" in
-  charter)
-    required_artifact_types=()
-    ;;
-  user-stories)
-    required_artifact_types=(charter)
-    ;;
-  requirements)
-    required_artifact_types=(charter user_stories)
-    ;;
-  technical-design)
-    required_artifact_types=(charter user_stories requirements)
-    ;;
-  plan)
-    required_artifact_types=(charter user_stories requirements technical_design)
-    ;;
-  tasks)
-    required_artifact_types=(execution_plan)
+  charter|user-stories|requirements|technical-design|plan|tasks)
     ;;
   *)
     echo "Unsupported artifact kind: $artifact_kind" >&2
@@ -214,34 +198,29 @@ else
     exit 1
   fi
 
-  mapfile -t found_artifact_types < <(printf '%s\n' "$source_artifacts_block" | sed -nE 's/^  ([a-z_]+): (.+)$/\1/p')
-  if (( ${#found_artifact_types[@]} == 0 )); then
-    echo "source_artifacts must include at least one artifact-type key for artifact kind: $artifact_kind" >&2
+  mapfile -t source_artifact_entries < <(printf '%s\n' "$source_artifacts_block" | sed -nE 's/^  ([a-z_]+): (.+)$/\1\t\2/p')
+  if (( ${#source_artifact_entries[@]} == 0 )); then
+    echo "source_artifacts must include at least one artifact path for artifact kind: $artifact_kind" >&2
     exit 1
   fi
 
-  for artifact_type in "${required_artifact_types[@]}"; do
-    path_value="$(printf '%s\n' "$source_artifacts_block" | sed -nE "s/^  ${artifact_type}: (.+)$/\\1/p" | head -n1)"
-    if [[ -z "$path_value" ]]; then
-      echo "Missing source_artifacts artifact-type: $artifact_type" >&2
-      exit 1
-    fi
-    if [[ ! "$path_value" =~ ^docs/(specs|plans|tasks)/.+\.md$ ]]; then
-      echo "Invalid source_artifacts path for artifact-type ${artifact_type}: $path_value" >&2
-      exit 1
-    fi
-  done
+  declare -A seen_artifact_types=()
+  for entry in "${source_artifact_entries[@]}"; do
+    artifact_type="${entry%%$'\t'*}"
+    path_value="${entry#*$'\t'}"
 
-  for found_artifact_type in "${found_artifact_types[@]}"; do
-    matched=false
-    for artifact_type in "${required_artifact_types[@]}"; do
-      if [[ "$found_artifact_type" == "$artifact_type" ]]; then
-        matched=true
-        break
-      fi
-    done
-    if [[ "$matched" == false ]]; then
-      echo "Unexpected source_artifacts artifact-type for ${artifact_kind}: $found_artifact_type" >&2
+    if [[ -n "${seen_artifact_types[$artifact_type]:-}" ]]; then
+      echo "Duplicate source_artifacts artifact-type: $artifact_type" >&2
+      exit 1
+    fi
+    seen_artifact_types[$artifact_type]=1
+
+    if [[ ! "$artifact_type" =~ ^[a-z_]+$ ]]; then
+      echo "Invalid source_artifacts artifact-type: $artifact_type" >&2
+      exit 1
+    fi
+    if [[ ! "$path_value" =~ ^\.specs/.+\.md$ ]]; then
+      echo "Invalid source_artifacts path for artifact-type ${artifact_type}: $path_value" >&2
       exit 1
     fi
   done

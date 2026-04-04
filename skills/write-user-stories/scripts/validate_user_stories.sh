@@ -8,7 +8,6 @@ fi
 
 FILE="$1"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-PATTERN_FILE="$SCRIPT_DIR/../assets/story-pattern.regex"
 PROVENANCE_SCRIPT="$SCRIPT_DIR/../../document-traceability/scripts/validate_frontmatter_provenance.sh"
 
 if [[ ! -f "$FILE" ]]; then
@@ -18,20 +17,75 @@ fi
 
 bash "$PROVENANCE_SCRIPT" user-stories "$FILE"
 
-story_pattern="$(tr -d '\n' < "$PATTERN_FILE")"
-
-mapfile -t story_lines < <(grep -E '^[[:space:]]*[0-9]+\.[[:space:]]+As an? .+, I want .+, so that .+\.$' "$FILE" || true)
-if (( ${#story_lines[@]} == 0 )); then
-  echo "User stories artifact must include at least one numbered canonical story sentence" >&2
+if grep -Eq '\[TODO:[^]]+\]|<[^>]+>' "$FILE"; then
+  echo "User stories artifact contains unresolved placeholder tokens" >&2
   exit 1
 fi
 
-while IFS= read -r line; do
-  story="$(printf '%s\n' "$line" | sed -E 's/^[[:space:]]*[0-9]+\.[[:space:]]+//')"
-  if [[ ! "$story" =~ $story_pattern ]]; then
-    echo "Invalid story sentence: $story" >&2
-    exit 1
-  fi
-done < <(printf '%s\n' "${story_lines[@]}")
+if ! grep -Eq '^# User Stories$' "$FILE"; then
+  echo "User stories artifact must include '# User Stories'" >&2
+  exit 1
+fi
+
+capability_count="$(grep -Ec '^## Capability Area: .+' "$FILE" || true)"
+if (( capability_count == 0 )); then
+  echo "User stories artifact must include at least one capability area" >&2
+  exit 1
+fi
+
+story_count="$(grep -Ec '^### Story: .+' "$FILE" || true)"
+if (( story_count == 0 )); then
+  echo "User stories artifact must include at least one story block" >&2
+  exit 1
+fi
+
+awk '
+function fail(msg, line) {
+  printf("%s at line %d\n", msg, line) > "/dev/stderr"
+  exit 1
+}
+BEGIN {
+  in_story=0
+  story_line=0
+}
+/^### Story: / {
+  if (in_story) {
+    if (!actor) fail("Missing - Actor: in story block", story_line)
+    if (!situation) fail("Missing - Situation: in story block", story_line)
+    if (!action) fail("Missing - Action: in story block", story_line)
+    if (!outcome) fail("Missing - Outcome: in story block", story_line)
+    if (!observation) fail("Missing - Observation: in story block", story_line)
+  }
+  in_story=1
+  story_line=NR
+  actor=situation=action=outcome=observation=0
+  next
+}
+/^## Capability Area: / {
+  if (in_story) {
+    if (!actor) fail("Missing - Actor: in story block", story_line)
+    if (!situation) fail("Missing - Situation: in story block", story_line)
+    if (!action) fail("Missing - Action: in story block", story_line)
+    if (!outcome) fail("Missing - Outcome: in story block", story_line)
+    if (!observation) fail("Missing - Observation: in story block", story_line)
+    in_story=0
+  }
+  next
+}
+in_story && /^- Actor:[[:space:]]*.+/ { actor=1; next }
+in_story && /^- Situation:[[:space:]]*.+/ { situation=1; next }
+in_story && /^- Action:[[:space:]]*.+/ { action=1; next }
+in_story && /^- Outcome:[[:space:]]*.+/ { outcome=1; next }
+in_story && /^- Observation:[[:space:]]*.+/ { observation=1; next }
+END {
+  if (in_story) {
+    if (!actor) fail("Missing - Actor: in story block", story_line)
+    if (!situation) fail("Missing - Situation: in story block", story_line)
+    if (!action) fail("Missing - Action: in story block", story_line)
+    if (!outcome) fail("Missing - Outcome: in story block", story_line)
+    if (!observation) fail("Missing - Observation: in story block", story_line)
+  }
+}
+' "$FILE"
 
 echo "User stories validation passed: $FILE"

@@ -7,90 +7,55 @@ report_path="${1:-}"
 required_sections=(
   "Executive Summary"
   "Stakeholder-Ready Product Narratives"
-  "Epic Map"
+  "Capability Map"
   "Coverage Gaps"
   "Additional Notes"
 )
 
-resolve_story_validator() {
-  local validator="${script_dir}/../../write-user-stories/scripts/validate_story.sh"
-  if [[ -x "${validator}" ]]; then
-    printf '%s\n' "${validator}"
-    return 0
-  fi
-
-  return 1
-}
-
-resolve_provenance_validator() {
-  local validator="${script_dir}/../../document-traceability/scripts/validate_frontmatter_provenance.sh"
-  if [[ -x "${validator}" ]]; then
-    printf '%s\n' "${validator}"
-    return 0
-  fi
-
-  return 1
-}
-
 if [[ -z "${report_path}" ]]; then
-  echo "Usage: scripts/validate_report.sh <report-path>"
+  echo "Usage: scripts/validate_report.sh <report-path>" >&2
   exit 1
 fi
 
 if [[ ! -f "${report_path}" ]]; then
-  echo "Error: report not found: ${report_path}"
+  echo "Error: report not found: ${report_path}" >&2
   exit 1
 fi
 
-story_validator="$(resolve_story_validator || true)"
-if [[ -z "${story_validator}" ]]; then
-  echo "Error: write-user-stories validator not found"
+story_validator="${script_dir}/../../write-user-stories/scripts/validate_story.sh"
+provenance_validator="${script_dir}/../../document-traceability/scripts/validate_frontmatter_provenance.sh"
+
+if [[ ! -x "${story_validator}" ]]; then
+  echo "Error: write-user-stories validator not found or not executable" >&2
   exit 1
 fi
 
-provenance_validator="$(resolve_provenance_validator || true)"
-if [[ -z "${provenance_validator}" ]]; then
-  echo "Error: document-traceability validator not found"
+if [[ ! -x "${provenance_validator}" ]]; then
+  echo "Error: document-traceability validator not found or not executable" >&2
   exit 1
 fi
 
 errors=0
-
 fail() {
-  echo "ERROR: $1"
+  echo "ERROR: $1" >&2
   errors=$((errors + 1))
 }
 
-has_unresolved_template_placeholders() {
-  grep -Eq '\[TODO:[^]]+\]|<[^>]+>' "$report_path"
-}
-
-section_block() {
-  local section="$1"
-  awk -v section="$section" '
-    $0 == "## " section { in_section = 1; next }
-    in_section && /^## / { exit }
-    in_section { print }
-  ' "$report_path"
-}
-
-if ! bash "${provenance_validator}" user-stories "$report_path" >/dev/null; then
+if ! bash "${provenance_validator}" user-stories "${report_path}" >/dev/null; then
   fail "Canonical provenance validation failed"
 fi
 
-first_heading_line="$(awk '
-  BEGIN { in_frontmatter = 0 }
-  NR == 1 && $0 == "---" { in_frontmatter = 1; next }
-  in_frontmatter && $0 == "---" { in_frontmatter = 0; next }
-  !in_frontmatter && NF { print; exit }
-' "$report_path")"
-if [[ ! "${first_heading_line}" =~ ^#\ .+\ Derived\ User\ Stories$ ]]; then
-  fail "First non-frontmatter heading must be '# {actual project name} Derived User Stories'"
+if grep -Eq '\[TODO:[^]]+\]|<[^>]+>' "${report_path}"; then
+  fail "Report still contains unresolved template placeholders ([TODO: ...] or legacy <...> tokens)"
+fi
+
+if ! grep -Eq '^# User Stories$' "${report_path}"; then
+  fail "First artifact heading must be '# User Stories'"
 fi
 
 prev_line=0
 for section in "${required_sections[@]}"; do
-  line="$(grep -n -m1 "^## ${section}$" "$report_path" | cut -d: -f1 || true)"
+  line="$(grep -n -m1 "^## ${section}$" "${report_path}" | cut -d: -f1 || true)"
   if [[ -z "$line" ]]; then
     fail "Missing required section: ## ${section}"
     continue
@@ -99,68 +64,73 @@ for section in "${required_sections[@]}"; do
     fail "Section out of order: ## ${section}"
   fi
   prev_line="$line"
-
-  content="$(section_block "$section" | sed '/^[[:space:]]*$/d' || true)"
-  if [[ -z "$content" ]]; then
-    fail "Section is empty: ## ${section}"
-  fi
 done
 
-story_count=0
-while IFS=$'\t' read -r story_id story_text; do
-  [[ -n "${story_id}" ]] || continue
-  story_count=$((story_count + 1))
+if ! grep -Eq '^## Capability Area: .+' "${report_path}"; then
+  fail "Capability Map must include at least one capability area"
+fi
 
-  if ! bash "${story_validator}" "${story_text}" >/dev/null; then
-    fail "Invalid user story for ${story_id}: ${story_text}"
+story_blocks="$(awk '
+/^### Story: / {
+  if (block != "") {
+    print block
+    print "__PI_STORY_BREAK__"
+  }
+  block = $0 ORS
+  next
+}
+block != "" {
+  if ($0 ~ /^## / && $0 !~ /^## Capability Area: /) {
+    print block
+    print "__PI_STORY_BREAK__"
+    block = ""
+  } else {
+    block = block $0 ORS
+  }
+}
+END {
+  if (block != "") print block
+}
+' "${report_path}")"
+
+story_count=0
+current_block=""
+while IFS= read -r line || [[ -n "$line" ]]; do
+  if [[ "$line" == "__PI_STORY_BREAK__" ]]; then
+    if [[ -n "$current_block" ]]; then
+      story_count=$((story_count + 1))
+      if ! printf '%s\n' "$current_block" | bash "$story_validator" >/dev/null; then
+        fail "Invalid canonical story block near story ${story_count}"
+      fi
+      if ! printf '%s\n' "$current_block" | grep -Eq '^- Confidence: (High|Medium|Low)$'; then
+        fail "Story ${story_count} must include '- Confidence: High|Medium|Low'"
+      fi
+      if ! printf '%s\n' "$current_block" | grep -Eq '^- Rationale: .+'; then
+        fail "Story ${story_count} must include '- Rationale:'"
+      fi
+      if ! printf '%s\n' "$current_block" | grep -Eq '^- Code Evidence:$'; then
+        fail "Story ${story_count} must include '- Code Evidence:'"
+      fi
+      if ! printf '%s\n' "$current_block" | grep -Eq '^  - .+'; then
+        fail "Story ${story_count} must include at least one evidence bullet"
+      fi
+      if ! printf '%s\n' "$current_block" | grep -Eq '^- Test Evidence:$'; then
+        fail "Story ${story_count} must include '- Test Evidence:'"
+      fi
+    fi
+    current_block=""
+  else
+    current_block+="$line"$'\n'
   fi
-done < <(
-  awk '
-    /^#### Story / {
-      story_id = $0
-      while (getline > 0) {
-        if ($0 ~ /^[[:space:]]*$/) {
-          continue
-        }
-        print story_id "\t" $0
-        break
-      }
-    }
-  ' "$report_path"
-)
+done <<< "$story_blocks"
 
 if (( story_count == 0 )); then
-  fail "Epic Map requires at least one story"
-fi
-
-epic_map_block="$(section_block "Epic Map")"
-if ! printf "%s\n" "${epic_map_block}" | grep -Eq '^### Epic: .+'; then
-  fail "Epic Map requires at least one epic heading"
-fi
-
-if ! grep -Eq '^- Confidence: (High|Medium|Low)$' "$report_path"; then
-  fail "Each story must include a confidence label"
-fi
-
-if ! grep -Eq '^- Rationale: .+' "$report_path"; then
-  fail "Each story must include a rationale"
-fi
-
-if ! grep -Eq '^- Code Evidence:$' "$report_path"; then
-  fail "Each story must include a Code Evidence block"
-fi
-
-if ! grep -Eq '^- Test Evidence:$' "$report_path"; then
-  fail "Each story must include a Test Evidence block"
-fi
-
-if has_unresolved_template_placeholders; then
-  fail "Report still contains unresolved template placeholders ([TODO: ...] or legacy <...> tokens)"
+  fail "Capability Map requires at least one story"
 fi
 
 if (( errors > 0 )); then
   echo
-  echo "Validation failed with ${errors} error(s)."
+  echo "Validation failed with ${errors} error(s)." >&2
   exit 1
 fi
 
