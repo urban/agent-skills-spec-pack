@@ -36,6 +36,60 @@ Every skill belongs to exactly one layer.
 
 This split is strict because the same artifact contracts must survive across authoring, reconstruction, and planning.
 
+## Framing versus context
+
+Use these terms deliberately.
+
+- **framing** means what a skill is responsible for describing or producing
+- **context** means the upstream artifacts, local files, and evidence a skill uses while doing that job
+
+This distinction matters because the pack separates workflow meaning from bounded artifact work.
+
+### Who owns framing
+
+- **coordination** owns **workflow framing**
+  - what workflow is happening
+  - what sequence of specialist steps applies
+  - what the root workflow identity is
+  - what lineage expectations apply across the workflow
+- **specialist** owns **bounded artifact framing**
+  - what one artifact or bounded analysis/planning output is for
+  - what truth standard applies to that output
+  - what it must not become
+- **foundational** owns shared contracts and validation mechanics, not framing for a specific run
+
+### How specialist skills use context
+
+Specialist skills may use context such as:
+
+- sibling artifacts like `./charter.md` or `./requirements.md`
+- repository code, tests, and configuration
+- approved upstream constraints or decisions
+
+But using context does not transfer ownership of framing.
+
+A specialist may read charter context without re-owning charter framing. It may read requirements context without re-owning requirements framing. It may read repository evidence without changing from authored work into reconstruction.
+
+### Why this distinction exists
+
+Without this distinction, skills start to absorb each other's responsibilities.
+
+Typical failures:
+
+- a specialist reads upstream artifacts as context, then rewrites their framing inside a downstream artifact
+- a specialist starts defining workflow-wide lineage or approval rules because it sees the larger workflow around it
+- a coordination skill starts restating artifact contracts instead of routing through specialists
+- a reconstruction specialist turns evidence into imagined product intent instead of implemented reality
+
+When that happens, artifacts drift, workflow boundaries blur, and reversibility weakens.
+
+### Practical rule
+
+- coordination defines **what workflow the run is in**
+- specialist defines **what this one output is for**
+- specialist consumes **context** from upstream artifacts and local evidence
+- foundational defines **shared structure and validation**, not run-specific framing
+
 ## Dependency rules
 
 Dependency direction is strict:
@@ -108,6 +162,12 @@ Keep these sources of truth separate:
 - **planning** describes sequencing and execution coordination
 
 Do not blur them. A plan is not a requirement. A requirement is not a design. A reconstruction should not invent intent.
+
+This is also a framing rule:
+
+- coordination owns the workflow framing that says whether the run is authoring, reconstruction, or planning
+- specialist skills must keep their artifact framing inside that workflow instead of drifting into adjacent sources of truth
+- upstream artifacts may be used as context, but their framing must not be re-owned downstream
 
 ## Why execution artifacts stay downstream and local
 

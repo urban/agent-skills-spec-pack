@@ -6,9 +6,9 @@ This directory explains how `agent-skills-pack` is organized, what it guarantees
 
 Read these in order if you are new to the package:
 
-1. [system-overview.md](./system-overview.md) — what the pack owns, how the layer model works, and why the boundaries are strict
+1. [system-overview.md](./system-overview.md) — what the pack owns, how the layer model works, why the boundaries are strict, and how framing differs from context across layers
 2. [provenance.md](./provenance.md) — the canonical frontmatter contract, lineage rules, and validation flow
-3. [skill-authoring.md](./skill-authoring.md) — how to structure a skill, where files go, and where guidance belongs
+3. [skill-authoring.md](./skill-authoring.md) — how to structure a skill, where files go, and how framing and context should be described in skill guidance
 
 ## Read by task
 
@@ -16,6 +16,7 @@ Read these in order if you are new to the package:
 | --- | --- |
 | Decide whether a new skill should exist | [skill-selection.md](./skill-selection.md) |
 | Create or update `skills/<skill-name>/SKILL.md` | [skill-authoring.md](./skill-authoring.md) |
+| Understand layer ownership, workflow framing, and specialist context | [system-overview.md](./system-overview.md) |
 | Check provenance, lineage, and frontmatter | [provenance.md](./provenance.md) |
 | Review a skill before shipping it | [review-checklist.md](./review-checklist.md) |
 

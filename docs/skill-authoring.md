@@ -73,6 +73,52 @@ Dependency direction is strict:
 - coordination may also use selected foundational leaf contracts only for workflow-wide coordination concerns such as naming, spec-pack root selection, or provenance assembly support
 - coordination must not use foundational dependencies to replace specialist artifact contracts
 
+## Framing and context rules
+
+Use these distinctions when writing a skill.
+
+- **framing** = what the skill is responsible for producing, describing, or deciding
+- **context** = the upstream artifacts, local files, and evidence the skill reads while doing that job
+
+### Ownership by layer
+
+- **coordination** owns **workflow framing**
+  - what workflow is happening
+  - what order specialist steps run in
+  - what root workflow identity and lineage expectations apply
+- **specialist** owns **bounded artifact framing**
+  - what one artifact or bounded analysis/planning output is for
+  - what source of truth standard applies to it
+  - what it must not become
+- **foundational** owns shared contracts, templates, validators, naming, and provenance mechanics rather than framing for a specific run
+
+### Why this matters
+
+This distinction protects the layer model.
+
+If framing and context are confused:
+
+- specialist skills start rewriting upstream artifact intent instead of using it as input
+- specialist skills start defining workflow-wide lineage or approval logic
+- coordination skills start copying artifact contracts instead of routing through specialists
+- reconstruction skills start inventing intended scope from weak evidence
+
+The result is drift, weaker reuse, and poorer reversibility.
+
+### Authoring rule of thumb
+
+When writing a specialist skill:
+
+- define the artifact framing it owns
+- name the context it may read
+- do not let context become reframed ownership
+
+Examples:
+
+- a requirements specialist may use `./charter.md` and `./user-stories.md` as context, but should not re-own charter framing
+- a technical-design specialist may use requirements and repo evidence as context, but should not become requirements or execution planning
+- a reconstruction specialist may use repo evidence as context, but must keep reconstruction framing instead of inventing approved intent
+
 ## Path and filename ownership
 
 Treat location as three separate concerns.
@@ -93,6 +139,8 @@ Use that split when writing skill instructions.
 - when specialist skills refer to sibling artifacts in the same pack, use pack-relative paths such as `./charter.md`
 - specialist skills may describe same-pack context and local validation commands, but should not define workflow-level lineage policy or hardcode root workflow identity
 - validators may operate on fully resolved runtime paths, but the skill contract should describe pack-local placement when that is the real contract
+- when describing specialist inputs, label upstream artifacts as context unless the specialist truly owns that framing
+- when describing coordination behavior, keep workflow framing at coordination rather than leaking it into child specialist rules
 
 ## Progressive disclosure
 
