@@ -1,22 +1,22 @@
 ---
 name: document-traceability
-description: Define canonical authored-document frontmatter, deterministic skill provenance, source artifact lineage fields, and shared provenance validation for authored skill-pack artifacts. Use when a skill writes or validates charter, user stories, requirements, technical design, execution plans, or task-tracking artifacts.
+description: Define canonical package-artifact frontmatter, deterministic skill provenance, source artifact lineage fields, and shared provenance validation for authored, reconstructed, and execution artifacts. Use when a skill writes or validates charter, user stories, requirements, technical design, execution plans, or task-tracking artifacts.
 metadata:
-  version: 0.1.0
+  version: 0.2.0
   layer: foundational
 ---
 
 ## Rules
 
-- Use one canonical frontmatter contract for authored skill-pack artifacts because downstream validation and feedback depend on deterministic metadata.
-- Keep skill provenance separate from source artifact lineage because one explains how the artifact was produced and the other explains what approved inputs it used.
+- Use one canonical frontmatter contract for package artifacts because downstream validation and feedback depend on deterministic metadata.
+- Keep skill provenance separate from source artifact lineage because one explains how the artifact was produced and the other explains what upstream artifacts shaped it.
 - Compute provenance only from the artifact-producing skill branch because sibling coordination branches are not part of one artifact's generation path.
 - Treat provenance failures as hard failures because partial or guessed metadata breaks traceability.
-- Use UTC ISO 8601 timestamps with a trailing `Z` because authored artifacts need stable machine-checkable time values.
+- Use UTC ISO 8601 timestamps with a trailing `Z` because package artifacts need stable machine-checkable time values.
 
 ## Canonical Frontmatter
 
-Every authored skill-pack artifact must begin with:
+Every package artifact must begin with:
 
 ```yaml
 ---
@@ -40,7 +40,7 @@ Use `source_artifacts: {}` when the active coordination workflow requires an emp
 
 ## Provenance Assembly
 
-- `root_skill` is the coordination skill that initiated authored generation.
+- `root_skill` is the coordination skill that initiated artifact generation.
 - `producing_skill` is the direct specialist skill responsible for the artifact.
 - `skills_used` is the ordered, deduplicated skill list from the producing branch only.
 - `skill_graph` is the adjacency map derived from each participating skill's declared `metadata.dependencies`.
@@ -59,7 +59,7 @@ Use `source_artifacts: {}` when the active coordination workflow requires an emp
 ## Workflow
 
 1. Identify the artifact kind and its direct producing skill.
-2. Establish the `root_skill` from the authored workflow that initiated the run.
+2. Establish the `root_skill` from the coordination workflow that initiated the run.
 3. Walk the producing skill branch from `SKILL.md` metadata dependencies only.
 4. Build `skills_used` in deterministic traversal order with duplicates removed.
 5. Build `skill_graph` from the same participating skills.
@@ -78,7 +78,7 @@ Use `source_artifacts: {}` when the active coordination workflow requires an emp
 
 ## Deliverables
 
-- canonical authored-document frontmatter contract
+- canonical package-artifact frontmatter contract
 - deterministic provenance assembly rules
 - canonical `source_artifacts` field shape
 - shared provenance validator script

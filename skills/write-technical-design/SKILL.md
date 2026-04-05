@@ -4,8 +4,6 @@ description: Write and validate canonical software technical design artifacts. U
 metadata:
   version: 0.2.0
   layer: foundational
-  dependencies:
-    - visual-diagramming
 ---
 
 ## Rules
