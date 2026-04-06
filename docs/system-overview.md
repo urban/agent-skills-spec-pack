@@ -28,6 +28,8 @@ Those artifacts may be created in different workflows:
 
 Every skill belongs to exactly one layer.
 
+For a visual explanation with concrete examples from `write-technical-design`, `technical-design`, `derive-technical-design`, `specification-authoring`, and `specification-reconstruction`, read [layer-hierarchy.md](./layer-hierarchy.md).
+
 | Layer | Owns | Must not own |
 | --- | --- | --- |
 | **foundational** | shared contracts, templates, validators, naming, metadata shape, provenance mechanics | workflow framing, artifact-specific filenames, parent workflow identity |
