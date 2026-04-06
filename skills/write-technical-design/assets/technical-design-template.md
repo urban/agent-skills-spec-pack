@@ -112,9 +112,9 @@ Or:
 
 ## Implementation Strategy
 
-- Recomposition sites: [TODO: composition root, provide sites, or layer assembly points]
+- Recomposition sites: [TODO: composition root, dependency-wiring sites, or layer assembly points]
 - Resource ownership: [TODO: temp dirs, child processes, scoped resources, or `Not needed`]
-- Direct runtime escape hatches: [TODO: direct Node or Bun APIs, thrown errors, or `Not needed`]
+- Direct runtime escape hatches: [TODO: direct host-runtime APIs, thrown errors, or `Not needed`]
 - Strategy: [TODO: implementation approach, sequencing assumptions, and boundary choices]
 
 ## Testing Strategy

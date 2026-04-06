@@ -107,7 +107,7 @@ Output:
 - If interfaces and data flow stay vague, teams discover incompatible assumptions only during coding. Make boundary contracts and major data movement explicit.
 - If you add a diagram and then repeat it in prose, the document gets longer without adding signal. Use the surrounding text for constraints, caveats, and decisions the diagram cannot show.
 - If you silently skip a required diagram slot because the system seems simple, validation will fail and reviewers will not know whether the omission was intentional. Fill every slot with a diagram, `Not needed:`, or `TODO: Confirm`.
-- If implementation strategy ignores composition roots, provide sites, or resource ownership, Effect and multi-boundary designs become too vague to guide change work. Name recomposition and ownership explicitly.
+- If implementation strategy ignores composition roots, dependency-wiring sites, or resource ownership, layered and multi-boundary designs become too vague to guide change work. Name recomposition and ownership explicitly.
 - If implementation strategy turns into a task list, planning gets duplicated and the design ages badly. Explain rollout approach and sequencing constraints, not every work item.
 - If derived design smooths over contradictions in the codebase, later planning treats speculation as architecture fact. Report implemented reality and mark weak seams `TODO: Confirm`.
 - If failure and recovery strategy is skipped, reliability bugs get deferred until production because no one owned them in design. Capture degraded modes, typed and thrown failures, and recovery paths explicitly.

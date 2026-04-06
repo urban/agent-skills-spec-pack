@@ -25,7 +25,7 @@ metadata:
 - Identify and document the composition root, runtime profile, layer or service graph, parser boundaries, validation seams, tagged error surfaces, resource ownership, and direct runtime escape hatches when the repository shows them.
 - When Effect imports or `Layer` composition are present, load `effect-technical-design` to recover the actual abstractions in use and their recomposition seams.
 - Apply `gray-box-modules` only when repository evidence supports a real bounded capability with a caller-visible seam.
-- Recover the observed error model, including direct thrown errors or direct Node or Bun usage, instead of rewriting the implementation into a preferred future-state style.
+- Recover the observed error model, including direct thrown errors or direct host-runtime API usage, instead of rewriting the implementation into a preferred future-state style.
 - Distinguish observed architecture from inferred rationale because code often shows structure more clearly than intent.
 - Use context from `./charter.md`, `./user-stories.md`, and `./requirements.md` when they exist because reconstructed design should stay aligned to reconstructed framing, outcomes, and obligations.
 - Use `TODO: Confirm` when rationale, ownership, boundary strength, or visible behavior cannot be proved from the repository.
@@ -40,7 +40,7 @@ metadata:
 - If the destination file already exists, create a timestamped backup before overwrite.
 - Do not recommend future-state improvements as if they were the current architecture.
 - Do not stop at generic “CLI + service” descriptions when the code shows concrete boundary types and runtime wiring.
-- Do not rewrite direct Node or Bun APIs or direct thrown-error usage into idealized Effect-only architecture in derived design.
+- Do not rewrite direct host-runtime APIs or direct thrown-error usage into idealized abstraction-only architecture in derived design.
 - Do not invent gray-box modules from naming, directory layout, or ideal decomposition alone.
 - Do not copy reconstructed five-field story blocks into the design as substitute architecture content.
 
@@ -115,7 +115,7 @@ Out of scope:
 
 - If you document the architecture you wish the repo had, later planning starts from fiction and misses the real constraints. Describe the system that exists today.
 - If you stop at generic “CLI + service” prose, the design misses the composition root, layer graph, parser boundaries, and other concrete seams that guide change work. Name those seams when the code proves them.
-- If direct thrown errors, direct Node or Bun APIs, or other runtime escape hatches are normalized away, the report stops matching the implementation. Record observed facts first.
+- If direct thrown errors, direct host-runtime APIs, or other runtime escape hatches are normalized away, the report stops matching the implementation. Record observed facts first.
 - If directory names alone are treated as module boundaries, gray-box documentation looks tidy but collapses under inspection. Require evidence of caller-visible seams, ownership, or boundary tests.
 - If inferred rationale is written in the same voice as observed structure, reviewers cannot tell fact from interpretation. Separate the two and use `TODO: Confirm` for weak conclusions.
 - If you only reconstruct action flows and ignore situations or observations, the design misses triggers, boundary handling, and visible feedback behavior. Preserve those signals when evidence supports them.

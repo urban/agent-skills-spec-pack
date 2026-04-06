@@ -34,11 +34,11 @@ source_artifacts:
 
 ## Integration Requirements
 
-- IR5.1: [TODO: filesystem, git diff, GitHub codeload, child-process, bundled asset, or other integration requirement]
+- IR5.1: [TODO: filesystem, version-control diff, source archive download, child-process, bundled asset, or other integration requirement]
 
 ## Dependencies
 
-- DEP6.1: [TODO: Bun, git, network access, packaged asset, fixed library, runtime integration, or other operational prerequisite]
+- DEP6.1: [TODO: required runtime, package manager, version-control tool, network access, packaged asset, fixed library, runtime integration, or other operational prerequisite]
 
 ## Further Notes
 

@@ -76,8 +76,8 @@ Out of scope:
    - `NFR` for runtime model, logging behavior, ordering guarantees, tolerant versus strict behavior, staging behavior, safety behavior, and other quality constraints
    - `TC` for accepted grammars, shared flag semantics, validation rules, framework constraints, metadata variants, path or layout assumptions, and compatibility rules
    - `DR` for data shape, required metadata, schema variants, parsing strictness, and source-classification rules
-   - `IR` for filesystem, network, GitHub, git diff, child-process, or other protocol and adapter constraints
-   - `DEP` for Bun, git, network access, packaged assets, or fixed runtime integrations required for operation
+   - `IR` for filesystem, network, source archive download, version-control diff, child-process, or other protocol and adapter constraints
+   - `DEP` for required runtimes, package managers, version-control tools, network access, packaged assets, or fixed runtime integrations required for operation
 5. Use reconstructed stories from `./user-stories.md` when available to preserve behavioral traceability.
 6. Infer missing rationale only as far as the evidence supports and mark weak points as `TODO: Confirm`.
 7. Resolve the chosen destination path.
@@ -98,7 +98,7 @@ Out of scope:
 ## Gotchas
 
 - If you describe what the product probably meant to do instead of what the code proves, the report becomes cleaner than reality and misleads future design work. Stay anchored to implemented behavior.
-- If `package.json`, runtime wiring, or command definitions are ignored, runtime and dependency constraints vanish from the reconstructed contract. Treat them as first-class evidence.
+- If package manifests, runtime wiring, or command definitions are ignored, runtime and dependency constraints vanish from the reconstructed contract. Treat them as first-class evidence.
 - If tests proving CLI grammar, shared flag placement, no-op output, or failure formatting are ignored, requirements understate the executable contract. Use those tests.
 - If implementation constraints are treated as design trivia, the output stops matching source-backed execution behavior. Put them in the right non-FR sections.
 - If every internal subsystem gets promoted into a requirement, the artifact turns into a technical inventory instead of a product contract. Keep the report externally meaningful and verifiable.
