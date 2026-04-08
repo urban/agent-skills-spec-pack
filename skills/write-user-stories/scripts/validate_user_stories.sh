@@ -39,6 +39,19 @@ if (( story_count == 0 )); then
   exit 1
 fi
 
+story_id_count="$(grep -Ec '^- Story ID:[[:space:]]*US1\.[0-9]+$' "$FILE" || true)"
+if (( story_id_count != story_count )); then
+  echo "Every story must include a valid '- Story ID: US1.x' line" >&2
+  exit 1
+fi
+
+duplicate_story_ids="$(grep -E '^- Story ID:[[:space:]]*US1\.[0-9]+$' "$FILE" | sed -E 's/^- Story ID:[[:space:]]*//' | sort | uniq -d)"
+if [[ -n "$duplicate_story_ids" ]]; then
+  echo "Duplicate story IDs found:" >&2
+  printf '%s\n' "$duplicate_story_ids" >&2
+  exit 1
+fi
+
 awk '
 function fail(msg, line) {
   printf("%s at line %d\n", msg, line) > "/dev/stderr"
@@ -50,6 +63,7 @@ BEGIN {
 }
 /^### Story: / {
   if (in_story) {
+    if (!storyid) fail("Missing - Story ID: in story block", story_line)
     if (!actor) fail("Missing - Actor: in story block", story_line)
     if (!situation) fail("Missing - Situation: in story block", story_line)
     if (!action) fail("Missing - Action: in story block", story_line)
@@ -58,11 +72,12 @@ BEGIN {
   }
   in_story=1
   story_line=NR
-  actor=situation=action=outcome=observation=0
+  storyid=actor=situation=action=outcome=observation=0
   next
 }
 /^## Capability Area: / {
   if (in_story) {
+    if (!storyid) fail("Missing - Story ID: in story block", story_line)
     if (!actor) fail("Missing - Actor: in story block", story_line)
     if (!situation) fail("Missing - Situation: in story block", story_line)
     if (!action) fail("Missing - Action: in story block", story_line)
@@ -72,6 +87,7 @@ BEGIN {
   }
   next
 }
+in_story && /^- Story ID:[[:space:]]*US1\.[0-9]+$/ { storyid=1; next }
 in_story && /^- Actor:[[:space:]]*.+/ { actor=1; next }
 in_story && /^- Situation:[[:space:]]*.+/ { situation=1; next }
 in_story && /^- Action:[[:space:]]*.+/ { action=1; next }
@@ -79,6 +95,7 @@ in_story && /^- Outcome:[[:space:]]*.+/ { outcome=1; next }
 in_story && /^- Observation:[[:space:]]*.+/ { observation=1; next }
 END {
   if (in_story) {
+    if (!storyid) fail("Missing - Story ID: in story block", story_line)
     if (!actor) fail("Missing - Actor: in story block", story_line)
     if (!situation) fail("Missing - Situation: in story block", story_line)
     if (!action) fail("Missing - Action: in story block", story_line)

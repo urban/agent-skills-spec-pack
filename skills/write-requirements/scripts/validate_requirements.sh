@@ -46,4 +46,40 @@ if ! grep -Eq '^[[:space:]]*-[[:space:]]+FR1\.[0-9]+:' "$FILE"; then
   exit 1
 fi
 
+awk '
+function fail(msg, line) {
+  printf("%s at line %d\n", msg, line) > "/dev/stderr"
+  exit 1
+}
+BEGIN {
+  in_fr=0
+  fr_line=0
+  trace=0
+}
+/^[[:space:]]*-[[:space:]]+FR1\.[0-9]+:/ {
+  if (in_fr && !trace) fail("Missing Story traceability for functional requirement", fr_line)
+  in_fr=1
+  fr_line=NR
+  trace=0
+  next
+}
+/^[[:space:]]*-[[:space:]]+(NFR2|TC3|DR4|IR5|DEP6)\.[0-9]+:/ {
+  if (in_fr && !trace) fail("Missing Story traceability for functional requirement", fr_line)
+  in_fr=0
+  next
+}
+/^## / {
+  if (in_fr && !trace) fail("Missing Story traceability for functional requirement", fr_line)
+  in_fr=0
+  next
+}
+in_fr && /^[[:space:]]+-[[:space:]]+Story traceability:[[:space:]]*(TODO: Confirm|.*US1\.[0-9]+.*)$/ {
+  trace=1
+  next
+}
+END {
+  if (in_fr && !trace) fail("Missing Story traceability for functional requirement", fr_line)
+}
+' "$FILE"
+
 echo "Requirements validation passed: $FILE"

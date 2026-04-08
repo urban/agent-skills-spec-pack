@@ -2,7 +2,7 @@
 name: write-requirements
 description: Write and validate canonical requirements artifacts. Use when a task creates, derives, reviews, or validates product obligations that must stay stable for downstream design and planning.
 metadata:
-  version: 0.3.0
+  version: 0.4.0
   layer: foundational
 ---
 
@@ -11,6 +11,7 @@ metadata:
 - Keep this artifact focused on product obligations and constraints because product framing and success criteria belong in the charter.
 - Preserve canonical frontmatter shape and validate created artifacts with the shared provenance validator when the workflow stamps provenance.
 - Use deterministic requirement identifiers because design, planning, and review need stable references.
+- When canonical user stories are available, use their story IDs in requirement traceability notes so downstream artifacts can link back to one source of truth for story intent.
 - Ground functional requirements in canonical user-story behavior, especially `Actor`, `Situation`, `Action`, `Outcome`, and `Observation`, because requirements should formalize approved behavior rather than replace it.
 - Keep requirements externally meaningful and testable because vague statements cannot be validated.
 - In derived requirements, concrete runtime, framework, protocol, parser, and tooling names are allowed when the implementation hard-wires them and replacing them would change executable behavior, accepted inputs, validation semantics, or operational prerequisites.
@@ -51,6 +52,7 @@ Minimum content expectations:
 
 - canonical frontmatter shape when provenance is stamped for the workflow
 - at least one numbered `FR1.x` requirement
+- every functional requirement includes a `Story traceability` note that references one or more `US1.x` story IDs or `TODO: Confirm`
 - every requirement is specific enough to verify
 - source-backed, execution-relevant implementation constraints appear in the right non-FR sections when they materially shape behavior or operations
 - unresolved or weakly supported details use `TODO: Confirm`
@@ -69,11 +71,12 @@ Output:
 1. Draft from [`assets/requirements-template.md`](./assets/requirements-template.md) so canonical ordering stays intact.
 2. Start from approved user stories or evidence-backed behavior before adding detailed constraints.
 3. Translate each relevant user-story behavior into verifiable obligations:
+   - carry forward the story ID so the requirement can point back to the canonical story block
    - `Actor` and `Action` usually shape functional behavior
    - `Situation` often shapes preconditions, triggers, or edge-case obligations
    - `Outcome` clarifies the value-bearing result that the requirement must preserve
    - `Observation` helps make the requirement testable and externally checkable
-4. Write numbered functional requirements with `FR1.x` identifiers.
+4. Write numbered functional requirements with `FR1.x` identifiers and include `Story traceability` notes that reference the relevant `US1.x` story IDs.
 5. Translate source-backed implementation facts into the correct requirement family instead of forcing everything into `FR` or dropping it as detail.
 6. Capture quality expectations, constraints, data rules, integrations, and dependencies with the shared identifier taxonomy.
 7. Keep scope framing and success checks in the charter instead of duplicating them here.
@@ -89,6 +92,7 @@ Output:
 - If requirements include technical design choices, later architecture work becomes fake because the solution was smuggled in as scope. Keep requirements focused on externally meaningful obligations and constraints.
 - If goals, personas, or success criteria are copied into this artifact, the pack drifts into redundancy and later edits split across files. Leave product framing to the charter.
 - If numbering is ad hoc, design and plan documents cannot reference requirements stably across revisions. Use the shared prefix taxonomy every time.
+- If requirement traceability points to story titles instead of canonical story IDs, downstream references become fragile when titles change. Use `US1.x` IDs whenever stories are available.
 - If derived requirements describe what the system probably meant to do, you create a cleaner story than the code actually supports. Document implemented reality and mark weak inferences with `TODO: Confirm`.
 - If empty sections are deleted instead of marked unresolved, downstream skills cannot tell whether the category was considered or forgotten. Keep the section and use `TODO: Confirm`.
 - If functional requirements are written as tasks or file edits, planning inherits implementation trivia instead of product obligations. State behavior and constraints, not commit steps.
@@ -98,6 +102,7 @@ Output:
 
 - A Markdown requirements artifact with canonical frontmatter shape and section order.
 - Deterministic identifiers across all requirement categories.
+- Functional requirement traceability that references canonical `US1.x` story IDs when stories are available.
 - Explicit functional requirements, non-functional requirements, constraints, integrations, data requirements, and dependencies.
 - Clear `TODO: Confirm` markers for unresolved high-impact details.
 
@@ -106,6 +111,7 @@ Output:
 - Canonical frontmatter passes shared provenance validation when the workflow stamps provenance.
 - All required sections exist and are in the correct order.
 - At least one `FR1.x` requirement exists.
+- Every functional requirement includes a `Story traceability` note with one or more `US1.x` story IDs or `TODO: Confirm`.
 - Functional requirements trace to user-story behavior rather than copying story blocks verbatim.
 - Concrete runtime, protocol, parser, and tooling constraints are included when source-backed and execution-relevant.
 - Command aliases, shared flag semantics, accepted source forms, and explicit validation rules are captured when they affect the executable interface.

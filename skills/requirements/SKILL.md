@@ -2,7 +2,7 @@
 name: requirements
 description: Produce requirements artifacts from approved product framing, approved user stories, and repository context. Use when a user needs product obligations, constraints, and dependencies defined before technical design or implementation.
 metadata:
-  version: 0.2.0
+  version: 0.3.0
   layer: specialist
   archetype: planning
   domain: specification-authoring
@@ -16,6 +16,7 @@ metadata:
 - Produce the artifact as `requirements.md`.
 - Use the `write-requirements` contract for section order, numbering, traceability, uncertainty handling, and final validation because downstream design and planning depend on that shared shape.
 - Ground requirements in approved user stories first, then repository evidence when existing code or integrations constrain behavior.
+- When `./user-stories.md` includes canonical story IDs, use those `US1.x` identifiers in requirement traceability notes instead of relying on story titles alone.
 - Keep approved charter context visible from `./charter.md` because requirements must stay inside its goals, actors, and success boundaries without re-owning them.
 - Use approved story context from `./user-stories.md` because requirements should trace back to user-visible outcomes and observable behavior.
 - Ask for clarification when missing detail changes scope, constraints, integrations, dependencies, or verifiability; otherwise keep moving and mark `TODO: Confirm`.
@@ -64,6 +65,7 @@ Out of scope:
 3. Inspect the repository only when existing code, integrations, or platform boundaries materially affect the requirements.
 4. Draft `requirements.md` using the `write-requirements` contract rather than inventing a new structure.
 5. Translate approved story behavior into verifiable obligations:
+   - use story `US1.x` identifiers to anchor requirement traceability notes
    - use `Actor` and `Action` to identify the required behavior
    - use `Situation` to preserve triggers, context, or boundary conditions
    - use `Outcome` to preserve the value-bearing result
@@ -79,6 +81,7 @@ Out of scope:
 - If you treat requirements like a place to solve the system, technical design becomes a rewrite of decisions already smuggled in. Keep the artifact about product obligations and constraints, not architecture.
 - If requirements start before the stories are stable, scope leaks in through formal language and later looks approved only because it was written down. Anchor the artifact to approved stories first.
 - If you only map story `Action` and ignore `Situation` or `Observation`, important preconditions and testability signals disappear. Preserve them where they matter.
+- If requirement traceability relies on story titles instead of canonical `US1.x` IDs, later story renames break the link back to the source artifact. Carry the story IDs forward.
 - If you restate goals, non-goals, personas, or success criteria at length, the pack grows redundant and later edits drift across files. Let the charter own framing.
 - If you draft from memory instead of the shared `write-requirements` contract, numbering and section order drift and downstream skills stop composing cleanly. Reuse the canonical structure every time.
 - If repository evidence already constrains behavior and you ignore it, the requirements read clean but contradict the product the team actually has to evolve. Inspect the code when it materially affects scope.
@@ -96,6 +99,7 @@ Out of scope:
 - artifact filename is `requirements.md`
 - section order and numbering follow the `write-requirements` contract
 - at least one functional requirement exists
+- functional requirement traceability uses approved `US1.x` story IDs or `TODO: Confirm`
 - functional requirements trace back to approved user-story behavior
 - implementation strategy is not mixed into the artifact
 - unresolved high-impact details are marked `TODO: Confirm`

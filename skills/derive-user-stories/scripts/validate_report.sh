@@ -36,6 +36,7 @@ if [[ ! -x "${provenance_validator}" ]]; then
 fi
 
 errors=0
+declare -A seen_story_ids=()
 fail() {
   echo "ERROR: $1" >&2
   errors=$((errors + 1))
@@ -101,6 +102,14 @@ while IFS= read -r line || [[ -n "$line" ]]; do
       story_count=$((story_count + 1))
       if ! printf '%s\n' "$current_block" | bash "$story_validator" >/dev/null; then
         fail "Invalid canonical story block near story ${story_count}"
+      fi
+      story_id="$(printf '%s\n' "$current_block" | sed -nE 's/^- Story ID:[[:space:]]*(US1\.[0-9]+)$/\1/p' | head -n 1)"
+      if [[ -z "$story_id" ]]; then
+        fail "Story ${story_count} must include '- Story ID: US1.x'"
+      elif [[ -n "${seen_story_ids[$story_id]:-}" ]]; then
+        fail "Duplicate story ID '${story_id}'"
+      else
+        seen_story_ids[$story_id]=1
       fi
       if ! printf '%s\n' "$current_block" | grep -Eq '^- Confidence: (High|Medium|Low)$'; then
         fail "Story ${story_count} must include '- Confidence: High|Medium|Low'"

@@ -1,4 +1,5 @@
 ### Story: [TODO: short title]
+- Story ID: US1.1
 - Actor: [TODO: clear actor or `TODO: Confirm`]
 - Situation: [TODO: concrete trigger, context, or precondition]
 - Action: [TODO: one meaningful user-visible behavior]

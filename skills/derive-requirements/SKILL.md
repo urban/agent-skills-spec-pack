@@ -2,7 +2,7 @@
 name: derive-requirements
 description: Reconstruct requirements artifacts from repository evidence and reconstructed user-visible behavior. Use when a user needs implemented product obligations documented for an existing system.
 metadata:
-  version: 0.3.0
+  version: 0.4.0
   layer: specialist
   archetype: research
   domain: specification-reconstruction
@@ -22,6 +22,7 @@ metadata:
 - If a concrete runtime, framework, protocol, parser rule, or tool is hard-wired by the implementation and changing it would change executable behavior or operational prerequisites, record it in the right non-FR category instead of dropping it.
 - Keep evidence traceable to concrete file paths and line references when support is thin or disputed.
 - Use context from `./charter.md` and `./user-stories.md` when they exist because reconstructed requirements should stay aligned to reconstructed framing and outcomes.
+- When reconstructed stories include canonical `US1.x` identifiers, use those IDs in requirement traceability notes so downstream artifacts can link back to the reconstructed story source of truth.
 - Use `TODO: Confirm` when the repository cannot prove the actor, rationale, intended scope boundary, or verification expectation.
 - Do not define workflow-wide `source_artifacts` lineage policy here.
 
@@ -84,6 +85,7 @@ Out of scope:
 8. If the destination artifact already exists, create a timestamped backup in the same directory before overwrite.
 9. Draft the artifact with the `write-requirements` contract.
 10. Translate reconstructed story behavior into requirements:
+   - use story `US1.x` identifiers to anchor requirement traceability notes
    - use `Actor` and `Action` to identify the implemented obligation
    - use `Situation` to capture preconditions and edge conditions supported by the code
    - use `Outcome` to preserve the visible result
@@ -101,6 +103,7 @@ Out of scope:
 - If package manifests, runtime wiring, or command definitions are ignored, runtime and dependency constraints vanish from the reconstructed contract. Treat them as first-class evidence.
 - If tests proving CLI grammar, shared flag placement, no-op output, or failure formatting are ignored, requirements understate the executable contract. Use those tests.
 - If implementation constraints are treated as design trivia, the output stops matching source-backed execution behavior. Put them in the right non-FR sections.
+- If requirement traceability relies on story titles instead of canonical `US1.x` IDs, later edits make story linkage brittle. Carry the reconstructed story IDs forward.
 - If every internal subsystem gets promoted into a requirement, the artifact turns into a technical inventory instead of a product contract. Keep the report externally meaningful and verifiable.
 - If you only reconstruct actions and ignore situations or observations, you lose the implementation's boundary behavior and testability. Preserve those signals when evidence exists.
 - If weak evidence is omitted entirely, reviewers read silence as certainty. Keep ambiguous items and mark them `TODO: Confirm`.
@@ -121,6 +124,7 @@ Out of scope:
 - artifact filename is `requirements.md`
 - existing artifact backup is created before overwrite when needed
 - section order and numbering follow the `write-requirements` contract
+- functional requirement traceability uses reconstructed `US1.x` story IDs or `TODO: Confirm`
 - requirements describe implemented behavior rather than guessed original intent
 - requirements stay compatible with reconstructed user-story behavior when user stories are available
 - high-impact implementation constraints are captured in non-FR sections when they materially shape execution or operations

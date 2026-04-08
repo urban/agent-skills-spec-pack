@@ -18,7 +18,7 @@ source_artifacts:
 ## Functional Requirements
 
 - FR1.1: [TODO: command group, alias, shared flag, operator-visible behavior, no-op behavior, selection behavior, or install/update/remove obligation]
-  - Story traceability: [TODO: capability area and story title or `TODO: Confirm`]
+  - Story traceability: [TODO: `US1.1` plus capability area and story title, or `TODO: Confirm`]
 
 ## Non-Functional Requirements
 

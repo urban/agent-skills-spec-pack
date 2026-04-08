@@ -2,7 +2,7 @@
 name: derive-user-stories
 description: Reconstruct user-stories artifacts from repository evidence. Use when a user needs implemented user-visible behavior and capability areas inferred from an existing system.
 metadata:
-  version: 0.2.0
+  version: 0.3.0
   layer: specialist
   archetype: research
   domain: specification-reconstruction
@@ -14,7 +14,7 @@ metadata:
 
 - Treat repository code as the primary evidence and use tests to strengthen confidence because this role reconstructs implemented outcomes, not roadmap intent.
 - Produce the artifact as `user-stories.md`.
-- Use the shared `write-user-stories` contract for canonical story structure, capability grouping, quality checks, and validation.
+- Use the shared `write-user-stories` contract for canonical story structure, story identifiers, capability grouping, quality checks, and validation.
 - Focus on user-visible behavior because technical plumbing without stakeholder-visible value belongs in coverage gaps, not in stories.
 - Keep evidence traceable to concrete file paths and line references because confidence must be reviewable.
 - Use context from `./charter.md` when it exists because reconstructed goals, actors, and success framing can sharpen the story set.
@@ -54,6 +54,7 @@ Required report sections, in order:
 Per-story requirements:
 
 - one canonical story block compatible with `write-user-stories`
+- one unique `US1.x` story identifier per story
 - confidence label: `High`, `Medium`, or `Low`
 - confidence rationale
 - at least one code evidence reference
@@ -82,12 +83,13 @@ Out of scope:
 5. Identify evidence-based actors and capability areas.
 6. Draft the report from `./assets/report-template.md`, then replace placeholders with actual content.
 7. Write one canonical story block per user-visible outcome using `Actor`, `Situation`, `Action`, `Outcome`, and `Observation`.
-8. Add confidence, rationale, code evidence, and test evidence for each story.
-9. Record non-mapped code areas in `Coverage Gaps` and unresolved ambiguity in `Additional Notes`.
-10. Write `user-stories.md` to the chosen destination.
-11. If the destination artifact already exists, create a timestamped backup in the same directory before overwrite.
-12. Validate with `bash ./scripts/validate_report.sh <resolved-user-stories-path>`.
-13. Deliver the artifact as reconstructed implemented user outcomes, not speculative product strategy.
+8. Assign unique `US1.x` story identifiers in artifact order so downstream requirements can trace back to canonical reconstructed stories.
+9. Add confidence, rationale, code evidence, and test evidence for each story.
+10. Record non-mapped code areas in `Coverage Gaps` and unresolved ambiguity in `Additional Notes`.
+11. Write `user-stories.md` to the chosen destination.
+12. If the destination artifact already exists, create a timestamped backup in the same directory before overwrite.
+13. Validate with `bash ./scripts/validate_report.sh <resolved-user-stories-path>`.
+14. Deliver the artifact as reconstructed implemented user outcomes, not speculative product strategy.
 
 ## Gotchas
 
@@ -95,6 +97,7 @@ Out of scope:
 - If technical capabilities that users never experience are forced into stories, the capability map fills with implementation trivia. Put those areas in `Coverage Gaps` instead.
 - If confidence is assigned by narrative coherence instead of evidence depth, weak stories get treated as facts downstream. Base confidence on code and test support only.
 - If ambiguous stories are dropped entirely, the report falsely suggests complete understanding of the product surface. Include plausible user-visible outcomes with lower confidence and clear uncertainty.
+- If story IDs are missing, duplicated, or unstable, downstream requirements lose a reliable traceability anchor. Keep one unique `US1.x` identifier on every reconstructed story.
 - If story blocks drift away from the shared five-field contract, reconstruction and authoring stop being reversible. Keep the shared structure intact.
 - If an existing report is overwritten without backup, previous interpretations disappear and review loses context. Create the timestamped backup first.
 
@@ -103,7 +106,7 @@ Out of scope:
 - `user-stories.md`
 - a timestamped backup when overwriting an existing artifact
 - stakeholder narratives, capability map, coverage gaps, and additional notes
-- user story blocks with confidence, rationale, evidence references, and canonical frontmatter
+- user story blocks with unique `US1.x` identifiers, confidence, rationale, evidence references, and canonical frontmatter
 - validation passing via `./scripts/validate_report.sh`
 
 ## Validation Checklist
@@ -111,6 +114,7 @@ Out of scope:
 - artifact filename is `user-stories.md`
 - existing artifact backup is created before overwrite when needed
 - all five required sections exist in order
+- every story has a unique `US1.x` story identifier
 - every story follows the canonical five-field contract
 - every story includes confidence, rationale, and evidence references
 - unresolved story details are marked `TODO: Confirm`

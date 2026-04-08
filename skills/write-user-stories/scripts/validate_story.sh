@@ -33,7 +33,7 @@ if printf '%s\n' "$story_input" | grep -Eq '\[TODO:[^]]+\]|<[^>]+>'; then
   exit 1
 fi
 
-required_fields=("Actor" "Situation" "Action" "Outcome" "Observation")
+required_fields=("Story ID" "Actor" "Situation" "Action" "Outcome" "Observation")
 
 if ! printf '%s\n' "$story_input" | grep -Eq '^### Story: .+'; then
   echo "Error: story must begin with '### Story: <short title>'" >&2
@@ -53,6 +53,12 @@ for field in "${required_fields[@]}"; do
     exit 1
   fi
 done
+
+story_id_value="$(printf '%s\n' "$story_input" | sed -nE 's/^- Story ID:[[:space:]]*(.+)$/\1/p' | head -n 1)"
+if [[ ! "$story_id_value" =~ ^US1\.[0-9]+$ ]]; then
+  echo "Error: Story ID must use the format 'US1.x'" >&2
+  exit 1
+fi
 
 action_value="$(printf '%s\n' "$story_input" | sed -nE 's/^- Action:[[:space:]]*(.+)$/\1/p' | head -n 1)"
 outcome_value="$(printf '%s\n' "$story_input" | sed -nE 's/^- Outcome:[[:space:]]*(.+)$/\1/p' | head -n 1)"
