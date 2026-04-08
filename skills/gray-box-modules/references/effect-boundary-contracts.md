@@ -4,7 +4,7 @@ Use this reference when defining the public contract of a gray-box module in Eff
 
 Contract rules:
 
-- Define the caller-visible capability as a `ServiceMap.Service` interface with a small set of durable methods.
+- Define the caller-visible capability as a `Context.Service` interface with a small set of durable methods.
 - Make inputs, outputs, and typed errors explicit in method signatures when they materially affect callers.
 - Use `Schema` for boundary DTOs, command inputs, result payloads, and errors that must be validated or serialized.
 - Use `Schema.TaggedErrorClass` for boundary-facing errors that callers should discriminate on.
@@ -15,7 +15,7 @@ Invariant rules:
 
 - State what the service preserves on success and failure, not just what it attempts.
 - Put validation at the boundary when invalid inputs would otherwise leak deeper into the module.
-- Keep policy defaults explicit through `ServiceMap.Reference` or config services rather than hidden magic constants.
+- Keep policy defaults explicit through `Context.Reference` or config services rather than hidden magic constants.
 - Keep reference-backed policy narrow and stable. Use it for defaults, feature flags, strictness, and thresholds, not to smuggle arbitrary internal state across the boundary.
 - Separate stable contract promises from replaceable implementation choices.
 

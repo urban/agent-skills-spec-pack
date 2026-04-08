@@ -44,7 +44,7 @@ Do not use when:
 - the system benefits from one named canonical class-based contract
 - callers materially rely on a richer domain type with shared meaning
 
-### `ServiceMap.Service`
+### `Context.Service`
 
 Use when:
 
@@ -63,7 +63,7 @@ Do not use when:
 - the code is pure, feature-local, and has no owned lifecycle or IO
 - you only want a namespace for helper functions
 
-### `ServiceMap.Reference`
+### `Context.Reference`
 
 Use when:
 
@@ -137,7 +137,7 @@ Do not use when:
 
 - the read is one-off and local to a component or service method
 - the module actually owns writes, retries, or background lifecycle
-- callers really depend on an infrastructure capability, in which case use `ServiceMap.Service`
+- callers really depend on an infrastructure capability, in which case use `Context.Service`
 
 ### `Atom` and `Atom.runtime`
 
@@ -196,8 +196,8 @@ Promote a helper only when one of these appears:
 - runtime-validated structural contract -> plain `Schema`
 - reusable semantic read -> feature read module
 - shared evolving read or UI command surface -> `Atom`
-- owned IO, lifecycle, caching, retries, or substitution -> `ServiceMap.Service`
-- defaultable shared configuration -> `ServiceMap.Reference`
+- owned IO, lifecycle, caching, retries, or substitution -> `Context.Service`
+- defaultable shared configuration -> `Context.Reference`
 - explicit keyed resource assembly point -> `LayerMap.Service`
 - explicit runtime assembly point -> `Layer`
 - AI or tool boundary -> toolkit contract

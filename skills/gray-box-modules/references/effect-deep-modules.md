@@ -4,7 +4,7 @@ Use this reference when a gray-box module should be expressed with Effect v4 ser
 
 Effect mapping:
 
-- Model the module boundary as a `ServiceMap.Service` with a small caller-visible interface.
+- Model the module boundary as a `Context.Service` with a small caller-visible interface.
 - Implement the module behind a `Layer` so dependency wiring and lifecycle stay explicit but off the public surface.
 - Use `Schema` for caller-visible data and typed errors when values cross meaningful boundaries.
 - Keep refs, queues, streams, `RequestResolver`, retries, caches, `PubSub`, and helper services private unless callers truly depend on them.

@@ -11,12 +11,12 @@ metadata:
 - Treat this skill as the Effect-specific companion to technical design, not as a replacement for the canonical technical-design artifact contract.
 - Focus on architecture decisions that are not already obvious from referencing the Effect source code, because this skill should redirect boundary choices, not restate Effect syntax or API basics.
 - Start from owned capabilities, read seams, lifecycle boundaries, and runtime composition points before naming an Effect abstraction, because premature abstraction causes most Effect design drift.
-- Choose the smallest stable abstraction that protects the boundary: helper before schema-backed contract, schema-backed contract before read module, read module before `Atom`, feature module before `ServiceMap.Service`, and `ServiceMap.Service` before wider layer graphs.
+- Choose the smallest stable abstraction that protects the boundary: helper before schema-backed contract, schema-backed contract before read module, read module before `Atom`, feature module before `Context.Service`, and `Context.Service` before wider layer graphs.
 - Treat a read module as a design role, not an Effect API: a small read-only module that exposes reusable semantic reads, hides storage and projection details, and does not own write policy, retries, resource lifecycle, or runtime wiring.
 - Separate capability ownership from observation ownership, because services and layers own infrastructure while read modules and `Atom` expose reads and feature-facing state.
 - Recompose modules through a small number of explicit runtime seams, because ad hoc `provide` chains hide the real architecture.
 - In derived design, describe the Effect abstractions actually used before recommending alternatives.
-- Recover concrete Effect architecture details such as `Layer.mergeAll`, `Layer.provideMerge`, `ServiceMap.Service`, `Schema.TaggedErrorClass`, `effect/unstable/cli`, scoped resources, and runtime helpers when the repository shows them.
+- Recover concrete Effect architecture details such as `Layer.mergeAll`, `Layer.provideMerge`, `Context.Service`, `Schema.TaggedErrorClass`, `effect/unstable/cli`, scoped resources, and runtime helpers when the repository shows them.
 - Capture where the implementation uses direct Node or Bun APIs, direct child-process calls, or direct thrown errors instead of idealized Effect-only boundaries.
 - Mark weakly supported design claims as `TODO: Confirm` instead of turning hunches into architecture.
 
@@ -36,7 +36,7 @@ Use this skill to supply:
 
 - decomposition rules for breaking a TypeScript + Effect system into stable modules
 - recomposition rules for wiring those modules into one runtime architecture
-- abstraction-selection guidance for `Schema.Class`, plain `Schema`, `ServiceMap.Service`, `ServiceMap.Reference`, `Layer`, `LayerMap.Service`, feature read modules, `Atom`, runtime edge modules, toolkits, and helpers
+- abstraction-selection guidance for `Schema.Class`, plain `Schema`, `Context.Service`, `Context.Reference`, `Layer`, `LayerMap.Service`, feature read modules, `Atom`, runtime edge modules, toolkits, and helpers
 - guardrails that keep technical designs focused on ownership instead of library enthusiasm
 - derived-design guidance that names the abstractions, runtime wiring, and escape hatches actually in use
 
@@ -83,7 +83,7 @@ Resolve these before finalizing guidance. If evidence is missing, keep the item 
 
 | Decision                              | Confirm options                                                                                                                              | Architecture impact                                                                                                                                                                                                                             |
 | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Reactive and background state profile | no shared reactive state; UI-facing reactive state; long-lived background work; both UI-facing reactive state and long-lived background work | UI-facing reactive state may justify feature read modules and `Atom`; background work strengthens `ServiceMap.Service` and lifecycle ownership guidance; both require an explicit seam between observation and infrastructure ownership         |
+| Reactive and background state profile | no shared reactive state; UI-facing reactive state; long-lived background work; both UI-facing reactive state and long-lived background work | UI-facing reactive state may justify feature read modules and `Atom`; background work strengthens `Context.Service` and lifecycle ownership guidance; both require an explicit seam between observation and infrastructure ownership         |
 | Persistence contract shape            | `Schema.Class`; plain `Schema`; existing external DTOs; mixed by boundary                                                                    | `Schema.Class` fits canonical shared domain meaning; plain `Schema` fits structural runtime-validated contracts; external DTOs fit adapter-facing boundaries; mixed should name which boundaries own canonical contracts versus borrowed shapes |
 | Runtime profile                       | browser-only; server-only; CLI-only; worker-only; multi-runtime                                                                              | runtime profile sets the real recomposition seams, runtime edge modules, and where layers or feature runtimes assemble                                                                                                                          |
 | Multi-runtime breakdown               | browser + server; CLI + worker; browser + worker; server + worker; other explicit combination                                                | multi-runtime designs must name which modules are shared versus runtime-specific, and where each runtime composes dependencies                                                                                                                  |
@@ -106,7 +106,7 @@ Resolve these before finalizing guidance. If evidence is missing, keep the item 
 ## Gotchas
 
 - If this skill starts teaching `Effect.gen`, `Effect.fn`, or basic service syntax, it duplicates information in the Effect source-code and wastes context right when the agent needs architecture guidance. Keep this skill on boundary and recomposition decisions.
-- If you pick a `ServiceMap.Service` because a module looks important, the design grows infrastructure seams without any protected capability. Ask what the module owns before recommending a service.
+- If you pick a `Context.Service` because a module looks important, the design grows infrastructure seams without any protected capability. Ask what the module owns before recommending a service.
 - If you pick an `Atom` because a value is shared, you can accidentally move retries, provider setup, or worker lifecycle into reactive state and make cleanup invisible. Keep infrastructure below the observation seam.
 - If you use read module, schema contract, service, and runtime edge as interchangeable labels, the design reads organized but gives implementers no ownership map. Assign one primary boundary role per module.
 - If decomposition follows current folders instead of stable contracts, the design freezes accidents from today's repo and blocks cleaner recomposition later. Name modules by capability, lifecycle, and caller-visible contract.
@@ -126,7 +126,7 @@ Resolve these before finalizing guidance. If evidence is missing, keep the item 
 ## References
 
 - [`references/decompose-recompose.md`](./references/decompose-recompose.md): Read when: breaking a complex system into modules or deciding how those modules should wire back together.
-- [`references/abstraction-selection.md`](./references/abstraction-selection.md): Read when: choosing between `Schema.Class`, plain `Schema`, `ServiceMap.Service`, `ServiceMap.Reference`, `Layer`, `LayerMap.Service`, a feature read module, `Atom`, a runtime edge module, a toolkit, or a feature-local helper.
+- [`references/abstraction-selection.md`](./references/abstraction-selection.md): Read when: choosing between `Schema.Class`, plain `Schema`, `Context.Service`, `Context.Reference`, `Layer`, `LayerMap.Service`, a feature read module, `Atom`, a runtime edge module, a toolkit, or a feature-local helper.
 - [`references/pattern-notes.md`](./references/pattern-notes.md): Read when: you need reusable, pattern reminders before finalizing the design.
 
 ## Validation Checklist

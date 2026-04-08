@@ -56,7 +56,7 @@ Once modules are real, wire them back together with explicit composition points.
 
 1. **Recompose domain contracts into boundary contracts**
    - domain types, DTO transforms, persistence shapes, tool schemas
-2. **Recompose capabilities through `Layer`, `ServiceMap.Service`, `ServiceMap.Reference`, or `LayerMap.Service`**
+2. **Recompose capabilities through `Layer`, `Context.Service`, `Context.Reference`, or `LayerMap.Service`**
    - one composition point per runtime or sub-runtime
 3. **Recompose reads through read modules and `Atom`**
    - read module first, `Atom` second when a shared evolving read or UI command is needed
@@ -69,7 +69,7 @@ Once modules are real, wire them back together with explicit composition points.
 
 Prefer one of these explicit composition sites:
 
-- a static `.layer` on a `ServiceMap.Service` when the capability is broadly reusable
+- a static `.layer` on a `Context.Service` when the capability is broadly reusable
 - an `Atom.runtime(...)` when a UI-facing feature needs a scoped runtime assembled from feature dependencies
 - an app bootstrap file when the whole runtime is global
 - a handler, command, or entrypoint module only for final decode-and-wire steps, not for durable business policy
@@ -103,7 +103,7 @@ A weak module usually has:
 Use this quick router:
 
 - pure invariant or entity meaning -> domain contract
-- external IO with retries, caching, scoping, or hidden policy -> `ServiceMap.Service`
+- external IO with retries, caching, scoping, or hidden policy -> `Context.Service`
 - reusable semantic read -> feature read module
 - shared evolving UI-facing read or command surface -> `Atom`
 - decode and wire edge -> runtime edge module

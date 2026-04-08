@@ -12,7 +12,7 @@ Observed reusable rule:
 
 Design implication:
 
-When a module owns process lifecycle, filesystem watch, API-client setup, cache lifetime, or scoped cleanup, model it as a `ServiceMap.Service` boundary and document lifecycle ownership explicitly.
+When a module owns process lifecycle, filesystem watch, API-client setup, cache lifetime, or scoped cleanup, model it as a `Context.Service` boundary and document lifecycle ownership explicitly.
 
 ## Pattern 2: Internal helpers stay hidden behind capability seams
 
@@ -95,7 +95,7 @@ If the design mixes these concerns, split the module or explain why the runtime 
 
 Prefer these rules when the target system has:
 
-- CLI, worker, or service-process lifecycles -> emphasize `ServiceMap.Service` boundaries and explicit lifecycle ownership
+- CLI, worker, or service-process lifecycles -> emphasize `Context.Service` boundaries and explicit lifecycle ownership
 - browser or app-style reactive state -> emphasize feature-local reads, commands, and runtime seams
 - schema-first entities shared across boundaries -> emphasize central domain contracts
 - multiple external integrations or adapters -> emphasize narrow capability contracts and visible composition points
