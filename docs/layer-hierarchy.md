@@ -1,6 +1,6 @@
 # Layer hierarchy
 
-`agent-skills-pack` uses a strict 3-layer model so the same artifact contracts can survive across authored and reconstructed workflows.
+`agent-skills-spec-pack` uses a strict 3-layer model so the same artifact contracts can survive across authored and reconstructed workflows.
 
 The layers are:
 

@@ -2,7 +2,7 @@
 name: technical-design
 description: Produce technical-design artifacts from approved specification context and repository evidence. Use when a user needs architecture, boundaries, interfaces, and implementation strategy documented before coding.
 metadata:
-  version: 0.3.3
+  version: 0.3.4
   layer: specialist
   archetype: design
   domain: specification-authoring
@@ -23,6 +23,7 @@ metadata:
 - If the target system uses a known library, framework, or platform, the representative code examples should fit the chosen stack, using its current names and following its conventions, idioms, and best practices rather than generic placeholders or outdated APIs.
 - When `./user-stories.md` includes canonical story IDs, carry those `US1.x` identifiers into design traceability notes instead of relying on story titles alone.
 - Use `visual-diagramming` to choose and author Mermaid diagrams when architecture, interactions, behavior, or data relationships will be understood faster visually than through prose alone.
+- Add an interaction diagram only when ordered collaboration between named participants explains the system more clearly than the process flowchart, context flowchart, and surrounding prose.
 - When diagram wording, syntax safety, or slot-specific completeness is unclear, load the relevant `visual-diagramming` references instead of improvising local conventions.
 - Ground the design in approved charter, approved requirements, approved stories, and repository evidence because architecture without scope alignment becomes speculative.
 - Use approved upstream context from `./charter.md`, `./user-stories.md`, and `./requirements.md`.
@@ -36,7 +37,9 @@ metadata:
 - Output must be one Markdown artifact named `technical-design.md`.
 - The artifact must stay compatible with the `write-technical-design` contract.
 - Include architecture, interfaces, data flow, operational concerns, implementation strategy, and testing strategy.
-- The artifact must explicitly address the four required diagram slots from `write-technical-design`: context flowchart, behavior state diagram, entity relationship diagram, and interaction diagram.
+- Under `System Context`, `### Process Flowchart` must appear before `### Context Flowchart`.
+- The artifact must explicitly address the four required diagram slots from `write-technical-design`: process flowchart, context flowchart, behavior state diagram, and entity relationship diagram.
+- `### Interaction Diagram` is optional and should be added only when ordered collaboration between participants adds material clarity beyond the process flowchart, context flowchart, and surrounding prose.
 - Use diagrams to support understanding, then use prose to add detail the diagrams cannot show without repeating them.
 - Do not collapse the design into requirements restatement, copied five-field story blocks, a file inventory, or a flat task list.
 - Do not invent module boundaries that are not supported by approved scope and repository evidence.
@@ -85,7 +88,7 @@ Out of scope:
    - use story `Observation` to preserve externally visible signals, feedback, or review points
    - use requirements to formalize contracts, constraints, and implementation obligations
 5. If the target system uses Effect, load `../effect-technical-design/SKILL.md` before finalizing boundaries so decomposition, recomposition, and abstraction choices stay consistent with the shared Effect guidance.
-6. Use `visual-diagramming` to fill the four required diagram slots with either the expected Mermaid diagram, a `Not needed:` rationale, or `TODO: Confirm` when applicability is unresolved.
+6. Use `visual-diagramming` to fill the required process, context, state, and entity diagram slots with either the expected Mermaid diagram, a `Not needed:` rationale, or `TODO: Confirm` when applicability is unresolved, and add an interaction diagram only when participant choreography adds material explanatory value.
 7. Load the relevant `visual-diagramming` references when syntax safety, interaction sequencing, flowchart mode, ERD scope, or state naming is unclear.
 8. Apply `gray-box-modules` only to capabilities with durable caller-visible boundaries; otherwise describe the observed structure without forcing the pattern.
 9. Draft `technical-design.md` using the `write-technical-design` contract.
@@ -108,6 +111,7 @@ Out of scope:
 - If design traceability relies on story titles instead of canonical `US1.x` IDs, later story renames break downstream planning anchors. Carry story IDs forward.
 - If you only carry story actions forward and ignore situations or observations, the design misses triggers, feedback, and edge behavior. Preserve those signals.
 - If data flow and interface contracts stay vague, integration bugs show up during coding when assumptions finally collide. Make boundary shape explicit before handing the design downstream.
+- If an interaction diagram only repeats the process flowchart or nearby prose, it consumes attention without adding understanding. Use it only when participant choreography, handoffs, or commit boundaries need the extra view.
 - If implementation strategy turns into a task list, execution planning gets duplicated and the design becomes noisy fast. Capture rollout shape and sequencing constraints, not every work item.
 - If the target system uses Effect and you skip the shared Effect guidance, abstraction choices drift toward personal preference and later designs stop being comparable. Reuse the foundational Effect pattern skill instead of improvising.
 - If unresolved design choices are hidden behind confident prose, planners treat guesses as settled architecture. Use `TODO: Confirm` where the decision is still open or weakly supported.
@@ -120,6 +124,7 @@ Out of scope:
 - explicit components, each introduced by a one-sentence definition before their structured bullets, plus interfaces, data flow, implementation strategy, testing strategy, risks, and tradeoffs
 - one or more short representative code examples with supporting prose, aligned to the chosen stack's current names, conventions, idioms, and best practices when the stack is known
 - the four required diagram slots completed with the expected Mermaid diagrams, `Not needed:` rationales, or `TODO: Confirm`, aligned with `visual-diagramming`
+- an optional interaction diagram only when ordered participant collaboration adds explanatory value, using `sequenceDiagram`, `Not needed:`, or `TODO: Confirm` when included
 - validation passing via the shared technical-design validator
 
 ## Validation Checklist
@@ -131,7 +136,8 @@ Out of scope:
 - at least one short non-Mermaid fenced code block appears where it clarifies the design
 - code examples are accompanied by prose that explains what they illustrate
 - testing strategy and risks/tradeoffs are explicit
-- all four required diagram slots are present and intentionally completed
+- all four required diagram slots are present, `### Process Flowchart` appears before `### Context Flowchart`, and each required slot is intentionally completed
+- if an `### Interaction Diagram` subsection is present, it adds explanatory value and is intentionally completed
 - design traceability uses relevant `US1.x` story IDs or requirement IDs where those anchors clarify scope
 - approved story behavior influences interaction paths, state, feedback, or failure handling where relevant
 - unresolved high-impact details are marked `TODO: Confirm`

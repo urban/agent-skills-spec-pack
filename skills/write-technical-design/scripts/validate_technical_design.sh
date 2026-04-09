@@ -144,6 +144,31 @@ extract_section_block() {
   ' "$FILE"
 }
 
+heading_line() {
+  local heading="$1"
+  grep -nFx "$heading" "$FILE" | head -n1 | cut -d: -f1 || true
+}
+
+assert_heading_order() {
+  local earlier="$1"
+  local later="$2"
+  local earlier_line
+  local later_line
+
+  earlier_line="$(heading_line "$earlier")"
+  later_line="$(heading_line "$later")"
+
+  if [[ -z "$earlier_line" || -z "$later_line" ]]; then
+    echo "Cannot verify heading order without both headings: $earlier / $later" >&2
+    exit 1
+  fi
+
+  if (( earlier_line >= later_line )); then
+    echo "Heading must appear before later subsection: $earlier -> $later" >&2
+    exit 1
+  fi
+}
+
 validate_diagram_slot() {
   local heading="$1"
   local diagram_type="$2"
@@ -179,6 +204,40 @@ validate_diagram_slot() {
   fi
 }
 
+validate_optional_diagram_slot() {
+  local heading="$1"
+  local diagram_type="$2"
+  local block
+
+  if ! grep -Fxq "$heading" "$FILE"; then
+    return 0
+  fi
+
+  block="$(extract_heading_block "$heading")"
+  if [[ -z "$block" ]]; then
+    echo "Diagram subsection is empty: $heading" >&2
+    exit 1
+  fi
+
+  if grep -Eq "^[[:space:]]*-[[:space:]]+Not needed: " <<<"$block"; then
+    return 0
+  fi
+
+  if grep -Eq 'TODO: Confirm' <<<"$block"; then
+    return 0
+  fi
+
+  if ! grep -Eq '```mermaid' <<<"$block"; then
+    echo "Optional diagram subsection must include a Mermaid block or 'Not needed:' rationale: $heading" >&2
+    exit 1
+  fi
+
+  if ! grep -Eq "^[[:space:]]*${diagram_type}( |$)" <<<"$block"; then
+    echo "Optional diagram subsection must use Mermaid type '${diagram_type}': $heading" >&2
+    exit 1
+  fi
+}
+
 system_context_block="$(extract_heading_block '## System Context')"
 if ! grep -Eq "^[[:space:]]*-[[:space:]]+Story or requirements traceability:[[:space:]]*(TODO: Confirm|.*(${traceability_pattern}).*)$" <<<"$system_context_block"; then
   echo "System Context must include story or requirements traceability with one or more US1.x or requirement IDs, or TODO: Confirm" >&2
@@ -191,9 +250,11 @@ if ! grep -Eq "^[[:space:]]*-[[:space:]]+Story impact:[[:space:]]*(TODO: Confirm
   exit 1
 fi
 
+validate_diagram_slot '### Process Flowchart' 'flowchart'
 validate_diagram_slot '### Context Flowchart' 'flowchart'
+assert_heading_order '### Process Flowchart' '### Context Flowchart'
 validate_diagram_slot '### Behavior State Diagram' 'stateDiagram-v2'
 validate_diagram_slot '### Entity Relationship Diagram' 'erDiagram'
-validate_diagram_slot '### Interaction Diagram' 'sequenceDiagram'
+validate_optional_diagram_slot '### Interaction Diagram' 'sequenceDiagram'
 
 echo "Technical design validation passed: $FILE"

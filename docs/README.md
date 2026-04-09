@@ -1,6 +1,6 @@
 # Documentation map
 
-This directory explains how `agent-skills-pack` is organized, what it guarantees, and how to change it safely.
+This directory explains how `agent-skills-spec-pack` is organized, what it guarantees, and how to change it safely.
 
 ## Start here
 
@@ -50,7 +50,7 @@ The package should be understandable in two ways at once:
 
 ### Human maintainer
 
-A human uses `agent-skills-pack` to understand what skills exist, what each one owns, how they compose, and how to change the package without breaking reversibility, provenance, or layer boundaries.
+A human uses `agent-skills-spec-pack` to understand what skills exist, what each one owns, how they compose, and how to change the package without breaking reversibility, provenance, or layer boundaries.
 
 Typical goals:
 
@@ -61,7 +61,7 @@ Typical goals:
 
 ### LLM or coding agent
 
-An LLM uses `agent-skills-pack` as selective runtime guidance. It should be able to load only the package-wide rules and the small set of skills needed for the current task, then apply those contracts directly while producing or validating artifacts.
+An LLM uses `agent-skills-spec-pack` as selective runtime guidance. It should be able to load only the package-wide rules and the small set of skills needed for the current task, then apply those contracts directly while producing or validating artifacts.
 
 Typical goals:
 

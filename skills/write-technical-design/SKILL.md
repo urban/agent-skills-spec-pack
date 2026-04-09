@@ -2,7 +2,7 @@
 name: write-technical-design
 description: Write and validate canonical technical-design artifacts. Use when a task creates, derives, reviews, or validates architecture and implementation strategy documentation that must stay compatible across workflows.
 metadata:
-  version: 0.5.1
+  version: 0.5.2
   layer: foundational
 ---
 
@@ -13,6 +13,7 @@ metadata:
 - Treat the approved charter, user stories, and requirements as the source of truth for scope, user-visible behavior, and obligations; reference them instead of restating them in the design.
 - When canonical user stories are available, use their `US1.x` identifiers in design traceability notes and component impact notes so downstream planning can link back to stable story anchors.
 - Use Mermaid diagram-authoring guidance when a Mermaid diagram communicates structure, interaction, behavior, or data relationships faster than prose because technical design is for humans making implementation decisions.
+- Add an interaction diagram only when ordered collaboration between named participants explains the system more clearly than the process flowchart, context flowchart, and surrounding prose.
 - Describe the system in terms of responsibilities, boundaries, interactions, and tradeoffs because component lists without relationships do not guide implementation.
 - Start each named component subsection with one orienting sentence immediately below the heading and before any bullets so readers can understand the component before scanning structured detail.
 - Include short representative code examples when they explain a contract, schema, result family, persisted shape, or composition seam better than prose alone.
@@ -36,8 +37,11 @@ metadata:
 - Include architecture and implementation strategy, but do not expand into commit sequencing or atomic task lists.
 - Include at least one short non-Mermaid fenced code block somewhere in the artifact; code examples must stay short and cannot replace architectural explanation.
 - Under `Components and Responsibilities`, each named component subsection must contain a one-sentence definition paragraph directly below the `###` heading and before the structured bullet list.
-- The artifact must explicitly address four diagram slots: context flowchart, behavior state diagram, entity relationship diagram, and interaction diagram.
-- Each diagram slot must contain either a Mermaid diagram of the expected type, a `Not needed:` rationale, or `TODO: Confirm` when applicability is still unresolved.
+- Under `System Context`, `### Process Flowchart` must appear before `### Context Flowchart`.
+- The artifact must explicitly address four required diagram slots: process flowchart, context flowchart, behavior state diagram, and entity relationship diagram.
+- Each required diagram slot must contain either a Mermaid diagram of the expected type, a `Not needed:` rationale, or `TODO: Confirm` when applicability is still unresolved.
+- `### Interaction Diagram` is optional and should be added only when ordered collaboration between participants adds material clarity beyond the process flowchart, context flowchart, and surrounding prose.
+- When an optional `### Interaction Diagram` subsection is included, it must contain either a `sequenceDiagram`, a `Not needed:` rationale, or `TODO: Confirm`.
 - If a required section is not yet confirmed, keep the section and mark it `TODO: Confirm`.
 - Do not copy charter framing, five-field story blocks, or requirement lists into the design as substitute content.
 
@@ -72,10 +76,11 @@ Minimum content expectations:
 - traceability notes use relevant `US1.x` story IDs or requirement IDs where those anchors clarify design scope
 - explicit testing strategy
 - explicit risks and tradeoffs
-- a `### Context Flowchart` subsection using `flowchart`, `Not needed:`, or `TODO: Confirm`
+- a `### Process Flowchart` subsection using `flowchart`, `Not needed:`, or `TODO: Confirm`
+- a `### Context Flowchart` subsection using `flowchart`, `Not needed:`, or `TODO: Confirm`, placed after `### Process Flowchart`
 - a `### Behavior State Diagram` subsection using `stateDiagram-v2`, `Not needed:`, or `TODO: Confirm`
 - a `### Entity Relationship Diagram` subsection using `erDiagram`, `Not needed:`, or `TODO: Confirm`
-- a `### Interaction Diagram` subsection using `sequenceDiagram`, `Not needed:`, or `TODO: Confirm`
+- if present, a `### Interaction Diagram` subsection using `sequenceDiagram`, `Not needed:`, or `TODO: Confirm`
 - `TODO: Confirm` where a high-impact design detail is unresolved or weakly supported
 
 Inputs:
@@ -83,7 +88,7 @@ Inputs:
 - approved requirements or repository evidence for derived design
 - approved or reconstructed user stories that define user-visible behavior
 - known architecture boundaries, integrations, operational concerns, and implementation constraints
-- visual explanation needs such as context, interactions, state behavior, persona flow, or persistent entity relationships when diagrams would add clarity
+- visual explanation needs such as process flow, context, interactions, state behavior, persona flow, or persistent entity relationships when diagrams would add clarity
 
 Output:
 
@@ -105,7 +110,7 @@ Output:
 6. For each named component subsection, write one sentence directly below the heading that orients the reader before the structured bullets begin.
 7. Add one or more short representative code examples when they clarify contracts, schemas, result families, persisted shapes, or composition seams better than prose alone.
 8. If the target uses a known library, framework, or platform, make those examples fit the chosen stack, using its current names and following its conventions, idioms, and best practices.
-9. Use Mermaid diagram-authoring guidance to fill the required diagram slots with either the right Mermaid diagram, a `Not needed:` rationale, or `TODO: Confirm` when applicability is unresolved.
+9. Use Mermaid diagram-authoring guidance to fill the required process, context, state, and entity diagram slots with either the right Mermaid diagram, a `Not needed:` rationale, or `TODO: Confirm` when applicability is unresolved, and add an interaction diagram only when participant choreography adds material explanatory value.
 10. Describe data flow, interfaces, integration points, grammars, validation rules, and failure handling in enough detail to guide implementation.
 11. Record security, reliability, performance, implementation strategy, resource ownership, and testing strategy decisions.
 12. Surface risks, tradeoffs, and unresolved questions rather than burying them in narrative.
@@ -123,7 +128,8 @@ Output:
 - If interfaces omit accepted grammars, validation rules, or boundary errors, important contracts stay implicit and change risk hides until coding. Make those seams explicit when they matter.
 - If interfaces and data flow stay vague, teams discover incompatible assumptions only during coding. Make boundary contracts and major data movement explicit.
 - If you add a diagram and then repeat it in prose, the document gets longer without adding signal. Use the surrounding text for constraints, caveats, and decisions the diagram cannot show.
-- If you silently skip a required diagram slot because the system seems simple, validation will fail and reviewers will not know whether the omission was intentional. Fill every slot with a diagram, `Not needed:`, or `TODO: Confirm`.
+- If you silently skip a required process, context, state, or entity diagram slot because the system seems simple, validation will fail and reviewers will not know whether the omission was intentional. Fill every required slot with a diagram, `Not needed:`, or `TODO: Confirm`.
+- If an interaction diagram only restates the process flowchart or nearby prose, it adds ceremony instead of understanding. Add it only when participant choreography, handoffs, or commit boundaries need the extra view.
 - If implementation strategy ignores composition roots, dependency-wiring sites, or resource ownership, layered and multi-boundary designs become too vague to guide change work. Name recomposition and ownership explicitly.
 - If implementation strategy turns into a task list, planning gets duplicated and the design ages badly. Explain rollout approach and sequencing constraints, not every work item.
 - If design traceability relies on story titles instead of canonical `US1.x` IDs, later story renames break downstream references. Use story IDs whenever stories are available.
@@ -139,6 +145,7 @@ Output:
 - Traceability notes that reference canonical `US1.x` story IDs or requirement IDs where relevant.
 - Explicit architecture, component responsibilities, data flow, interfaces, operational concerns, and implementation strategy.
 - The four required diagram slots completed with Mermaid diagrams, `Not needed:` rationales, or `TODO: Confirm`, chosen with Mermaid diagram-authoring guidance.
+- An optional interaction diagram only when ordered participant collaboration adds explanatory value, using `sequenceDiagram`, `Not needed:`, or `TODO: Confirm` when included.
 - A concrete testing strategy plus explicit risks and tradeoffs.
 - One or more short representative code examples with supporting prose.
 - Clear `TODO: Confirm` markers for unresolved high-impact design details.
@@ -157,7 +164,8 @@ Output:
 - Validation and error seams are explicit when source-backed.
 - Resource and lifecycle ownership is explicit when it materially affects behavior.
 - Testing strategy and risks or tradeoffs are explicit.
-- All four required diagram slots exist and each uses the expected Mermaid type, `Not needed:`, or `TODO: Confirm`.
+- All four required diagram slots exist, `### Process Flowchart` appears before `### Context Flowchart`, and each required slot uses the expected Mermaid type, `Not needed:`, or `TODO: Confirm`.
+- If an `### Interaction Diagram` subsection is present, it adds explanatory value and uses `sequenceDiagram`, `Not needed:`, or `TODO: Confirm`.
 - Traceability notes use relevant `US1.x` story IDs or requirement IDs where those anchors clarify the design.
 - User-story behavior influences interfaces, triggers, state, or feedback where relevant rather than being copied verbatim.
 - Mermaid diagrams are chosen to clarify rather than decorate and their prose does not simply restate them.

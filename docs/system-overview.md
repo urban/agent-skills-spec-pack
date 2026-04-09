@@ -1,6 +1,6 @@
 # System overview
 
-`agent-skills-pack` exists to make software specification artifacts usable in both directions:
+`agent-skills-spec-pack` exists to make software specification artifacts usable in both directions:
 
 - from product intent to implementation
 - from an implemented system back to reusable specification artifacts

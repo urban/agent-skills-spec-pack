@@ -1,6 +1,6 @@
 # Diagram Evidence and Recovery Wording
 
-Use this reference when a derived technical design needs help filling the four required diagram slots without overstating certainty.
+Use this reference when a derived technical design needs help filling the required process, context, state, and entity diagram slots, and deciding whether an optional interaction diagram adds value, without overstating certainty.
 
 ## Evidence rules
 
@@ -12,11 +12,17 @@ Use this reference when a derived technical design needs help filling the four r
 
 ## Slot guidance
 
+### Process Flowchart
+
+Use when repo evidence shows how work moves through major steps, decisions, and handoffs.
+
+Use `Not needed:` only when the observed system is simple enough that a process view would add no clarity beyond surrounding prose.
+
 ### Context Flowchart
 
-Use when repo evidence shows runtime boundaries, entrypoints, major processing stages, or external systems.
+Use when repo evidence shows runtime boundaries, actors, major capabilities, entrypoints, or external systems.
 
-Use `Not needed:` only when the surrounding prose already makes the runtime boundary trivial and a flowchart would add no new clarity.
+Use `Not needed:` only when the surrounding prose already makes the runtime boundary trivial and a second flowchart would add no new clarity.
 
 ### Behavior State Diagram
 
@@ -32,9 +38,9 @@ Use `Not needed:` when persistence is opaque, external, or not central to the re
 
 ### Interaction Diagram
 
-Use when handlers, controllers, jobs, events, or integration code show ordered collaboration between participants.
+Use when handlers, controllers, jobs, events, or integration code show ordered collaboration between participants and that ordered choreography adds value beyond the process flowchart, context flowchart, and surrounding prose.
 
-Use `Not needed:` when ordering adds no clarity beyond a simpler flowchart.
+Omit the subsection when ordering adds no new clarity beyond those other views. If you keep the subsection while uncertainty remains visible, use `Not needed:` or `TODO: Confirm` instead of overstating certainty.
 
 ## Wording patterns
 

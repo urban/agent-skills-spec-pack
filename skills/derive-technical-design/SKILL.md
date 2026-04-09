@@ -2,7 +2,7 @@
 name: derive-technical-design
 description: Reconstruct technical-design artifacts from repository evidence and reconstructed specification context. Use when a user needs as-built architecture, boundaries, and implementation strategy documented for an existing system.
 metadata:
-  version: 0.4.0
+  version: 0.4.1
   layer: specialist
   archetype: research
   domain: specification-reconstruction
@@ -20,6 +20,7 @@ metadata:
 - Produce the artifact as `technical-design.md`.
 - Use the `write-technical-design` contract so the derived artifact stays compatible with authored technical design.
 - Use `visual-diagramming` to choose and author Mermaid diagrams when observed architecture, interactions, behavior, or data relationships will be understood faster visually than through prose alone.
+- Add an interaction diagram only when observed ordered collaboration between named participants explains the implemented system more clearly than the process flowchart, context flowchart, and surrounding prose.
 - When diagram wording, syntax safety, or slot-specific completeness is unclear, load the relevant `visual-diagramming` references instead of inventing local conventions.
 - Upstream reconstructed artifacts help, but source code wins when it proves stronger runtime, validation, lifecycle, or failure constraints.
 - Identify and document the composition root, runtime profile, layer or service graph, parser boundaries, validation seams, tagged error surfaces, resource ownership, and direct runtime escape hatches when the repository shows them.
@@ -36,7 +37,9 @@ metadata:
 
 - Output must be one Markdown artifact named `technical-design.md`.
 - The artifact must stay compatible with the `write-technical-design` contract.
-- The artifact must explicitly address the four required diagram slots from `write-technical-design`: context flowchart, behavior state diagram, entity relationship diagram, and interaction diagram.
+- Under `System Context`, `### Process Flowchart` must appear before `### Context Flowchart`.
+- The artifact must explicitly address the four required diagram slots from `write-technical-design`: process flowchart, context flowchart, behavior state diagram, and entity relationship diagram.
+- `### Interaction Diagram` is optional and should be added only when observed ordered collaboration between participants adds material clarity beyond the process flowchart, context flowchart, and surrounding prose.
 - Diagrams must stay evidence-based and support the observed system instead of proposing a cleaner future state.
 - If the destination file already exists, create a timestamped backup before overwrite.
 - Do not recommend future-state improvements as if they were the current architecture.
@@ -101,7 +104,7 @@ Out of scope:
    - use reconstructed requirements to anchor obligations and constraints the code appears to implement
 10. If Effect imports or `Layer` composition are present, load `effect-technical-design` to document the actual Effect abstractions, composition sites, and runtime escape hatches in use.
 11. Evaluate whether any bounded capability meets the gray-box evidence threshold before documenting it as a module boundary.
-12. Use `visual-diagramming` to fill the four required diagram slots with either the expected Mermaid diagram, a `Not needed:` rationale, or `TODO: Confirm` when applicability is unresolved, while avoiding claims the evidence cannot support.
+12. Use `visual-diagramming` to fill the required process, context, state, and entity diagram slots with either the expected Mermaid diagram, a `Not needed:` rationale, or `TODO: Confirm` when applicability is unresolved, while avoiding claims the evidence cannot support, and add an interaction diagram only when participant choreography adds material explanatory value.
 13. Load the relevant `visual-diagramming` references when syntax safety, interaction sequencing, flowchart mode, ERD scope, or state naming is unclear.
 14. Load `references/diagram-evidence.md` when diagram wording, slot applicability, or evidence thresholds are unclear.
 15. Resolve the chosen destination path.
@@ -125,6 +128,7 @@ Out of scope:
 - If data flow is skipped because the codebase is large, the final document names parts without explaining how the system actually works. Trace the important paths end to end.
 - If contradictory evidence between tests, config, and implementation is smoothed over, the report hides the repo's real design risk. Preserve the ambiguity instead of cleaning it up.
 - If a derived diagram explains more than the repository proves, readers trust a picture that the evidence cannot support. Keep diagrams anchored to observed behavior and mark weak spots `TODO: Confirm`.
+- If an interaction diagram only repeats the process flowchart or nearby prose, it makes the artifact busier without improving understanding. Add it only when participant choreography, handoffs, or commit boundaries need the extra evidence-backed view.
 - If the composition root is omitted, the runtime architecture stays too vague to guide later changes. Name the entrypoint and recomposition sites when observable.
 - If an existing report is overwritten without backup, future review loses the history of how understanding changed. Create the timestamped backup first.
 
@@ -136,12 +140,13 @@ Out of scope:
 - traceability notes that reference relevant reconstructed `US1.x` story IDs or requirement IDs
 - explicit composition-root, runtime-profile, boundary, resource-ownership, and error-model coverage when source-backed
 - the four required diagram slots completed with evidence-backed Mermaid diagrams, `Not needed:` rationales, or `TODO: Confirm`
+- an optional interaction diagram only when ordered participant collaboration adds explanatory value, using `sequenceDiagram`, `Not needed:`, or `TODO: Confirm` when included
 - validation passing via the shared technical-design validator
 
 ## References
 
 - [`references/gray-box-routing.md`](./references/gray-box-routing.md): Read when: deciding whether observed repository seams are strong enough to document as gray-box modules.
-- [`references/diagram-evidence.md`](./references/diagram-evidence.md): Read when: filling required diagram slots for a derived technical design without overstating certainty.
+- [`references/diagram-evidence.md`](./references/diagram-evidence.md): Read when: filling required diagram slots and deciding whether an optional interaction diagram adds value in a derived technical design without overstating certainty.
 
 ## Validation Checklist
 
@@ -153,7 +158,8 @@ Out of scope:
 - parser, validation, resource, and error boundaries are documented when source-backed
 - named components, interfaces, testing strategy, and risks or tradeoffs are explicit
 - design traceability uses relevant reconstructed `US1.x` story IDs or requirement IDs where those anchors clarify scope
-- all four required diagram slots are present and completed without overstating certainty
+- all four required diagram slots are present, `### Process Flowchart` appears before `### Context Flowchart`, and the required slots are completed without overstating certainty
+- if an `### Interaction Diagram` subsection is present, it adds explanatory value and stays evidence-backed
 - reconstructed story behavior influences observed interfaces, state, feedback, or failure handling where relevant
 - gray-box module claims are tied to concrete repository evidence
 - stronger technical findings are marked for requirement reconciliation when needed

@@ -27,16 +27,27 @@ source_artifacts:
 - [TODO: upstream system, user surface, runtime environment, or external boundary]
 - Story or requirements traceability: [TODO: relevant `US1.x` story IDs, capability areas, or requirement IDs]
 
-### Context Flowchart
+### Process Flowchart
 
 ```mermaid
 flowchart TD
-  [TODO: add system context or process flow]
+  [TODO: add process flow]
 ```
 
 Or:
 
-- Not needed: [TODO: explain why a flowchart would not add clarity here]
+- Not needed: [TODO: explain why a process flowchart would not add clarity here]
+
+### Context Flowchart
+
+```mermaid
+flowchart TD
+  [TODO: add system context]
+```
+
+Or:
+
+- Not needed: [TODO: explain why a context flowchart would not add clarity here]
 
 ## Components and Responsibilities
 
@@ -98,6 +109,8 @@ Representative code example when it clarifies a service contract, schema, error 
 ```text
 [TODO: replace this fence with the language or format for the chosen stack, then add a short representative example and explain it in surrounding prose]
 ```
+
+Optional: include this subsection only when ordered collaboration between named participants adds material clarity beyond the process flowchart, context flowchart, and surrounding prose. Remove it entirely when it would only restate those views.
 
 ### Interaction Diagram
 

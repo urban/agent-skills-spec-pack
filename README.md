@@ -1,6 +1,6 @@
-# Agent skills for software development
+# Agent Skills Spec Pack
 
-`agent-skills-pack` is a contract-first skill pack for software specification work.
+`agent-skills-spec-pack` is a contract-first skill pack for software specification work.
 
 It supports both directions:
 
