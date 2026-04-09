@@ -2,7 +2,7 @@
 name: technical-design
 description: Produce technical-design artifacts from approved specification context and repository evidence. Use when a user needs architecture, boundaries, interfaces, and implementation strategy documented before coding.
 metadata:
-  version: 0.3.2
+  version: 0.3.3
   layer: specialist
   archetype: design
   domain: specification-authoring
@@ -20,7 +20,7 @@ metadata:
 - Use the `write-technical-design` contract for section order, content boundaries, shared validation, diagram slot requirements, traceability expectations, component-definition formatting, and representative code-example expectations because downstream planning expects that canonical shape.
 - Under each named component heading, write one orienting sentence before any bullet list so readers can understand the component at a glance before scanning its structured details.
 - Include short representative code examples when they clarify a contract, schema, result family, persisted shape, or composition seam faster than prose alone, and surround them with prose that explains what the example is illustrating.
-- If the target system uses Effect, the representative code examples should use current Effect best practices and current names from the shared Effect guidance rather than generic TypeScript or outdated Effect patterns.
+- If the target system uses a known library, framework, or platform, the representative code examples should fit the chosen stack, using its current names and following its conventions, idioms, and best practices rather than generic placeholders or outdated APIs.
 - When `./user-stories.md` includes canonical story IDs, carry those `US1.x` identifiers into design traceability notes instead of relying on story titles alone.
 - Use `visual-diagramming` to choose and author Mermaid diagrams when architecture, interactions, behavior, or data relationships will be understood faster visually than through prose alone.
 - When diagram wording, syntax safety, or slot-specific completeness is unclear, load the relevant `visual-diagramming` references instead of improvising local conventions.
@@ -91,7 +91,7 @@ Out of scope:
 9. Draft `technical-design.md` using the `write-technical-design` contract.
 10. For each named component subsection, add a one-sentence definition immediately below the heading before listing boundary type, owned capability, hidden depth, inputs, outputs, and impact notes.
 11. Add one or more short representative code examples where they clarify the design better than prose alone, especially for contracts, schemas, result families, persisted shapes, or composition seams.
-12. When the target system uses Effect, ensure those code examples use current Effect best practices and names from `effect-technical-design`.
+12. When the target system uses a known library, framework, or platform, ensure those code examples fit the chosen stack, using its current names and following its conventions, idioms, and best practices; if the system uses Effect, keep them aligned with `effect-technical-design`.
 13. Record implementation strategy, testing strategy, risks, tradeoffs, and `TODO: Confirm` markers for unresolved high-impact design decisions.
 14. Validate with `bash ../write-technical-design/scripts/validate_technical_design.sh <resolved-technical-design-path>`.
 15. Deliver the draft and request approval before implementation proceeds.
@@ -102,7 +102,7 @@ Out of scope:
 - If the first line under a component heading is a bullet list, readers have to infer the component's purpose from fragments and the section becomes harder to skim. Start each component with one orienting sentence before the bullets.
 - If code examples are omitted from a design that would be clearer with one, the artifact forces implementers to reverse-engineer types and contracts from prose. Add short representative examples where they carry meaning faster than paragraphs.
 - If code examples appear without surrounding explanation, reviewers can read the syntax but still miss why the example matters. Introduce or follow each example with prose that names what it is illustrating.
-- If an Effect-target design uses outdated pre-`Context` examples, it teaches the wrong architecture while appearing precise. Use current Effect best practices and names.
+- If code examples use outdated or non-idiomatic patterns for the chosen stack, they teach the wrong architecture while appearing precise. Use that stack's current names, conventions, idioms, and best practices.
 - If components are named without owned responsibilities, the design becomes a directory tour instead of a system model. State what each component owns and how it interacts with others.
 - If you force every design into gray-box modules, weak seams get documented as facts and later work ossifies around speculation. Use the pattern only when evidence supports a real boundary.
 - If design traceability relies on story titles instead of canonical `US1.x` IDs, later story renames break downstream planning anchors. Carry story IDs forward.
@@ -118,7 +118,7 @@ Out of scope:
 - architecture aligned to approved charter, user stories, and requirements
 - traceability notes that reference relevant `US1.x` story IDs or requirement IDs
 - explicit components, each introduced by a one-sentence definition before their structured bullets, plus interfaces, data flow, implementation strategy, testing strategy, risks, and tradeoffs
-- one or more short representative code examples with supporting prose, using current Effect best practices when the target system uses Effect
+- one or more short representative code examples with supporting prose, aligned to the chosen stack's current names, conventions, idioms, and best practices when the stack is known
 - the four required diagram slots completed with the expected Mermaid diagrams, `Not needed:` rationales, or `TODO: Confirm`, aligned with `visual-diagramming`
 - validation passing via the shared technical-design validator
 

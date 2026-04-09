@@ -68,10 +68,10 @@ Or:
 - Flow: [TODO: how data moves through the system]
 - Observation support: [TODO: how visible outcomes, feedback, or state signals are produced]
 
-Representative code example when it clarifies a core data shape, persisted record, or result model:
+Representative code example when it clarifies a core data shape, persisted record, or result model. Use the fence and syntax that match the chosen stack:
 
-```ts
-[TODO: add a short representative example and explain it in surrounding prose]
+```text
+[TODO: replace this fence with the language or format for the chosen stack, then add a short representative example and explain it in surrounding prose]
 ```
 
 ### Entity Relationship Diagram
@@ -93,10 +93,10 @@ Or:
 - Boundary errors: [TODO: tagged errors, schema errors, thrown errors, or `TODO: Confirm`]
 - Trigger and boundary conditions: [TODO: relevant situations, preconditions, or edge cases]
 
-Representative code example when it clarifies a service contract, schema, error model, or composition seam:
+Representative code example when it clarifies a service contract, schema, error model, or composition seam. Use the fence and syntax that match the chosen stack:
 
-```ts
-[TODO: add a short representative example and explain it in surrounding prose]
+```text
+[TODO: replace this fence with the language or format for the chosen stack, then add a short representative example and explain it in surrounding prose]
 ```
 
 ### Interaction Diagram

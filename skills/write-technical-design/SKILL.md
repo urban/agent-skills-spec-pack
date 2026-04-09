@@ -2,7 +2,7 @@
 name: write-technical-design
 description: Write and validate canonical technical-design artifacts. Use when a task creates, derives, reviews, or validates architecture and implementation strategy documentation that must stay compatible across workflows.
 metadata:
-  version: 0.5.0
+  version: 0.5.1
   layer: foundational
 ---
 
@@ -17,8 +17,7 @@ metadata:
 - Start each named component subsection with one orienting sentence immediately below the heading and before any bullets so readers can understand the component before scanning structured detail.
 - Include short representative code examples when they explain a contract, schema, result family, persisted shape, or composition seam better than prose alone.
 - Surround code examples with supporting prose that explains what the example is illustrating and why that shape matters.
-- When the design targets a known library or framework, write code examples using that library's current best practices and current names instead of generic pseudocode or outdated APIs.
-- For Effect targets specifically, use current Effect patterns such as `Context.Service`, `Context.Reference`, `Schema.Struct`, `Schema.TaggedStruct`, `Schema.Union`, `Schema.TaggedErrorClass`, `Effect.gen`, `Effect.fn`, and `Layer.effect` when those abstractions are the right fit.
+- When the design targets a known library, framework, or platform, write code examples that fit the chosen stack, using its current names and following its conventions, idioms, and best practices instead of generic pseudocode or outdated APIs.
 - Keep interfaces, data flow, and operational concerns concrete enough to implement because vague design prose fails downstream.
 - When observable, name the composition root, runtime profile, boundary types, resource ownership, and error model explicitly.
 - For derived design, record the actual abstractions and runtime escape hatches the code uses, even when they differ from preferred style.
@@ -105,7 +104,7 @@ Output:
 5. Define major components or subsystems and state their responsibilities, boundary types, ownership, and interactions.
 6. For each named component subsection, write one sentence directly below the heading that orients the reader before the structured bullets begin.
 7. Add one or more short representative code examples when they clarify contracts, schemas, result families, persisted shapes, or composition seams better than prose alone.
-8. If the target uses a known library or framework, make those examples use current best practices and current names for that stack; for Effect targets, prefer current Effect idioms.
+8. If the target uses a known library, framework, or platform, make those examples fit the chosen stack, using its current names and following its conventions, idioms, and best practices.
 9. Use Mermaid diagram-authoring guidance to fill the required diagram slots with either the right Mermaid diagram, a `Not needed:` rationale, or `TODO: Confirm` when applicability is unresolved.
 10. Describe data flow, interfaces, integration points, grammars, validation rules, and failure handling in enough detail to guide implementation.
 11. Record security, reliability, performance, implementation strategy, resource ownership, and testing strategy decisions.
