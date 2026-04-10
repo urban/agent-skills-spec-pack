@@ -1,9 +1,9 @@
 ---
 name: effect-technical-design
-description: Define Effect-specific technical design guidance for TypeScript systems. Use when a technical-design task targets an Effect application and needs shared architecture and boundary conventions.
+description: "Define Effect-specific technical design guidance for TypeScript systems. Use when a technical-design task targets an Effect application and needs shared architecture and boundary conventions."
 license: MIT
 metadata:
-  version: 0.2.1
+  version: "0.2.1"
   author: "urban (https://github.com)"
   layer: foundational
 ---

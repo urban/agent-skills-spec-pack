@@ -1,9 +1,9 @@
 ---
 name: write-charter
-description: Write and validate canonical charter artifacts. Use when a task creates, derives, reviews, or validates scope-baseline documentation for a specification pack.
+description: "Write and validate canonical charter artifacts. Use when a task creates, derives, reviews, or validates scope-baseline documentation for a specification pack."
 license: MIT
 metadata:
-  version: 0.2.0
+  version: "0.2.0"
   author: "urban (https://github.com)"
   layer: foundational
 ---

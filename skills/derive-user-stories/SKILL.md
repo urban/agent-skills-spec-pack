@@ -1,9 +1,9 @@
 ---
 name: derive-user-stories
-description: Reconstruct user-stories artifacts from repository evidence. Use when a user needs implemented user-visible behavior and capability areas inferred from an existing system.
+description: "Reconstruct user-stories artifacts from repository evidence. Use when a user needs implemented user-visible behavior and capability areas inferred from an existing system."
 license: MIT
 metadata:
-  version: 0.3.0
+  version: "0.3.0"
   author: "urban (https://github.com)"
   layer: specialist
   archetype: research

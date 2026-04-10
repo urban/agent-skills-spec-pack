@@ -1,9 +1,9 @@
 ---
 name: reconstruct-implementation-constraints
-description: Recover source-backed implementation constraints that materially shape execution, accepted inputs, operator-visible behavior, or operational prerequisites. Use when a derived requirements or technical-design task needs a reusable constraint ledger from code, tests, manifests, or runtime wiring.
+description: "Recover source-backed implementation constraints that materially shape execution, accepted inputs, operator-visible behavior, or operational prerequisites. Use when a derived requirements or technical-design task needs a reusable constraint ledger from code, tests, manifests, or runtime wiring."
 license: MIT
 metadata:
-  version: 0.1.0
+  version: "0.1.0"
   author: "urban (https://github.com)"
   layer: foundational
 ---

@@ -1,9 +1,9 @@
 ---
 name: write-user-stories
-description: Write and validate canonical user-stories artifacts. Use when a task creates, derives, reviews, or validates user-visible behavior documentation that must stay compatible across workflows.
+description: "Write and validate canonical user-stories artifacts. Use when a task creates, derives, reviews, or validates user-visible behavior documentation that must stay compatible across workflows."
 license: MIT
 metadata:
-  version: 0.3.0
+  version: "0.3.0"
   author: "urban (https://github.com)"
   layer: foundational
 ---

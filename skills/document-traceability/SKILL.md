@@ -1,9 +1,9 @@
 ---
 name: document-traceability
-description: Define canonical provenance and source-artifact lineage for package artifacts. Use when a skill creates or validates a package artifact that must carry deterministic frontmatter metadata.
+description: "Define canonical provenance and source-artifact lineage for package artifacts. Use when a skill creates or validates a package artifact that must carry deterministic frontmatter metadata."
 license: MIT
 metadata:
-  version: 0.2.0
+  version: "0.2.0"
   author: "urban (https://github.com)"
   layer: foundational
 ---

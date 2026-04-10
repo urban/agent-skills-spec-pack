@@ -1,9 +1,9 @@
 ---
 name: write-execution-plan
-description: Write and validate canonical execution-plan artifacts. Use when a task creates, derives, reviews, or validates implementation coordination from approved specification context.
+description: "Write and validate canonical execution-plan artifacts. Use when a task creates, derives, reviews, or validates implementation coordination from approved specification context."
 license: MIT
 metadata:
-  version: 0.3.0
+  version: "0.3.0"
   author: "urban (https://github.com)"
   layer: foundational
 ---

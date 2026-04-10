@@ -1,9 +1,9 @@
 ---
 name: derive-technical-design
-description: Reconstruct technical-design artifacts from repository evidence and reconstructed specification context. Use when a user needs as-built architecture, boundaries, and implementation strategy documented for an existing system.
+description: "Reconstruct technical-design artifacts from repository evidence and reconstructed specification context. Use when a user needs as-built architecture, boundaries, and implementation strategy documented for an existing system."
 license: MIT
 metadata:
-  version: 0.4.1
+  version: "0.4.1"
   author: "urban (https://github.com)"
   layer: specialist
   archetype: research

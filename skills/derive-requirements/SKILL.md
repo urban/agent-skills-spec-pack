@@ -1,9 +1,9 @@
 ---
 name: derive-requirements
-description: Reconstruct requirements artifacts from repository evidence and reconstructed user-visible behavior. Use when a user needs implemented product obligations documented for an existing system.
+description: "Reconstruct requirements artifacts from repository evidence and reconstructed user-visible behavior. Use when a user needs implemented product obligations documented for an existing system."
 license: MIT
 metadata:
-  version: 0.4.0
+  version: "0.4.0"
   author: "urban (https://github.com)"
   layer: specialist
   archetype: research

@@ -1,9 +1,9 @@
 ---
 name: write-task-tracking
-description: Write and validate canonical local task-tracking artifacts. Use when a task creates, derives, reviews, or validates execution tasks from an approved plan.
+description: "Write and validate canonical local task-tracking artifacts. Use when a task creates, derives, reviews, or validates execution tasks from an approved plan."
 license: MIT
 metadata:
-  version: 0.3.0
+  version: "0.3.0"
   author: "urban (https://github.com)"
   layer: foundational
 ---

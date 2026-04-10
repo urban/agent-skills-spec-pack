@@ -1,9 +1,9 @@
 ---
 name: visual-diagramming
-description: Select and author Mermaid diagrams that clarify systems, behavior, relationships, or journeys. Use when an artifact needs a visual explanation grounded in the available evidence.
+description: "Select and author Mermaid diagrams that clarify systems, behavior, relationships, or journeys. Use when an artifact needs a visual explanation grounded in the available evidence."
 license: MIT
 metadata:
-  version: 0.2.0
+  version: "0.2.0"
   author: "urban (https://github.com)"
   layer: foundational
 ---

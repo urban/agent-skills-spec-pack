@@ -1,9 +1,9 @@
 ---
 name: specification-authoring
-description: Orchestrate authored specification work for a new product or major feature. Use when a user needs a coordinated charter, user-stories, requirements, and technical-design pack created from approved product framing.
+description: "Orchestrate authored specification work for a new product or major feature. Use when a user needs a coordinated charter, user-stories, requirements, and technical-design pack created from approved product framing."
 license: MIT
 metadata:
-  version: 0.2.0
+  version: "0.2.0"
   author: "urban (https://github.com)"
   layer: coordination
   dependencies:

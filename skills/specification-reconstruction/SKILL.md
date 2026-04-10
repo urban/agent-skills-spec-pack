@@ -1,9 +1,9 @@
 ---
 name: specification-reconstruction
-description: Orchestrate reconstruction of a specification pack from repository evidence. Use when a user needs charter, user-stories, requirements, and technical-design artifacts recovered from an existing system.
+description: "Orchestrate reconstruction of a specification pack from repository evidence. Use when a user needs charter, user-stories, requirements, and technical-design artifacts recovered from an existing system."
 license: MIT
 metadata:
-  version: 0.3.0
+  version: "0.3.0"
   author: "urban (https://github.com)"
   layer: coordination
   dependencies:

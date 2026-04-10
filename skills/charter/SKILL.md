@@ -1,9 +1,9 @@
 ---
 name: charter
-description: Produce charter artifacts from product intent and relevant repository context. Use when a user needs approved scope, goals, non-goals, personas, and success criteria captured for specification work.
+description: "Produce charter artifacts from product intent and relevant repository context. Use when a user needs approved scope, goals, non-goals, personas, and success criteria captured for specification work."
 license: MIT
 metadata:
-  version: 0.2.0
+  version: "0.2.0"
   author: "urban (https://github.com)"
   layer: specialist
   archetype: planning
