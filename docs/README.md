@@ -18,6 +18,7 @@ Read these in order if you are new to the package:
 | --- | --- |
 | Decide whether a new skill should exist | [skill-selection.md](./skill-selection.md) |
 | Create or update `skills/<skill-name>/SKILL.md` | [skill-authoring.md](./skill-authoring.md), [skill-descriptions.md](./skill-descriptions.md) |
+| Decide whether a skill should be internal-only | [skill-authoring.md](./skill-authoring.md), [skill-selection.md](./skill-selection.md) |
 | Understand layer ownership, dependency direction, and concrete hierarchy examples | [system-overview.md](./system-overview.md), [layer-hierarchy.md](./layer-hierarchy.md) |
 | Check provenance, lineage, and frontmatter | [provenance.md](./provenance.md) |
 | Review a skill before shipping it | [review-checklist.md](./review-checklist.md) |
@@ -28,6 +29,7 @@ These rules appear throughout the docs. Keep them stable.
 
 - All skills live under `skills/`.
 - Every skill declares exactly one layer in `metadata.layer`.
+- `metadata.internal: true` marks a skill as internal-only for skill installers. Internal skills are hidden from installer selection surfaces, but they can still be installed automatically when another skill depends on them. This flag only affects installer visibility; dependency resolution, packaging, and runtime behavior stay the same.
 - Layers are strict:
   - **foundational** — shared contracts, templates, validators, naming, provenance mechanics
   - **specialist** — one bounded artifact or bounded analysis/planning job built on foundational contracts

@@ -6,6 +6,7 @@ metadata:
   version: "0.5.2"
   author: "urban (https://github.com)"
   layer: foundational
+  internal: true
 ---
 
 ## Rules

@@ -38,6 +38,8 @@ Write `description` as stable routing metadata rather than a mini workflow summa
 
 Add `metadata.dependencies` when the skill composes other skills or relies on shared contracts.
 
+Use `metadata.internal: true` for helper or support skills that should be hidden from skill installers. Internal skills are not shown in installer selection surfaces, but they can still be installed automatically when another skill depends on them. This flag only affects installer visibility; dependency resolution, packaging, and runtime behavior stay the same.
+
 Specialist skills must also define:
 
 - `metadata.archetype`
@@ -53,6 +55,7 @@ name: example-skill
 description: One-sentence description of the workflow this skill owns.
 metadata:
   layer: foundational
+  internal: true
   dependencies:
     - write-requirements
     - artifact-naming
