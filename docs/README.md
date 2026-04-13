@@ -29,7 +29,7 @@ These rules appear throughout the docs. Keep them stable.
 
 - All skills live under `skills/`.
 - Every skill declares exactly one layer in `metadata.layer`.
-- `metadata.internal: true` marks a skill as internal-only. Internal skills are hidden from user-facing discovery and install-selection surfaces, but they can still be installed automatically when another skill depends on them.
+- `metadata.internal: true` marks a skill as internal-only for skill installers. Internal skills are hidden from installer selection surfaces, but they can still be installed automatically when another skill depends on them. This flag only affects installer visibility; dependency resolution, packaging, and runtime behavior stay the same.
 - Layers are strict:
   - **foundational** — shared contracts, templates, validators, naming, provenance mechanics
   - **specialist** — one bounded artifact or bounded analysis/planning job built on foundational contracts

@@ -6,12 +6,13 @@ Use this checklist before shipping a new or changed skill.
 
 Confirm that:
 
-- the `description` makes the skill easy to select at runtime when the skill is meant to be user-selectable
+- the `description` makes the skill easy to select at runtime
 - the `description` states stable ownership rather than today's workflow implementation details
 - runtime use does not depend on the reader already knowing the full package graph
 - the skill has clear boundaries
-- another agent could choose it without reading unrelated skills first when the skill is public
-- helper or support skills that should not appear in user-facing discovery or install-selection surfaces are marked `metadata.internal: true`
+- another agent could choose it without reading unrelated skills first
+- helper or support skills that should not appear in skill installers are marked `metadata.internal: true`
+- `metadata.internal: true` is not described as changing dependency resolution, packaging, or runtime behavior
 - the `description` follows [skill-descriptions.md](./skill-descriptions.md)
 
 ## 2. Layer and boundary checks

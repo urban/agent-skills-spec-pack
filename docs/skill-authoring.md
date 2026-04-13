@@ -38,7 +38,7 @@ Write `description` as stable routing metadata rather than a mini workflow summa
 
 Add `metadata.dependencies` when the skill composes other skills or relies on shared contracts.
 
-Use `metadata.internal: true` for helper or support skills that are meant to be consumed by other skills rather than selected directly by a user. Internal skills are hidden from user-facing discovery and install-selection surfaces, but they can still be installed automatically when another skill depends on them.
+Use `metadata.internal: true` for helper or support skills that should be hidden from skill installers. Internal skills are not shown in installer selection surfaces, but they can still be installed automatically when another skill depends on them. This flag only affects installer visibility; dependency resolution, packaging, and runtime behavior stay the same.
 
 Specialist skills must also define:
 
