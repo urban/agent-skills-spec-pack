@@ -6,11 +6,12 @@ This directory explains how `agent-skills-spec-pack` is organized, what it guara
 
 Read these in order if you are new to the package:
 
-1. [system-overview.md](./system-overview.md) — what the pack owns, how the layer model works, why the boundaries are strict, and how framing differs from context across layers
+1. [system-overview.md](./system-overview.md) — what the pack owns, how the layer model works, why the boundaries are strict, how the current contract-preserving approval model works, and how framing differs from context across layers
 2. [layer-hierarchy.md](./layer-hierarchy.md) — a visual explanation of the 3-layer hierarchy with concrete examples from `technical-design`, `derive-technical-design`, and `write-technical-design`
 3. [provenance.md](./provenance.md) — the canonical frontmatter contract, lineage rules, and validation flow
-4. [skill-authoring.md](./skill-authoring.md) — how to structure a skill, where files go, and how framing and context should be described in skill guidance
-5. [skill-descriptions.md](./skill-descriptions.md) — how to write stable `description` fields that remain useful as workflows and dependencies evolve
+4. [approval-views.md](./approval-views.md) — the derived approval-view contract, snapshot rules, output paths, and validation model
+5. [skill-authoring.md](./skill-authoring.md) — how to structure a skill, where files go, and how the current runtime-focused `SKILL.md` shape should be written
+6. [skill-descriptions.md](./skill-descriptions.md) — how to write stable `description` fields that remain useful as workflows and dependencies evolve
 
 ## Read by task
 
@@ -21,6 +22,7 @@ Read these in order if you are new to the package:
 | Decide whether a skill should be internal-only | [skill-authoring.md](./skill-authoring.md), [skill-selection.md](./skill-selection.md) |
 | Understand layer ownership, dependency direction, and concrete hierarchy examples | [system-overview.md](./system-overview.md), [layer-hierarchy.md](./layer-hierarchy.md) |
 | Check provenance, lineage, and frontmatter | [provenance.md](./provenance.md) |
+| Understand derived approval views and snapshot approval rules | [approval-views.md](./approval-views.md) |
 | Review a skill before shipping it | [review-checklist.md](./review-checklist.md) |
 
 ## Core rules
@@ -39,6 +41,7 @@ These rules appear throughout the docs. Keep them stable.
   - specialist -> foundational only
   - coordination -> specialist only for artifact-producing work, with selected foundational leaf contracts allowed only for workflow-wide coordination concerns
 - Provenance and `source_artifacts` are part of the artifact contract.
+- Canonical Markdown artifacts remain the source of truth; approval views under `<spec-pack-root>/approval/` are derived review surfaces only.
 - Authored and reconstructed artifacts should use the same contract when they represent the same artifact type.
 
 ## Design goal

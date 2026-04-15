@@ -34,6 +34,7 @@ Typical examples:
 - `write-technical-design`
 - `write-execution-plan`
 - `write-task-tracking`
+- `write-approval-view`
 - `gray-box-modules`
 
 Foundational skills should be reusable leaves. They may own shared naming and normalization such as `<project-name>` resolution, shared metadata shape, validators, templates, and provenance assembly mechanics. They must not own workflow-specific spec-pack roots, specialist-owned filenames, or workflow-level lineage policy.
@@ -96,6 +97,7 @@ They may also depend on selected foundational leaf contracts when the concern is
 - naming needed to resolve one workflow-wide `<project-name>`
 - spec-pack root selection
 - provenance assembly support
+- approval-view generation and validation support
 
 They must not use foundational dependencies to replace specialist artifact contracts.
 

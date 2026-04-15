@@ -17,12 +17,43 @@ The pack covers skills for these artifact types and adjacent workflow steps:
 - technical design
 - execution plan
 - task tracking
+- derived approval views for exact canonical snapshots
 
 Those artifacts may be created in different workflows:
 
 - **authoring** — starting from product intent and approved scope
 - **reconstruction** — starting from repository evidence and implemented behavior
 - **planning** — starting from approved specification artifacts
+
+## Current operating style
+
+The current pack keeps contracts strict while optimizing for faster human review.
+
+That means:
+
+- canonical filenames, section schemas, workflow order, provenance, and validators stay fixed
+- `SKILL.md` files stay focused on runtime-useful guidance instead of maintenance-heavy prose
+- human-review presentation moves into derived approval views instead of bloating canonical artifacts
+
+## Canonical artifacts and approval surfaces
+
+Use these terms deliberately:
+
+- **canonical artifact** — the Markdown artifact with canonical frontmatter that remains the source of truth
+- **derived approval view** — a Markdown or HTML review surface generated from one canonical artifact snapshot or one full-pack snapshot
+- **approval snapshot** — the exact canonical bytes a derived approval view represents
+
+Rules:
+
+- canonical Markdown artifacts remain the single source of truth
+- approval views live under `<spec-pack-root>/approval/` and stay secondary to canonical artifacts
+- approval of a derived approval view counts as approval of the exact snapshot it represents
+- any canonical artifact change invalidates prior approval for that artifact
+- approval views must derive only from the in-scope canonical artifact or explicit pack snapshot and trace substantive claims back to exact canonical locations
+- no artifact may be treated as approved while `TODO: Confirm` remains
+- reconstruction outputs and reconstruction approval views should keep weak evidence and inferred-versus-observed distinctions explicit rather than smoothing them away
+
+Read [approval-views.md](./approval-views.md) for the exact approval-view contract, snapshot rules, and validation model.
 
 ## The layer model
 
@@ -105,6 +136,7 @@ Coordination may also use selected foundational leaf contracts when the concern 
 - `<project-name>` resolution
 - spec-pack root selection
 - provenance assembly support
+- approval-view generation and validation support
 
 Coordination must not use foundational dependencies to bypass specialist artifact skills.
 

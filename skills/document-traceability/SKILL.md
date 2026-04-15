@@ -3,89 +3,73 @@ name: document-traceability
 description: "Define canonical provenance and source-artifact lineage for package artifacts. Use when a skill creates or validates a package artifact that must carry deterministic frontmatter metadata."
 license: MIT
 metadata:
-  version: "0.2.0"
+  version: "0.2.1"
   author: "urban (https://github.com)"
   layer: foundational
   internal: true
 ---
 
-## Rules
+## Purpose
 
-- Use one canonical frontmatter contract for package artifacts because downstream validation and feedback depend on deterministic metadata.
-- Keep skill provenance separate from source artifact lineage because one explains how the artifact was produced and the other explains what upstream artifacts shaped it.
-- Compute provenance only from the artifact-producing skill branch because sibling coordination branches are not part of one artifact's generation path.
-- Treat provenance failures as hard failures because partial or guessed metadata breaks traceability.
-- Use UTC ISO 8601 timestamps with a trailing `Z` because package artifacts need stable machine-checkable time values.
+Own the shared frontmatter contract for package artifacts: canonical provenance fields, deterministic provenance assembly, `source_artifacts` field shape, and fail-closed validation.
 
-## Canonical Frontmatter
+## Contract
 
-Every package artifact must begin with:
+- Every package artifact begins with canonical frontmatter containing:
+  - `name`
+  - `created_at`
+  - `updated_at`
+  - `generated_by.root_skill`
+  - `generated_by.producing_skill`
+  - `generated_by.skills_used`
+  - `generated_by.skill_graph`
+  - `source_artifacts`
+- Timestamps use UTC ISO 8601 with trailing `Z`.
+- Keep skill provenance separate from source-artifact lineage.
+- Provenance assembly rules:
+  - `root_skill` is the coordination skill that initiated the run
+  - `producing_skill` is the direct artifact-producing skill
+  - `skills_used` is the ordered, deduplicated skill list from the producing branch only
+  - `skill_graph` is the adjacency map from each participating skill's declared `metadata.dependencies`
+  - traversal order is deterministic: root first, then depth-first in declared dependency order
+  - include only participating skills from the producing branch
+  - fail closed on missing skill files, missing declared dependencies, malformed metadata, or dependency cycles
+- `source_artifacts` rules:
+  - this skill defines field shape and validation expectations
+  - coordination owns which artifact-type keys must be present for each workflow
+  - use `source_artifacts: {}` when the active workflow requires an empty lineage map
 
-```yaml
----
-name: <artifact-name>
-created_at: <UTC ISO 8601 timestamp>
-updated_at: <UTC ISO 8601 timestamp>
-generated_by:
-  root_skill: <top-level coordination skill>
-  producing_skill: <direct artifact-producing skill>
-  skills_used:
-    - <ordered participating skills>
-  skill_graph:
-    <skill-name>:
-      - <declared dependency>
-source_artifacts:
-  <role>: <path>
----
-```
+## Inputs
 
-Use `source_artifacts: {}` when the active coordination workflow requires an empty lineage map.
+- artifact kind
+- direct producing skill
+- root coordination skill
+- participating skill metadata from the producing branch
+- workflow-owned `source_artifacts` keys and resolved paths
 
-## Provenance Assembly
+## Outputs
 
-- `root_skill` is the coordination skill that initiated artifact generation.
-- `producing_skill` is the direct specialist skill responsible for the artifact.
-- `skills_used` is the ordered, deduplicated skill list from the producing branch only.
-- `skill_graph` is the adjacency map derived from each participating skill's declared `metadata.dependencies`.
-- traversal order is deterministic: root skill first, then depth-first traversal in declared dependency order.
-- include only participating skills from the producing branch, including foundational leaf contracts when they actually participate in that branch.
-- participating foundational skills may include shared naming guidance, shared provenance assembly and validation, and the relevant shared artifact contract when used by the producing branch.
-- exclude sibling specialist branches that did not participate in the specific artifact.
-- fail closed on missing skill files, missing declared dependencies, malformed metadata, or dependency cycles.
-
-## Source Artifact Lineage Field
-
-- `source_artifacts` records the upstream artifact paths required by the active coordination workflow.
-- This skill defines the field shape and validation expectations for `source_artifacts`, but not the canonical artifact-type map for each workflow.
-- Coordination owns which source artifact-types must be present for each artifact in that workflow.
+- canonical frontmatter contract for package artifacts
+- deterministic provenance assembly rules
+- canonical `source_artifacts` field shape
+- shared validator at `./scripts/validate_frontmatter_provenance.sh`
 
 ## Workflow
 
-1. Identify the artifact kind and its direct producing skill.
+1. Identify the artifact kind and direct producing skill.
 2. Establish the `root_skill` from the coordination workflow that initiated the run.
-3. Walk the producing skill branch from `SKILL.md` metadata dependencies only.
+3. Walk the producing branch from declared `metadata.dependencies` only.
 4. Build `skills_used` in deterministic traversal order with duplicates removed.
 5. Build `skill_graph` from the same participating skills.
-6. Record the `source_artifacts` artifact-type keys required by the active coordination workflow.
+6. Record the `source_artifacts` keys required by the active coordination workflow.
 7. Stamp canonical frontmatter before final validation.
-8. Validate with [`scripts/validate_frontmatter_provenance.sh`](./scripts/validate_frontmatter_provenance.sh).
+8. Validate with `bash ./scripts/validate_frontmatter_provenance.sh <artifact-kind> <artifact-file>`.
 9. If validation fails, stop and do not emit the artifact.
 
-## Gotchas
+## Validation
 
-- If source artifact lineage is copied into `generated_by`, provenance stops explaining the skill chain and becomes noisy. Keep the two concerns separate.
-- If sibling coordination branches appear in `skills_used`, the metadata becomes non-deterministic across artifact kinds. Keep traversal on the producing branch only.
-- If timestamps use date-only values or local time, machines cannot tell whether metadata is canonical. Use UTC ISO 8601 with `Z`.
-- If a workflow expects `source_artifacts: {}` and you emit an empty multiline map instead, validators cannot distinguish deliberate emptiness from omission. Use the explicit empty map form.
-- If a skill is used but missing from `skill_graph`, downstream reviewers cannot reconstruct provenance deterministically. Keep `skills_used` and `skill_graph` aligned.
-
-## Deliverables
-
-- canonical provenance and source-artifact lineage contract for package artifacts
-- deterministic provenance assembly rules
-- canonical `source_artifacts` field shape
-- shared provenance validator script
-
-## Deterministic Validation
-
-- `bash scripts/validate_frontmatter_provenance.sh <artifact-kind> <artifact-file>`
+- Run: `bash ./scripts/validate_frontmatter_provenance.sh <artifact-kind> <artifact-file>`
+- Confirm provenance is computed from the producing branch only.
+- Confirm `skills_used` and `skill_graph` stay aligned.
+- Confirm timestamps use UTC ISO 8601 with `Z`.
+- Confirm `source_artifacts` keys come from coordination, and `{}` is used only when the workflow requires explicit emptiness.

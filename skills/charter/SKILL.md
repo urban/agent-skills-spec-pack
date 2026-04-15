@@ -1,9 +1,9 @@
 ---
 name: charter
-description: "Produce charter artifacts from product intent and relevant repository context. Use when a user needs approved scope, goals, non-goals, personas, and success criteria captured for specification work."
+description: "Produce charter artifacts from approved product framing. Use when a user needs approved scope, goals, non-goals, personas, and success criteria captured for specification work."
 license: MIT
 metadata:
-  version: "0.2.0"
+  version: "0.2.1"
   author: "urban (https://github.com)"
   layer: specialist
   archetype: planning
@@ -12,87 +12,62 @@ metadata:
     - write-charter
 ---
 
-## Rules
+## Purpose
 
-- Keep this role focused on the charter artifact because it is the approval-gated scope baseline and user stories, requirements, and design belong downstream.
-- Produce the charter as `charter.md` and keep the artifact limited to scope framing.
-- Use the `write-charter` contract for section order, success-criterion numbering, uncertainty handling, and final validation because downstream roles depend on that shared shape.
-- Ground the artifact in user intent first, then repository evidence when existing code or integrations constrain scope.
-- Ask for clarification when missing detail changes goals, non-goals, actors, or success criteria; otherwise keep moving and mark `TODO: Confirm`.
-- Do not define workflow-wide `source_artifacts` lineage policy here.
+Produce `charter.md` from approved product framing. Capture the approved scope baseline, actors, and measurable success criteria without re-owning user stories, requirements, technical design, or planning.
 
-## Constraints
+## Boundaries
 
-- Output must be one Markdown artifact named `charter.md`.
-- The artifact must stay compatible with the `write-charter` contract.
-- Do not mix detailed functional requirements, technical design, or execution sequencing into the artifact.
-- The charter must be approved before downstream specification work proceeds unless the user explicitly waives staged approval.
-- Keep unresolved high-impact details explicit as `TODO: Confirm` instead of inventing certainty.
+- Output filename: `charter.md`
+- Source of truth: approved product intent, problem statement, and scope framing; use repository evidence only when existing behavior, integrations, or platform constraints materially affect scope or success criteria
+- Artifact contract: follow `../write-charter/SKILL.md`
+- In scope:
+  - define goals and non-goals
+  - name personas and actors
+  - record measurable success criteria
+  - preserve explicit uncertainty where needed
+- Out of scope:
+  - detailed user stories
+  - detailed requirements
+  - technical architecture
+  - implementation task planning
+  - code changes
+- Ask only when ambiguity changes goals, non-goals, actors, success criteria, scope, software quality, provenance or validator compatibility, or approval readiness.
 
-## Requirements
-
-Inputs:
+## Inputs
 
 - product idea, feature request, or approved problem statement
 - desired outcomes, goals, and scope boundaries
 - known actors, stakeholders, and success measures
 - repository evidence when existing behavior affects framing
 
-Output:
+## Output
 
-- one complete charter artifact named `charter.md`
-
-In scope:
-
-- defining goals and non-goals
-- naming personas and actors
-- recording measurable success criteria
-- preserving explicit uncertainty markers where needed
-
-Out of scope:
-
-- detailed user stories
-- detailed requirements
-- technical architecture
-- implementation task planning
-- code changes
+- `charter.md`
+- one charter artifact downstream user stories, requirements, and design can trust as the approved scope baseline
 
 ## Workflow
 
-1. Confirm the user needs charter artifacts captured from product intent before downstream specification or implementation work.
-2. Gather desired outcomes, goals, non-goals, personas / actors, and success signals.
-3. Inspect the repository only when existing code, integrations, or platform boundaries materially affect scope or success criteria.
-4. Draft `charter.md` using the `write-charter` contract rather than inventing a new structure.
-5. Keep the artifact on the approved scope baseline; move user-visible behaviors, detailed requirements, and design ideas out of the document.
+1. Load approved framing and gather goals, non-goals, actors, and success signals; inspect repo evidence only where existing behavior or constraints materially affect framing.
+2. Draft `charter.md` with the `write-charter` contract.
+3. Make goals and non-goals explicit before downstream artifacts add behavior or solution detail.
+4. Keep personas or actors concrete and write measurable `SC1.x` success criteria.
+5. Move user-visible behaviors, detailed obligations, and design ideas out of the charter.
 6. Mark unresolved high-impact details as `TODO: Confirm`.
 7. Validate with `bash ../write-charter/scripts/validate_charter.sh <resolved-charter-path>`.
-8. Deliver the draft and request approval before user stories, requirements, or technical design proceed.
+8. Deliver for approval before user stories, requirements, or technical design proceed.
 
-## Gotchas
+## Validation
 
-- If goals are written without explicit non-goals, later artifacts quietly absorb adjacent ideas as scope. Make exclusion explicit before story writing starts.
-- If personas are vague, user stories inherit generic actors and weak downstream behavior. Name concrete actors or use `TODO: Confirm`.
-- If success criteria stay aspirational, reviewers cannot tell whether the spec pack is done or merely polished. Make completion signals concrete enough to verify.
-- If you let this artifact accumulate behaviors or architecture, it becomes a second requirements document and duplicates downstream work. Keep it on framing only.
-- If repository evidence already constrains scope and you ignore it, the charter reads clean but contradicts the product the team has to evolve. Inspect the code when it materially affects framing.
-- If missing details are guessed to keep momentum, later artifacts inherit invented certainty and have to unwind it. Use `TODO: Confirm` for high-impact unknowns.
+- Run: `bash ../write-charter/scripts/validate_charter.sh <resolved-charter-path>`
+- Confirm filename is `charter.md`, section order matches the shared contract, and success criteria use `SC1.x`.
+- Confirm goals and non-goals are explicit, and at least one success criterion exists.
+- Confirm detailed user stories, requirements, and implementation strategy are not mixed into the artifact.
+- Confirm unresolved high-impact details stay `TODO: Confirm`.
 
-## Deliverables
+## Approval-view focus
 
-- `charter.md`
-- explicit goals, non-goals, personas / actors, and success criteria
-- validation passing via the shared charter validator
-- a draft ready for user review before user stories, requirements, or technical design
-
-## Validation Checklist
-
-- artifact filename is `charter.md`
-- section order follows the `write-charter` contract
-- goals and non-goals are explicit
-- at least one success criterion exists
-- detailed requirements and implementation strategy are not mixed into the artifact
-- unresolved high-impact details are marked `TODO: Confirm`
-
-## Deterministic Validation
-
-- `bash ../write-charter/scripts/validate_charter.sh <resolved-charter-path>`
+- goals and non-goals that set scope edges
+- personas or actors that will shape downstream stories
+- measurable success criteria and obvious scope risks
+- any `TODO: Confirm` item that would distort downstream artifacts if treated as settled

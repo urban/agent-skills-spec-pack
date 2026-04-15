@@ -132,6 +132,8 @@ Apply canonical provenance and traceability to:
 - execution artifacts under `.specs/<project-name>/`
 - reconstructed artifacts under `.specs/<project-name>-reconstructed/` when created through the package's canonical contracts
 
+Do not apply this frontmatter contract to derived approval views under `<spec-pack-root>/approval/`. Approval views are secondary review surfaces with no canonical frontmatter; validate them with the shared approval-view contract instead. See [approval-views.md](./approval-views.md).
+
 If a skill creates one of these artifacts, it should either:
 
 - depend on `document-traceability`, or

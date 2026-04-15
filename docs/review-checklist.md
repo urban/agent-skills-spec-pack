@@ -38,6 +38,9 @@ If the skill works with a shared artifact type, confirm that:
 - canonical provenance and `source_artifacts` are applied on create
 - workflow-level lineage expectations come from coordination rather than foundational or specialist contracts
 - uncertainty is explicit for reconstruction outputs
+- workflows with approval checkpoints generate approval views from canonical artifacts only
+- approval views live under `<spec-pack-root>/approval/`, are validated, and are regenerated after canonical changes
+- approved artifacts do not still contain `TODO: Confirm`
 
 Prefer reusing a `write-*` skill over copying its rules.
 
@@ -80,6 +83,7 @@ For reconstruction-heavy skills, confirm that:
 - code, tests, config, and repo structure are primary evidence
 - implemented reality is described instead of imagined intent
 - weak conclusions are marked explicitly
+- approval views surface low-confidence claims, weak evidence, and inferred-versus-observed distinctions when the workflow uses approval checkpoints
 - compatibility with the authored contract is preserved when the artifact type is shared
 
 ## 8. Final decision

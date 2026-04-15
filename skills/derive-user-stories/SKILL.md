@@ -1,9 +1,9 @@
 ---
 name: derive-user-stories
-description: "Reconstruct user-stories artifacts from repository evidence. Use when a user needs implemented user-visible behavior and capability areas inferred from an existing system."
+description: "Reconstruct user-stories artifacts from repository evidence. Use when a user needs implemented user-visible behavior and capability areas documented for an existing system."
 license: MIT
 metadata:
-  version: "0.3.0"
+  version: "0.3.1"
   author: "urban (https://github.com)"
   layer: specialist
   archetype: research
@@ -12,116 +12,84 @@ metadata:
     - write-user-stories
 ---
 
-## Rules
+## Purpose
 
-- Treat repository code as the primary evidence and use tests to strengthen confidence because this role reconstructs implemented outcomes, not roadmap intent.
-- Produce the artifact as `user-stories.md`.
-- Use the shared `write-user-stories` contract for canonical story structure, story identifiers, capability grouping, quality checks, and validation.
-- Focus on user-visible behavior because technical plumbing without stakeholder-visible value belongs in coverage gaps, not in stories.
-- Keep evidence traceable to concrete file paths and line references because confidence must be reviewable.
-- Use context from `./charter.md` when it exists because reconstructed goals, actors, and success framing can sharpen the story set.
-- Use `TODO: Confirm` for unsupported actor, situation, action, outcome, or observation details instead of guessing.
-- Assign confidence from evidence strength, not from how plausible the narrative sounds.
-- Do not define workflow-wide `source_artifacts` lineage policy here.
+Produce `user-stories.md` from repository evidence. Reconstruct implemented user-visible behavior, actors, and capability areas without inventing product history or forcing technical-only internals into stories.
 
-## Constraints
+## Boundaries
 
-- Output must be one Markdown artifact named `user-stories.md`.
-- Always draft from `./assets/report-template.md`.
-- If the destination file already exists, create a timestamped backup before overwrite.
-- Do not use PR descriptions, commit history, issue trackers, or external docs as primary evidence.
-- Do not omit ambiguous stories when they still reflect likely user-visible behavior; include them with lower confidence and explicit uncertainty.
+- Output filename: `user-stories.md`
+- Source of truth: repository code and tests; reconstructed `./charter.md` is supporting context, and stronger repository evidence wins
+- Artifact contract: use canonical story blocks compatible with `../write-user-stories/SKILL.md`
+- Report shape:
+  - draft from `./assets/report-template.md`
+  - output one Markdown artifact with these sections, in order:
+    1. `Executive Summary`
+    2. `Stakeholder-Ready Product Narratives`
+    3. `Capability Map`
+    4. `Coverage Gaps`
+    5. `Additional Notes`
+  - `Capability Map` must include at least one `## Capability Area:` section and at least one canonical story block
+  - every story must include:
+    - unique `US1.x` story identifier
+    - canonical `Actor`, `Situation`, `Action`, `Outcome`, and `Observation`
+    - `Confidence: High|Medium|Low`
+    - `Rationale`
+    - `Code Evidence` with at least one `path:line` reference
+    - `Test Evidence` or `No direct test evidence`
+    - `TODO: Confirm` for unresolved story details when needed
+- In scope:
+  - infer implemented user-visible outcomes and evidence-based capability areas
+  - document coverage gaps for code areas without clear user-facing mapping
+  - keep confidence tied to evidence depth
+  - back up an existing report before overwrite
+- Out of scope:
+  - technical-only stories with no user-visible outcome
+  - speculative product history or roadmap intent
+  - multi-file output
+  - PR descriptions, commit history, issue trackers, or external docs as primary evidence
+  - workflow-wide `source_artifacts` lineage policy
+- Ask only when ambiguity changes scope, destination, evidence threshold, artifact shape, confidence assignment, software quality, provenance or validator compatibility, or approval readiness.
 
-## Requirements
-
-Inputs:
+## Inputs
 
 - repository source code
 - repository tests when present
 - optional user-provided scope paths or modules
 - optional user-provided output destination
+- reconstructed `./charter.md` when present
 
-Output:
+## Output
 
-- one derived user-stories artifact named `user-stories.md`
-
-Required report sections, in order:
-
-1. `Executive Summary`
-2. `Stakeholder-Ready Product Narratives`
-3. `Capability Map`
-4. `Coverage Gaps`
-5. `Additional Notes`
-
-Per-story requirements:
-
-- one canonical story block compatible with `write-user-stories`
-- one unique `US1.x` story identifier per story
-- confidence label: `High`, `Medium`, or `Low`
-- confidence rationale
-- at least one code evidence reference
-- test evidence or explicit `No direct test evidence`
-- `TODO: Confirm` for unresolved story details
-
-In scope:
-
-- inferring implemented user-visible outcomes
-- grouping stories into evidence-based capability areas
-- documenting coverage gaps for code areas without clear user-facing mapping
-- backing up an existing report before overwrite
-
-Out of scope:
-
-- technical-only stories with no user-visible outcome
-- speculative product history
-- multi-file output
+- `user-stories.md`
+- a timestamped backup in the same directory before overwrite when the destination already exists
+- one derived user-stories artifact with executive summary, stakeholder narratives, capability map, coverage gaps, and evidence-backed story blocks ready for downstream requirements work
 
 ## Workflow
 
-1. Confirm the user needs user-stories artifacts reconstructed from repository evidence, then define analysis scope, defaulting to the full repository when the user does not narrow it.
+1. Confirm analysis scope and destination; default to the full repository when the user does not narrow it.
 2. Inventory user-facing surfaces such as UI routes, API endpoints, CLI commands, workflows, and integrations.
-3. Trace those surfaces into handlers, services, and domain logic and collect `path:line` evidence.
-4. Use tests to strengthen or weaken confidence about each inferred outcome.
-5. Identify evidence-based actors and capability areas.
-6. Draft the report from `./assets/report-template.md`, then replace placeholders with actual content.
-7. Write one canonical story block per user-visible outcome using `Actor`, `Situation`, `Action`, `Outcome`, and `Observation`.
-8. Assign unique `US1.x` story identifiers in artifact order so downstream requirements can trace back to canonical reconstructed stories.
-9. Add confidence, rationale, code evidence, and test evidence for each story.
-10. Record non-mapped code areas in `Coverage Gaps` and unresolved ambiguity in `Additional Notes`.
-11. Write `user-stories.md` to the chosen destination.
-12. If the destination artifact already exists, create a timestamped backup in the same directory before overwrite.
-13. Validate with `bash ./scripts/validate_report.sh <resolved-user-stories-path>`.
-14. Deliver the artifact as reconstructed implemented user outcomes, not speculative product strategy.
+3. Trace those surfaces into handlers, services, and domain logic; collect concrete `path:line` evidence and use tests to strengthen or weaken confidence.
+4. Identify evidence-based actors and capability areas; use reconstructed `./charter.md` only as supporting context.
+5. Draft from `./assets/report-template.md`; write one canonical story block per user-visible outcome in `Capability Map`, assign unique `US1.x` identifiers, and add confidence, rationale, code evidence, and test evidence.
+6. Put technically important but not clearly user-visible areas in `Coverage Gaps` instead of forcing them into stories.
+7. Include ambiguous but plausible user-visible outcomes with lower confidence and `TODO: Confirm` instead of dropping them.
+8. If the destination already exists, create a timestamped backup in the same directory before overwrite.
+9. Validate with `bash ./scripts/validate_report.sh <resolved-user-stories-path>`.
+10. Deliver the result as reconstructed implemented user outcomes, not speculative product strategy.
 
-## Gotchas
+## Validation
 
-- If actor or outcome fields are guessed from naming alone, the report sounds polished but overstates what the code proves. Keep uncertainty explicit.
-- If technical capabilities that users never experience are forced into stories, the capability map fills with implementation trivia. Put those areas in `Coverage Gaps` instead.
-- If confidence is assigned by narrative coherence instead of evidence depth, weak stories get treated as facts downstream. Base confidence on code and test support only.
-- If ambiguous stories are dropped entirely, the report falsely suggests complete understanding of the product surface. Include plausible user-visible outcomes with lower confidence and clear uncertainty.
-- If story IDs are missing, duplicated, or unstable, downstream requirements lose a reliable traceability anchor. Keep one unique `US1.x` identifier on every reconstructed story.
-- If story blocks drift away from the shared five-field contract, reconstruction and authoring stop being reversible. Keep the shared structure intact.
-- If an existing report is overwritten without backup, previous interpretations disappear and review loses context. Create the timestamped backup first.
+- Run: `bash ./scripts/validate_report.sh <resolved-user-stories-path>`
+- Confirm backup exists before overwrite when needed and required report sections are present in order.
+- Confirm every story has a unique `US1.x` identifier, canonical five fields, confidence label, rationale, code evidence, and test evidence or `No direct test evidence`.
+- Confirm evidence is traceable to concrete file paths and lines, and no template placeholders remain.
+- Confirm technical-only areas stay in `Coverage Gaps` instead of being forced into stories.
+- Confirm ambiguous stories use lower confidence or `TODO: Confirm` instead of overclaiming certainty.
 
-## Deliverables
+## Approval-view focus
 
-- `user-stories.md`
-- a timestamped backup when overwriting an existing artifact
-- stakeholder narratives, capability map, coverage gaps, and additional notes
-- user story blocks with unique `US1.x` identifiers, confidence, rationale, evidence references, and canonical frontmatter
-- validation passing via `./scripts/validate_report.sh`
-
-## Validation Checklist
-
-- artifact filename is `user-stories.md`
-- existing artifact backup is created before overwrite when needed
-- all five required sections exist in order
-- every story has a unique `US1.x` story identifier
-- every story follows the canonical five-field contract
-- every story includes confidence, rationale, and evidence references
-- unresolved story details are marked `TODO: Confirm`
-- no template placeholders remain
-
-## Deterministic Validation
-
-- `bash ./scripts/validate_report.sh <resolved-user-stories-path>`
+- capability map and highest-value recovered stories
+- coverage gaps and evidence weakness around likely user-facing behavior
+- low-confidence stories and inferred-versus-observed pressure points
+- any story or ambiguity that would mislead downstream requirements if treated as settled

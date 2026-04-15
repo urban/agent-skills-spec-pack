@@ -209,6 +209,43 @@ Avoid putting these in the one-line description:
 
 Use the layer-specific rules and examples in [`skill-descriptions.md`](./skill-descriptions.md) as the canonical guide.
 
+## Current `SKILL.md` body shape
+
+The current repo keeps `SKILL.md` files short and runtime-oriented.
+
+Use these defaults:
+
+- keep only runtime-useful guidance in `SKILL.md`
+- move long examples, anti-pattern catalogs, and maintenance detail into `references/`, `assets/`, or `scripts/`
+- keep local validation explicit
+- use runtime-relative paths
+- do not restate a dependency's contract when that dependency already owns it
+- prefer short bullets over long prose blocks
+- keep section intros to one or two sentences
+
+### Default section collapse
+
+When refactoring or cleaning up a heavy `SKILL.md`, prefer this collapse:
+
+- `Rules` + `Constraints` -> one tighter ownership section such as `Contract`, `Boundaries`, or `Workflow rules`
+- `Requirements` -> split into `Inputs` plus owned `Output`/`Outputs` or contract bullets
+- `Deliverables` -> merge into `Output`/`Outputs`
+- `Validation Checklist` + `Deterministic Validation` -> `Validation`
+- `Gotchas` -> drop by default; keep only when a small set of failure modes still changes runtime behavior
+- long rationale prose -> move to support files only when it still adds value
+
+### Default section stacks by layer
+
+These are defaults, not hard requirements.
+
+| Layer | Default sections |
+| --- | --- |
+| foundational | `Purpose`, `Contract`, `Inputs`, `Outputs`, `Workflow`, `Validation`, optional `References` |
+| specialist | `Purpose`, `Boundaries`, `Inputs`, `Output`, `Workflow`, `Validation`, optional `Approval-view focus`, optional `References` |
+| coordination | `Purpose`, `Workflow rules`, `Source artifact lineage`, `Inputs`, `Outputs`, `Workflow`, `Approval flow`, `Validation`, optional `References` |
+
+Use `Approval-view focus` only when the artifact family has stable human-review emphasis worth surfacing for the shared approval-view contract.
+
 ## Progressive disclosure
 
 Write documentation so an agent can load only what it needs.

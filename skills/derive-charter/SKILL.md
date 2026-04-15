@@ -1,9 +1,9 @@
 ---
 name: derive-charter
-description: "Reconstruct charter artifacts from repository evidence. Use when a user needs implemented goals, boundaries, personas, and success criteria inferred from an existing system with explicit uncertainty."
+description: "Reconstruct charter artifacts from repository evidence. Use when a user needs implemented goals, boundaries, personas, and success criteria documented for an existing system with explicit uncertainty."
 license: MIT
 metadata:
-  version: "0.2.0"
+  version: "0.2.1"
   author: "urban (https://github.com)"
   layer: specialist
   archetype: research
@@ -12,86 +12,60 @@ metadata:
     - write-charter
 ---
 
-## Rules
+## Purpose
 
-- Treat repository code and tests as the primary evidence because this role documents implemented reality, not remembered product strategy.
-- Produce the artifact as `charter.md`.
-- Use the `write-charter` contract so the derived artifact stays compatible with authored charter artifacts while remaining explicit that it is reconstructed, not historically approved.
-- Infer goals, non-goals, personas, and success criteria only as far as repository evidence supports them because business framing is often only partially observable in code.
-- Keep evidence traceable to concrete file paths and line references when support is thin or disputed.
-- Use `TODO: Confirm` when the repository cannot prove framing details strongly enough.
-- Do not define workflow-wide `source_artifacts` lineage policy here.
+Produce `charter.md` from repository evidence. Reconstruct plausible goals, non-goals, personas, and success criteria from implemented behavior without inventing product history or pretending the recovered framing was historically approved.
 
-## Constraints
+## Boundaries
 
-- Output must be one Markdown artifact named `charter.md`.
-- The artifact must stay compatible with the `write-charter` contract.
-- If the destination file already exists, create a timestamped backup before overwrite.
-- Do not claim original intent, non-goals, or success measures that are not supportable from repository evidence.
-- Do not turn low-level implementation details into fake goals or personas just to fill sections.
+- Output filename: `charter.md`
+- Source of truth: repository code and tests; stronger repository evidence wins over cleaner narrative
+- Artifact contract: follow `../write-charter/SKILL.md`
+- In scope:
+  - reconstruct plausible goals, non-goals, personas, and success criteria from observable behavior and constraints
+  - preserve explicit uncertainty where business framing cannot be proved confidently
+  - back up an existing report before overwrite
+- Out of scope:
+  - presenting guessed strategy as recovered fact
+  - reconstructing detailed requirements or technical design
+  - using commit history, PR text, or external docs as primary evidence
+- Ask only when ambiguity changes scope, destination, evidence threshold, artifact shape, software quality, provenance or validator compatibility, or approval readiness.
 
-## Requirements
-
-Inputs:
+## Inputs
 
 - repository source code
 - repository tests when present
 - optional user-provided scope paths
 - optional user-provided output destination
 
-Output:
+## Output
 
-- one derived charter artifact named `charter.md`
-
-In scope:
-
-- reconstructing plausible goals, non-goals, personas, and success criteria from implemented behavior and constraints
-- preserving explicit uncertainty where business framing cannot be proved confidently
-- backing up an existing report before overwrite
-
-Out of scope:
-
-- presenting guessed strategy as recovered fact
-- reconstructing detailed requirements or technical design
-- using commit history, PR text, or external docs as primary evidence
+- `charter.md`
+- a timestamped backup in the same directory before overwrite when the destination already exists
+- one reconstructed charter artifact downstream work can trust as evidence-bounded framing with explicit uncertainty
 
 ## Workflow
 
-1. Confirm the user needs charter artifacts reconstructed from repository evidence, then confirm analysis scope, defaulting to the full repository when the user does not narrow it.
-2. Inventory user-visible surfaces, constraints, role boundaries, and measurable outcomes from code and tests.
-3. Infer candidate goals, non-goals, personas, and success criteria only as far as the evidence supports and mark weak conclusions as `TODO: Confirm`.
-4. Write `charter.md` to the chosen destination.
-5. If the destination artifact already exists, create a timestamped backup in the same directory before overwrite.
-6. Draft the chosen destination with the `write-charter` contract.
-7. Add evidence-aware `TODO: Confirm` markers anywhere framing remains weakly supported.
-8. Validate with `bash ../write-charter/scripts/validate_charter.sh <resolved-charter-path>`.
-9. Deliver the artifact as reconstructed charter-form scope grounded in implemented evidence, not as speculative product history or proof of historical approval.
+1. Confirm analysis scope and destination; default to the full repository when the user does not narrow it.
+2. Inspect code and tests to inventory user-visible surfaces, constraints, role boundaries, and measurable outcomes.
+3. Infer candidate goals, non-goals, personas, and success criteria only as far as the evidence supports.
+4. If the destination already exists, create a timestamped backup in the same directory before overwrite.
+5. Draft `charter.md` with the `write-charter` contract.
+6. Add evidence-aware `TODO: Confirm` wherever framing remains weakly supported.
+7. Validate with `bash ../write-charter/scripts/validate_charter.sh <resolved-charter-path>`.
+8. Deliver the result as reconstructed framing grounded in implemented evidence, not speculative product history.
 
-## Gotchas
+## Validation
 
-- If you treat naming or UI labels as proof of business goals, the artifact becomes cleaner than the evidence allows. Keep weak framing explicit with `TODO: Confirm`.
-- If you infer personas from internal module names alone, later stories inherit invented actors. Use observable entry points, permissions, workflows, or tests to support actor claims.
-- If code constraints are rewritten as product goals, the charter artifact misstates why the system exists. Separate inferred purpose from implementation necessity.
-- If success criteria are guessed from optimism instead of measurable signals in the codebase, future planning inherits fake definitions of done. Keep success claims concrete or mark them unresolved.
-- If weak evidence is omitted entirely, reviewers read silence as certainty. Keep ambiguous framing and mark it clearly.
-- If you overwrite an existing research report without a backup, later reviewers lose the ability to compare interpretations across passes. Create the timestamped backup first.
+- Run: `bash ../write-charter/scripts/validate_charter.sh <resolved-charter-path>`
+- Confirm backup exists before overwrite when needed and filename is `charter.md`.
+- Confirm section order and `SC1.x` numbering match the shared contract.
+- Confirm goals, non-goals, personas, and success criteria are grounded in observable evidence rather than guessed intent.
+- Confirm unresolved high-impact details stay `TODO: Confirm`.
 
-## Deliverables
+## Approval-view focus
 
-- `charter.md`
-- a timestamped backup when overwriting an existing artifact
-- evidence-based reconstructed framing with explicit uncertainty handling
-- validation passing via the shared charter validator
-
-## Validation Checklist
-
-- artifact filename is `charter.md`
-- existing artifact backup is created before overwrite when needed
-- section order follows the `write-charter` contract
-- goals, non-goals, personas, and success criteria are derived from observable evidence rather than guessed product history
-- unresolved high-impact details are marked `TODO: Confirm`
-- validation passes with the shared script
-
-## Deterministic Validation
-
-- `bash ../write-charter/scripts/validate_charter.sh <resolved-charter-path>`
+- highest-confidence framing and measurable outcomes
+- weakly supported goals, non-goals, or personas
+- evidence basis for success criteria and obvious scope boundaries
+- any `TODO: Confirm` item that would distort downstream reconstruction if treated as settled
