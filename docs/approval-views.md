@@ -112,7 +112,10 @@ Every Markdown approval view has a matching self-contained HTML companion for th
 The HTML view must:
 
 - keep the same section order and snapshot identity as the Markdown view
-- be rendered deterministically from the Markdown view
+- surface the review target in both the HTML `<title>` and the visible page title:
+  - artifact view -> `Artifact Approval View: <artifact-basename>`
+  - pack view -> `Pack Approval View: <spec-pack-name>` where `<spec-pack-name>` is the basename of `Spec-pack root`
+- be rendered deterministically from the Markdown view and snapshot identity
 - validate against the same snapshot metadata
 
 ## Validation commands
@@ -134,6 +137,7 @@ Fail closed on:
 - unresolved traceability headings or quotes
 - missing `Change Summary` for revised views
 - HTML and Markdown snapshot mismatch
+- HTML title does not surface the approved artifact or pack
 - unresolved template placeholders
 
 ## Workflow defaults

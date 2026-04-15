@@ -68,7 +68,10 @@ Own the shared approval-view contract: derived Markdown and HTML review surfaces
 - HTML rules:
   - self-contained HTML
   - same section order and snapshot identity as the Markdown view
-  - render from the Markdown view with `python3 ./scripts/render_approval_view_html.py <approval-md> <approval-html>` unless the caller has an equivalent deterministic renderer
+  - surface the review target in both the HTML `<title>` and the visible page title:
+    - artifact view -> `Artifact Approval View: <artifact-basename>`
+    - pack view -> `Pack Approval View: <spec-pack-name>` where `<spec-pack-name>` is the basename of `Spec-pack root`
+  - render from the Markdown view and snapshot identity with `python3 ./scripts/render_approval_view_html.py <approval-md> <approval-html>` unless the caller has an equivalent deterministic renderer
 - Reporting rules:
   - when presenting an HTML approval view in terminal/chat, include the resolved HTML filesystem path and the absolute `file://` URI for that same file
   - emit the `file://` URI as plain text so terminal URL detection can make it clickable
@@ -99,7 +102,7 @@ Own the shared approval-view contract: derived Markdown and HTML review surfaces
    - pack view -> SHA-256 of the sorted `<resolved-path><TAB><file-sha>` list
 4. Copy only claims backed by the canonical artifact or pack snapshot; record each substantive claim in `Traceability Map` with an exact heading and verbatim evidence quote.
 5. If the view is revised, add `Change Summary` immediately after `Snapshot Identity` and anchor it to the previous approved snapshot hash.
-6. Render the HTML companion with `python3 ./scripts/render_approval_view_html.py <approval-md> <approval-html>`.
+6. Render the HTML companion with `python3 ./scripts/render_approval_view_html.py <approval-md> <approval-html>`, making sure the HTML `<title>` and page title surface the approved artifact basename or pack name.
 7. Validate with the correct mode:
    - artifact: `bash ./scripts/validate_approval_view.sh artifact <canonical-file> <approval-md> <approval-html>`
    - revised artifact: `bash ./scripts/validate_approval_view.sh artifact-revised <canonical-file> <approval-md> <approval-html>`
@@ -116,6 +119,7 @@ Own the shared approval-view contract: derived Markdown and HTML review surfaces
 - Confirm revised modes include `Change Summary` with `Previous snapshot SHA-256:`.
 - Confirm every traceability entry resolves to an exact heading and verbatim quote in the referenced canonical artifact.
 - Confirm HTML and Markdown point to the same snapshot.
+- Confirm the HTML `<title>` and visible page title surface the approved artifact basename for artifact review or the pack name for pack review.
 - Confirm any user-facing HTML review reference includes the resolved HTML path and the matching absolute `file://` URI.
 - Confirm unresolved template placeholders do not remain.
 - Run the shared validator with the correct mode before asking for approval.

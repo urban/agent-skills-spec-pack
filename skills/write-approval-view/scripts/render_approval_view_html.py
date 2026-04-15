@@ -26,11 +26,28 @@ def slugify(value: str) -> str:
     return slug or "section"
 
 
-def extract_title(markdown_text: str) -> str:
+def extract_markdown_title(markdown_text: str) -> str:
     for line in markdown_text.splitlines():
         if line.startswith("# "):
             return line[2:].strip()
     return "Approval View"
+
+
+def approval_view_title(markdown_text: str, metadata: dict[str, object]) -> str:
+    review_type = str(metadata.get("review_type", "")).strip()
+    if review_type == "Artifact":
+        canonical_artifact = str(metadata.get("canonical_artifact", "")).strip()
+        if canonical_artifact:
+            artifact_name = Path(canonical_artifact).name or canonical_artifact
+            return f"Artifact Approval View: {artifact_name}"
+        return "Artifact Approval View"
+    if review_type == "Pack":
+        spec_pack_root = str(metadata.get("spec_pack_root", "")).strip()
+        if spec_pack_root:
+            pack_name = Path(spec_pack_root).name or spec_pack_root
+            return f"Pack Approval View: {pack_name}"
+        return "Pack Approval View"
+    return extract_markdown_title(markdown_text)
 
 
 def first_h1_removed(markdown_text: str) -> str:
@@ -215,8 +232,8 @@ def main() -> int:
 
     markdown_text = read_text(source_path)
     shell_text = read_text(shell_path)
-    title = extract_title(markdown_text)
     metadata = extract_snapshot_metadata(markdown_text)
+    title = approval_view_title(markdown_text, metadata)
     generated_at = str(metadata.get("approval_view_generated_at", "Unknown"))
     body_html = markdown_to_html(first_h1_removed(markdown_text))
 

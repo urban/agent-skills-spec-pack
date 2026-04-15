@@ -429,15 +429,46 @@ def extract_html_metadata(html_text: str) -> dict[str, object]:
         fail("HTML approval view metadata JSON is invalid")
 
 
+def approval_view_title(review_type: str, canonical_artifact: str | None = None, spec_pack_root: str | None = None) -> str:
+    if review_type == "Artifact":
+        if canonical_artifact:
+            artifact_name = Path(canonical_artifact).name or canonical_artifact
+            return f"Artifact Approval View: {artifact_name}"
+        return "Artifact Approval View"
+    if review_type == "Pack":
+        if spec_pack_root:
+            pack_name = Path(spec_pack_root).name or spec_pack_root
+            return f"Pack Approval View: {pack_name}"
+        return "Pack Approval View"
+    fail(f"Unsupported review type for HTML title: {review_type}")
+
+
+def extract_html_value(html_text: str, pattern: str, error_message: str) -> str:
+    match = re.search(pattern, html_text, re.DOTALL)
+    if not match:
+        fail(error_message)
+    return unescape(match.group(1)).strip()
+
+
 def validate_html(
     html_text: str,
     required_titles: list[str],
     expected_metadata: dict[str, object],
+    expected_title: str,
 ) -> None:
     metadata = extract_html_metadata(html_text)
     for key, value in expected_metadata.items():
         if metadata.get(key) != value:
             fail(f"HTML metadata mismatch for {key}")
+
+    page_title = extract_html_value(html_text, r"<title>(.*?)</title>", "HTML approval view missing <title>")
+    if page_title != expected_title:
+        fail(f"HTML <title> must be '{expected_title}', found '{page_title}'")
+
+    header_title = extract_html_value(html_text, r"<h1>(.*?)</h1>", "HTML approval view missing page title <h1>")
+    if header_title != expected_title:
+        fail(f"HTML page title must be '{expected_title}', found '{header_title}'")
+
     for title in required_titles:
         if title not in html_text:
             fail(f"HTML approval view missing section title: {title}")
@@ -492,7 +523,8 @@ def validate_artifact_mode(mode: str, canonical_file: Path, approval_md: Path, a
         "canonical_updated_at": snapshot["canonical_updated_at"],
         "approval_view_generated_at": snapshot["approval_view_generated_at"],
     }
-    validate_html(approval_html_text, required_titles, expected_metadata)
+    expected_title = approval_view_title("Artifact", canonical_artifact=snapshot["canonical_artifact"])
+    validate_html(approval_html_text, required_titles, expected_metadata, expected_title)
 
 
 def validate_pack_mode(mode: str, approval_md: Path, approval_html: Path, canonical_files: list[Path], revised: bool) -> None:
@@ -526,7 +558,8 @@ def validate_pack_mode(mode: str, approval_md: Path, approval_html: Path, canoni
         "approval_view_generated_at": snapshot["approval_view_generated_at"],
         "included_snapshots": snapshot["included_snapshots"],
     }
-    validate_html(approval_html_text, required_titles, expected_metadata)
+    expected_title = approval_view_title("Pack", spec_pack_root=str(snapshot["spec_pack_root"]))
+    validate_html(approval_html_text, required_titles, expected_metadata, expected_title)
 
 
 def main() -> int:
