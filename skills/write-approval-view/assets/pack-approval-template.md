@@ -1,18 +1,8 @@
 # Approval View
 
-## Snapshot Identity
-
-- Review type: Pack
-- Approval mode: Initial
-- Spec-pack root: [TODO: resolved spec-pack root]
-- Pack snapshot SHA-256: [TODO: aggregate SHA-256 of sorted path + file-hash pairs]
-- Approval view generated_at: [TODO: UTC ISO 8601 timestamp]
-- Included snapshots:
-  - [TODO: resolved canonical path] | SHA-256: [TODO: file hash] | updated_at: [TODO: updated_at]
-
 ## Executive Summary
 
-- [TODO: concise pack summary for approvers]
+- [TODO: 1-3 concise pack-approval bullets; HTML renders these as the primary hero summary]
 
 ### Visual Evidence
 
@@ -27,15 +17,15 @@
 
 ## Decisions Required for Approval
 
-- [TODO: decision or None]
+- [TODO: one decision per bullet; start with the decision, then add rationale if needed]
 
 ## Risks and Tradeoffs
 
-- [TODO: risk, tradeoff, or None]
+- [TODO: one risk or tradeoff per bullet; keep each bullet scan-friendly]
 
 ## Blockers and Unresolved Items
 
-- [TODO: blocker, unresolved item, or None]
+- [TODO: one blocker or unresolved item per bullet; use `- None` when clear]
 
 ## Traceability Map
 
@@ -54,4 +44,14 @@
 
 ## Downstream Impact if Approved
 
-- [TODO: downstream effect of pack approval]
+- [TODO: one downstream effect per bullet; order the bullets roughly by sequence or impact]
+
+## Snapshot Identity
+
+- Review type: Pack
+- Approval mode: Initial
+- Spec-pack root: [TODO: resolved spec-pack root]
+- Pack snapshot SHA-256: [TODO: aggregate SHA-256 of sorted path + file-hash pairs]
+- Approval view generated_at: [TODO: UTC ISO 8601 timestamp]
+- Included snapshots:
+  - [TODO: resolved canonical path] | SHA-256: [TODO: file hash] | updated_at: [TODO: updated_at]

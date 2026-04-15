@@ -19,6 +19,21 @@ USAGE = """Usage:
   validate_approval_view.py pack-revised <approval-md> <approval-html> <canonical-file>...
 """
 
+SECTION_STYLES = {
+    "Change Summary": "hero",
+    "Executive Summary": "hero",
+    "Scope": "elevated",
+    "Decisions Required for Approval": "default",
+    "Risks and Tradeoffs": "default",
+    "Blockers and Unresolved Items": "elevated",
+    "Traceability Map": "default",
+    "Validator Status": "elevated",
+    "Downstream Impact if Approved": "default",
+    "Snapshot Identity": "recessed",
+}
+
+MERMAID_FENCE_PATTERN = re.compile(r"^```mermaid\s*$", re.IGNORECASE | re.MULTILINE)
+
 
 @dataclass
 class TraceEntry:
@@ -43,6 +58,11 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(65536), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def slugify(value: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
+    return slug or "section"
 
 
 def parse_iso8601_z(value: str, field_name: str) -> None:
@@ -79,16 +99,26 @@ def parse_sections(markdown_text: str) -> list[tuple[str, list[str]]]:
     for line in markdown_text.splitlines():
         if line.startswith("## "):
             if current_title is not None:
-                sections.append((current_title, current_lines))
+                sections.append((current_title, trim_blank_lines(current_lines)))
             current_title = line[3:].strip()
             current_lines = []
         elif current_title is not None:
             current_lines.append(line)
 
     if current_title is not None:
-        sections.append((current_title, current_lines))
+        sections.append((current_title, trim_blank_lines(current_lines)))
 
     return sections
+
+
+def trim_blank_lines(lines: list[str]) -> list[str]:
+    start = 0
+    end = len(lines)
+    while start < end and not lines[start].strip():
+        start += 1
+    while end > start and not lines[end - 1].strip():
+        end -= 1
+    return lines[start:end]
 
 
 def section_map(markdown_text: str) -> dict[str, list[str]]:
@@ -104,7 +134,6 @@ def require_sections(markdown_text: str, revised: bool) -> list[str]:
     sections = parse_sections(markdown_text)
     titles = [title for title, _ in sections]
     expected = [
-        "Snapshot Identity",
         "Executive Summary",
         "Scope",
         "Decisions Required for Approval",
@@ -113,9 +142,10 @@ def require_sections(markdown_text: str, revised: bool) -> list[str]:
         "Traceability Map",
         "Validator Status",
         "Downstream Impact if Approved",
+        "Snapshot Identity",
     ]
     if revised:
-        expected.insert(1, "Change Summary")
+        expected.insert(0, "Change Summary")
 
     if titles != expected:
         fail(
@@ -450,16 +480,92 @@ def extract_html_value(html_text: str, pattern: str, error_message: str) -> str:
     return unescape(match.group(1)).strip()
 
 
+def group_top_level_bullets(lines: list[str]) -> list[list[str]]:
+    groups: list[list[str]] = []
+    current: list[str] | None = None
+    in_code = False
+
+    for line in lines:
+        if line.startswith("```"):
+            if current is not None:
+                current.append(line)
+            in_code = not in_code
+            continue
+        if in_code:
+            if current is not None:
+                current.append(line)
+            continue
+        if line.startswith("- "):
+            if current is not None:
+                groups.append(trim_blank_lines(current))
+            current = [line]
+        elif current is not None:
+            current.append(line)
+
+    if current is not None:
+        groups.append(trim_blank_lines(current))
+
+    return [group for group in groups if group]
+
+
+def bullet_text(group: list[str]) -> str:
+    if not group:
+        return ""
+    return re.sub(r"^-\s+", "", group[0]).strip()
+
+
+def count_meaningful_groups(lines: list[str]) -> int:
+    groups = group_top_level_bullets(lines)
+    meaningful = [group for group in groups if bullet_text(group).lower() != "none"]
+    return len(meaningful)
+
+
+def validator_pass_count(lines: list[str]) -> int:
+    return len(re.findall(r"^  - Result: Passed$", "\n".join(lines), re.MULTILINE))
+
+
+def count_visual_evidence_items(markdown_text: str) -> int:
+    return len(re.findall(r"^- Source: ", markdown_text, re.MULTILINE))
+
+
+def derive_expected_rich_metadata(markdown_text: str, required_titles: list[str], sections: dict[str, list[str]]) -> dict[str, object]:
+    return {
+        "sections": [{"id": f"section-{slugify(title)}", "title": title} for title in required_titles],
+        "glance": {
+            "decisions": count_meaningful_groups(sections["Decisions Required for Approval"]),
+            "risks": count_meaningful_groups(sections["Risks and Tradeoffs"]),
+            "blockers": count_meaningful_groups(sections["Blockers and Unresolved Items"]),
+            "traceability_claims": len(parse_traceability(sections["Traceability Map"])),
+            "validator_checks_passed": validator_pass_count(sections["Validator Status"]),
+            "visual_evidence_items": count_visual_evidence_items(markdown_text),
+        },
+        "has_mermaid": bool(MERMAID_FENCE_PATTERN.search(markdown_text)),
+        "has_toc": len(required_titles) >= 4,
+    }
+
+
 def validate_html(
     html_text: str,
+    markdown_text: str,
     required_titles: list[str],
+    sections: dict[str, list[str]],
     expected_metadata: dict[str, object],
     expected_title: str,
+    review_type: str,
 ) -> None:
     metadata = extract_html_metadata(html_text)
     for key, value in expected_metadata.items():
         if metadata.get(key) != value:
             fail(f"HTML metadata mismatch for {key}")
+
+    derived = metadata.get("derived")
+    if not isinstance(derived, dict):
+        fail("HTML metadata missing derived rich-view metadata")
+
+    expected_derived = derive_expected_rich_metadata(markdown_text, required_titles, sections)
+    for key, value in expected_derived.items():
+        if derived.get(key) != value:
+            fail(f"HTML derived metadata mismatch for {key}")
 
     page_title = extract_html_value(html_text, r"<title>(.*?)</title>", "HTML approval view missing <title>")
     if page_title != expected_title:
@@ -469,9 +575,66 @@ def validate_html(
     if header_title != expected_title:
         fail(f"HTML page title must be '{expected_title}', found '{header_title}'")
 
+    if 'data-approval-view="rich-v1"' not in html_text:
+        fail("HTML approval view must use the rich approval layout marker")
+    if 'id="approval-glance"' not in html_text or 'data-approval-glance' not in html_text:
+        fail("HTML approval view missing top-level glance summary")
+    if html_text.count('data-glance-card') < len(expected_derived["glance"]):
+        fail("HTML approval view missing one or more glance summary cards")
+
+    section_markup = re.findall(
+        r'<section[^>]+id="([^"]+)"[^>]+data-section-role="([^"]+)"[^>]+data-section-style="([^"]+)"',
+        html_text,
+    )
+    expected_section_markup = [
+        (f"section-{slugify(title)}", slugify(title), SECTION_STYLES[title])
+        for title in required_titles
+    ]
+    if section_markup != expected_section_markup:
+        fail(
+            "HTML section order or section-specific style markers do not match the shared contract. "
+            f"Expected {expected_section_markup}; found {section_markup}"
+        )
+
     for title in required_titles:
         if title not in html_text:
             fail(f"HTML approval view missing section title: {title}")
+
+    if expected_derived["has_toc"]:
+        if 'id="approval-toc"' not in html_text:
+            fail("HTML approval view missing responsive section navigation")
+        toc_links = re.findall(r'<a[^>]+href="#([^"]+)"[^>]+data-toc-link', html_text)
+        expected_ids = [f"section-{slugify(title)}" for title in required_titles]
+        if toc_links != expected_ids:
+            fail("HTML approval view TOC links do not match the required sections")
+
+    if 'data-scope-grid' not in html_text:
+        fail("HTML approval view missing scope split layout")
+    if 'data-validator-grid' not in html_text or html_text.count('data-validator-card') < 2:
+        fail("HTML approval view missing validator status cards")
+    if 'data-impact-timeline' not in html_text:
+        fail("HTML approval view missing downstream impact timeline")
+    if 'data-snapshot-panel' not in html_text:
+        fail("HTML approval view missing recessed snapshot panel")
+
+    traceability_count = len(parse_traceability(sections["Traceability Map"]))
+    if 'data-traceability-list' not in html_text or html_text.count('data-traceability-item') < traceability_count:
+        fail("HTML approval view missing traceability details accordions")
+
+    if review_type == "Pack" and 'data-snapshot-table' not in html_text:
+        fail("Pack approval HTML must render included snapshots as a semantic table")
+
+    if expected_derived["has_mermaid"]:
+        for marker in [
+            'data-mermaid-shell',
+            'data-mermaid-source',
+            'data-mermaid-source-detail',
+            'language-mermaid',
+            'cdn.jsdelivr.net/npm/mermaid@11',
+            'data-zoom-action',
+        ]:
+            if marker not in html_text:
+                fail(f"HTML approval view missing Mermaid rich-render marker: {marker}")
 
 
 def validate_common_sections(sections: dict[str, list[str]], mode: str, revised: bool) -> list[TraceEntry]:
@@ -524,7 +687,15 @@ def validate_artifact_mode(mode: str, canonical_file: Path, approval_md: Path, a
         "approval_view_generated_at": snapshot["approval_view_generated_at"],
     }
     expected_title = approval_view_title("Artifact", canonical_artifact=snapshot["canonical_artifact"])
-    validate_html(approval_html_text, required_titles, expected_metadata, expected_title)
+    validate_html(
+        approval_html_text,
+        approval_md_text,
+        required_titles,
+        sections,
+        expected_metadata,
+        expected_title,
+        "Artifact",
+    )
 
 
 def validate_pack_mode(mode: str, approval_md: Path, approval_html: Path, canonical_files: list[Path], revised: bool) -> None:
@@ -559,7 +730,15 @@ def validate_pack_mode(mode: str, approval_md: Path, approval_html: Path, canoni
         "included_snapshots": snapshot["included_snapshots"],
     }
     expected_title = approval_view_title("Pack", spec_pack_root=str(snapshot["spec_pack_root"]))
-    validate_html(approval_html_text, required_titles, expected_metadata, expected_title)
+    validate_html(
+        approval_html_text,
+        approval_md_text,
+        required_titles,
+        sections,
+        expected_metadata,
+        expected_title,
+        "Pack",
+    )
 
 
 def main() -> int:

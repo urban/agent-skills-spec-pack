@@ -1,17 +1,8 @@
 # Approval View
 
-## Snapshot Identity
-
-- Review type: Artifact
-- Approval mode: Initial
-- Canonical artifact: [TODO: resolved canonical path]
-- Snapshot SHA-256: [TODO: SHA-256 of canonical artifact bytes]
-- Canonical updated_at: [TODO: updated_at from canonical frontmatter]
-- Approval view generated_at: [TODO: UTC ISO 8601 timestamp]
-
 ## Executive Summary
 
-- [TODO: concise artifact summary for approvers]
+- [TODO: 1-3 concise approval bullets; HTML renders these as the primary hero summary]
 
 ### Visual Evidence
 
@@ -26,15 +17,15 @@
 
 ## Decisions Required for Approval
 
-- [TODO: decision or None]
+- [TODO: one decision per bullet; start with the decision, then add rationale if needed]
 
 ## Risks and Tradeoffs
 
-- [TODO: risk, tradeoff, or None]
+- [TODO: one risk or tradeoff per bullet; keep each bullet scan-friendly]
 
 ## Blockers and Unresolved Items
 
-- [TODO: blocker, unresolved item, or None]
+- [TODO: one blocker or unresolved item per bullet; use `- None` when clear]
 
 ## Traceability Map
 
@@ -53,4 +44,13 @@
 
 ## Downstream Impact if Approved
 
-- [TODO: downstream effect of approval]
+- [TODO: one downstream effect per bullet; order the bullets roughly by sequence or impact]
+
+## Snapshot Identity
+
+- Review type: Artifact
+- Approval mode: Initial
+- Canonical artifact: [TODO: resolved canonical path]
+- Snapshot SHA-256: [TODO: SHA-256 of canonical artifact bytes]
+- Canonical updated_at: [TODO: updated_at from canonical frontmatter]
+- Approval view generated_at: [TODO: UTC ISO 8601 timestamp]
