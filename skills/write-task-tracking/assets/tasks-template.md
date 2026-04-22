@@ -13,6 +13,8 @@ source_artifacts:
   [TODO: workflow-owned lineage key]: [TODO: resolved artifact path]
 ---
 
+# Exectuion Tasks
+
 ## Task Summary
 
 - Parent plan: [TODO: resolved execution-plan path]

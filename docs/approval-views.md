@@ -22,9 +22,10 @@ Use these terms deliberately:
 
 | Concern | Owner |
 | --- | --- |
-| shared approval-view contract, rendering, and validation | foundational `write-approval-view` |
+| shared approval-view framework, rendering, and validation | foundational `write-approval-view` |
 | when approval views are generated | coordination |
-| artifact-specific review emphasis | specialist |
+| artifact approval framing | producing specialist skill |
+| pack approval framing | workflow coordinator skill |
 
 ## Output paths
 
@@ -44,28 +45,126 @@ Default paths:
 - no artifact may be treated as approved while any `TODO: Confirm` remains
 - revised review requires a fresh approval view for the new snapshot before re-approval
 
+## Profile routing
+
+Artifact review resolves profiles in this order:
+
+1. canonical frontmatter `generated_by.producing_skill`
+2. basename fallback mapped to a specialist owner only
+3. built-in generic artifact fallback profile
+
+Pack review resolves profiles in this order:
+
+1. unanimous canonical frontmatter `generated_by.root_skill` across the included artifact set
+2. matching coordinator-owned `skills/<root-skill>/assets/pack-approval-view-profile.json`
+3. built-in generic pack fallback profile
+
+Bad or missing provenance must not block generation. Fall back best-effort.
+
 ## Required Markdown structure
 
 Markdown approval views have no frontmatter.
 
-Required sections, in order:
+Required top-level `##` sections are profile-driven:
 
-1. `Snapshot Identity`
-2. `Change Summary` when the view is revised
-3. `Executive Summary`
-4. `Scope`
-5. `Decisions Required for Approval`
-6. `Risks and Tradeoffs`
-7. `Blockers and Unresolved Items`
-8. `Traceability Map`
-9. `Validator Status`
-10. `Downstream Impact if Approved`
+- artifact review uses the producing skill's `skills/<skill>/assets/approval-view-profile.json` when routing resolves cleanly
+- pack review uses the coordinator skill's `skills/<root-skill>/assets/pack-approval-view-profile.json` when routing resolves cleanly
+- otherwise the shared generic fallback profile applies
+- section order must match the selected profile exactly
+- `Snapshot Identity` must stay the final top-level section
 
 Revised views are diff-first:
 
-- `Change Summary` appears immediately after `Snapshot Identity`
+- `Change Summary` appears first
 - `Change Summary` includes `Previous snapshot SHA-256:`
 - `Change Summary` includes at least one delta bullet or `- None`
+
+## Profile schema
+
+Core top-level fields:
+
+- `profile_id`
+- `display_name`
+- `subtitle`
+- `review_type`
+- optional `default_visual_section`
+- optional `revised`
+- `sections`
+- `glance_cards`
+
+Section fields:
+
+- `key`
+- `title`
+- `kind`
+- `label`
+- `style`
+- `tone`
+- `emphasis`
+- `item_label`
+- `empty_state`
+- `why`
+
+Glance-card fields:
+
+- `label`
+- `metric`
+- `section_title`
+- `hint`
+- `tone`
+- `source` -> `approval` or `canonical`
+- `extractor`
+
+Revised config fields:
+
+- `section_overrides`
+- `glance_cards`
+
+## Supported section kinds
+
+- `change-summary`
+- `summary`
+- `scope`
+- `cards`
+- `callouts`
+- `traceability`
+- `validator`
+- `timeline`
+- `snapshot`
+- `fragment`
+- `paired-lists`
+- `checklist`
+- `ledger`
+- `matrix`
+- `roster`
+- `diagram-led-summary`
+
+Unknown kinds fail closed.
+
+## Visual evidence
+
+- carry forward only in-scope visuals that materially affect approval
+- place them in `### Visual Evidence` inside the most relevant required section
+- if the profile sets `default_visual_section`, keep visuals there when present
+- precede each carried-forward visual with `- Source: <resolved canonical path> :: <exact heading>`
+- copy Mermaid fence contents exactly; do not redraw, rename, or reinterpret diagrams
+
+## Traceability and validator status
+
+Every substantive claim in `Traceability Map` uses this exact three-line block:
+
+```text
+- [Tn] Claim: <summary>
+  - Source: <resolved canonical path> :: <exact heading>
+  - Evidence quote: "<verbatim quote from that canonical section>"
+```
+
+Rules:
+
+- source headings must match the canonical artifact exactly
+- evidence quotes must appear verbatim in the referenced section
+- `Validator Status` must include both `Canonical validator` and `Approval-view validator`
+- record the command and result for each validator
 
 ## Snapshot identity
 
@@ -88,23 +187,6 @@ Pack views record:
 - `Included snapshots:` with one bullet per canonical artifact in this exact form:
   - `<resolved path> | SHA-256: <hash> | updated_at: <timestamp>`
 
-## Traceability and validator status
-
-Every substantive claim in `Traceability Map` uses this exact three-line block:
-
-```text
-- [Tn] Claim: <summary>
-  - Source: <resolved canonical path> :: <exact heading>
-  - Evidence quote: "<verbatim quote from that canonical section>"
-```
-
-Rules:
-
-- source headings must match the canonical artifact exactly
-- evidence quotes must appear verbatim in the referenced section
-- `Validator Status` must include both `Canonical validator` and `Approval-view validator`
-- record the command and result for each validator
-
 ## HTML companion
 
 Every Markdown approval view has a matching self-contained HTML companion for the same snapshot.
@@ -112,10 +194,11 @@ Every Markdown approval view has a matching self-contained HTML companion for th
 The HTML view must:
 
 - keep the same section order and snapshot identity as the Markdown view
-- surface the review target in both the HTML `<title>` and the visible page title:
-  - artifact view -> `Artifact Approval View: <artifact-basename>`
-  - pack view -> `Pack Approval View: <spec-pack-name>` where `<spec-pack-name>` is the basename of `Spec-pack root`
-- be rendered deterministically from the Markdown view and snapshot identity
+- surface the review target in both the HTML `<title>` and visible page title
+- render by section kind, tone, and emphasis rather than old hardcoded section names
+- show section `why` subtly but visibly
+- include a top-level `At a Glance` summary derived from approval content or canonical extraction, depending on the profile
+- include responsive section navigation when the page has 4+ top-level sections
 - validate against the same snapshot metadata
 
 ## Validation commands
@@ -136,8 +219,10 @@ Fail closed on:
 - stale `updated_at` metadata
 - unresolved traceability headings or quotes
 - missing `Change Summary` for revised views
+- unknown section kinds
+- misplaced visual evidence when the profile sets `default_visual_section`
 - HTML and Markdown snapshot mismatch
-- HTML title does not surface the approved artifact or pack
+- missing HTML section markers, tone/emphasis attrs, or visible section `why`
 - unresolved template placeholders
 
 ## Workflow defaults

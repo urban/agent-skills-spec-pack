@@ -12,6 +12,8 @@ generated_by:
 source_artifacts: {}
 ---
 
+# Charter
+
 ## Goals
 
 - [TODO: goal]

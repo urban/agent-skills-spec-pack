@@ -75,4 +75,5 @@ Produce `user-stories.md` from approved product framing. Capture user-visible be
 - highest-value story anchors and observable outcomes
 - boundary and failure coverage that protects downstream requirements quality
 - story gaps or `TODO: Confirm` items that would distort later requirements if left vague
-- approval-shell layout lives in `./assets/approval-view-profile.json`; use it instead of the generic approval template
+- artifact approval profile owned here lives in `./assets/approval-view-profile.json`
+- keep that profile aligned with this skill's review framing; do not rely on a generic template

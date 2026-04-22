@@ -81,7 +81,8 @@ Produce `technical-design.md` as as-built architecture documentation from reposi
 - inferred-versus-observed distinctions and confidence hotspots
 - runtime, error, and resource-ownership seams most likely to affect later changes
 - major risks, tradeoffs, and findings that pressure requirement reconciliation
-- approval-shell layout lives in `./assets/approval-view-profile.json`; use it instead of the generic approval template
+- artifact approval profile owned here lives in `./assets/approval-view-profile.json`
+- keep that profile aligned with this skill's review framing; do not rely on a generic template
 
 ## References
 

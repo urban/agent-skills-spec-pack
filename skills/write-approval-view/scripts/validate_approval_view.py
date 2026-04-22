@@ -11,7 +11,7 @@ from datetime import datetime
 from html import unescape
 from pathlib import Path
 
-from approval_profiles import load_review_profile, section_spec_by_kind, section_specs
+from approval_profiles import glance_cards_for_mode, load_review_profile, section_spec_by_kind, section_specs
 
 
 USAGE = """Usage:
@@ -22,6 +22,7 @@ USAGE = """Usage:
 """
 
 MERMAID_FENCE_PATTERN = re.compile(r"^```mermaid\s*$", re.IGNORECASE | re.MULTILINE)
+MARKDOWN_TABLE_SEPARATOR_PATTERN = re.compile(r"^\|?(\s*:?-{3,}:?\s*\|)+\s*:?-{3,}:?\s*\|?$")
 
 
 @dataclass
@@ -31,6 +32,12 @@ class TraceEntry:
     source_path: str
     heading: str
     evidence_quote: str
+
+
+@dataclass
+class CanonicalSnapshot:
+    path: str
+    text: str
 
 
 def fail(message: str) -> None:
@@ -47,11 +54,6 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(65536), b""):
             digest.update(chunk)
     return digest.hexdigest()
-
-
-def slugify(value: str) -> str:
-    slug = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
-    return slug or "section"
 
 
 def parse_iso8601_z(value: str, field_name: str) -> None:
@@ -80,6 +82,16 @@ def parse_frontmatter_updated_at(markdown_text: str, path: Path) -> str:
     fail(f"Canonical artifact missing updated_at in frontmatter: {path}")
 
 
+def trim_blank_lines(lines: list[str]) -> list[str]:
+    start = 0
+    end = len(lines)
+    while start < end and not lines[start].strip():
+        start += 1
+    while end > start and not lines[end - 1].strip():
+        end -= 1
+    return lines[start:end]
+
+
 def parse_sections(markdown_text: str) -> list[tuple[str, list[str]]]:
     sections: list[tuple[str, list[str]]] = []
     current_title: str | None = None
@@ -100,16 +112,6 @@ def parse_sections(markdown_text: str) -> list[tuple[str, list[str]]]:
     return sections
 
 
-def trim_blank_lines(lines: list[str]) -> list[str]:
-    start = 0
-    end = len(lines)
-    while start < end and not lines[start].strip():
-        start += 1
-    while end > start and not lines[end - 1].strip():
-        end -= 1
-    return lines[start:end]
-
-
 def section_map(markdown_text: str) -> dict[str, list[str]]:
     mapping: dict[str, list[str]] = {}
     for title, lines in parse_sections(markdown_text):
@@ -123,13 +125,11 @@ def require_sections(markdown_text: str, expected_specs: list[dict[str, object]]
     sections = parse_sections(markdown_text)
     titles = [title for title, _ in sections]
     expected = [str(spec["title"]) for spec in expected_specs]
-
     if titles != expected:
         fail(
             "Approval-view sections must match the selected approval profile exactly. "
             f"Expected {expected}; found {titles}"
         )
-
     return titles
 
 
@@ -178,7 +178,6 @@ def parse_snapshot_identity_artifact(lines: list[str], canonical_path: Path, rev
         fail("Snapshot SHA-256 must be 64 lowercase hex characters")
     parse_iso8601_z(data["canonical_updated_at"], "Canonical updated_at")
     parse_iso8601_z(data["approval_view_generated_at"], "Approval view generated_at")
-
     return data
 
 
@@ -288,173 +287,16 @@ def validate_change_summary(lines: list[str]) -> None:
     if not re.fullmatch(r"[0-9a-f]{64}", previous_hash):
         fail("Previous snapshot SHA-256 must be 64 lowercase hex characters")
 
-    delta_lines = [
-        line
-        for line in lines
-        if line.startswith("- ") and not line.startswith("- Previous snapshot SHA-256:")
-    ]
+    delta_lines = [line for line in lines if line.startswith("- ") and not line.startswith("- Previous snapshot SHA-256:")]
     if not delta_lines:
         fail("Change Summary must include at least one delta bullet or '- None'")
 
 
 def validate_scope(lines: list[str]) -> None:
-    if not any(line == "- In scope:" for line in lines):
+    if "- In scope:" not in lines:
         fail("Scope section must include '- In scope:'")
-    if not any(line == "- Out of scope:" for line in lines):
+    if "- Out of scope:" not in lines:
         fail("Scope section must include '- Out of scope:'")
-
-
-def parse_traceability(lines: list[str]) -> list[TraceEntry]:
-    entries: list[TraceEntry] = []
-    i = 0
-    while i < len(lines):
-        line = lines[i]
-        if not line.strip():
-            i += 1
-            continue
-        claim_match = re.match(r"^- \[([^\]]+)\] Claim: (.+)$", line)
-        if not claim_match:
-            fail(f"Invalid Traceability Map entry: {line}")
-        claim_id, claim_text = claim_match.groups()
-        if i + 2 >= len(lines):
-            fail(f"Incomplete Traceability Map entry for {claim_id}")
-        source_line = lines[i + 1]
-        quote_line = lines[i + 2]
-        source_match = re.match(r"^  - Source: (.+?) :: (.+)$", source_line)
-        quote_match = re.match(r'^  - Evidence quote: "(.*)"$', quote_line)
-        if not source_match:
-            fail(f"Traceability entry {claim_id} missing valid Source line")
-        if not quote_match:
-            fail(f"Traceability entry {claim_id} missing valid Evidence quote line")
-        source_path, heading = source_match.groups()
-        entries.append(
-            TraceEntry(
-                claim_id=claim_id.strip(),
-                claim=claim_text.strip(),
-                source_path=source_path.strip(),
-                heading=heading.strip(),
-                evidence_quote=quote_match.group(1),
-            )
-        )
-        i += 3
-
-    if not entries:
-        fail("Traceability Map must include at least one substantive claim")
-
-    return entries
-
-
-def parse_heading_blocks(markdown_text: str) -> dict[str, str]:
-    lines = markdown_text.splitlines()
-    headings: list[tuple[int, int, str]] = []
-    blocks: dict[str, str] = {}
-
-    for index, line in enumerate(lines):
-        match = re.match(r"^(#{1,6})\s+(.+)$", line)
-        if match:
-            headings.append((index, len(match.group(1)), match.group(2).strip()))
-
-    for idx, (start_index, level, title) in enumerate(headings):
-        if title in blocks:
-            fail(f"Canonical artifact contains duplicate heading title: {title}")
-        end_index = len(lines)
-        for next_index in range(idx + 1, len(headings)):
-            candidate_index, candidate_level, _ = headings[next_index]
-            if candidate_level <= level:
-                end_index = candidate_index
-                break
-        blocks[title] = "\n".join(lines[start_index:end_index])
-
-    return blocks
-
-
-def validate_traceability(entries: list[TraceEntry], allowed_paths: set[str], canonical_texts: dict[str, str]) -> None:
-    heading_cache = {path: parse_heading_blocks(text) for path, text in canonical_texts.items()}
-
-    for entry in entries:
-        resolved_source = str(Path(entry.source_path).resolve())
-        if resolved_source not in allowed_paths:
-            fail(f"Traceability entry {entry.claim_id} references an out-of-scope canonical artifact")
-        heading_blocks = heading_cache[resolved_source]
-        if entry.heading not in heading_blocks:
-            fail(
-                f"Traceability entry {entry.claim_id} references missing heading '{entry.heading}' in {resolved_source}"
-            )
-        if entry.evidence_quote not in heading_blocks[entry.heading]:
-            fail(
-                f"Traceability entry {entry.claim_id} quote not found in heading '{entry.heading}' of {resolved_source}"
-            )
-
-
-def validate_validator_status(lines: list[str], mode: str) -> None:
-    text = "\n".join(lines)
-    canonical_block = re.search(
-        r"- Canonical validator:\n  - Command: (.+)\n  - Result: (.+)",
-        text,
-    )
-    approval_block = re.search(
-        r"- Approval-view validator:\n  - Command: (.+)\n  - Result: (.+)",
-        text,
-    )
-    if not canonical_block:
-        fail("Validator Status must include Canonical validator command and result")
-    if not approval_block:
-        fail("Validator Status must include Approval-view validator command and result")
-
-    canonical_result = canonical_block.group(2).strip()
-    approval_command = approval_block.group(1).strip()
-    approval_result = approval_block.group(2).strip()
-
-    if canonical_result != "Passed":
-        fail("Canonical validator result must be Passed")
-    if approval_result != "Passed":
-        fail("Approval-view validator result must be Passed")
-    if "validate_approval_view.sh" not in approval_command:
-        fail("Approval-view validator command must call validate_approval_view.sh")
-    if mode not in approval_command:
-        fail(f"Approval-view validator command must include the current mode: {mode}")
-
-
-def validate_placeholders(markdown_text: str) -> None:
-    if re.search(r"\[(?:TODO|todo):[^\]]+\]", markdown_text):
-        fail("Approval view still contains unresolved [TODO: ...] placeholders")
-    if re.search(r"<[^>\n]+>", markdown_text):
-        fail("Approval view still contains unresolved <...> placeholders")
-
-
-def extract_html_metadata(html_text: str) -> dict[str, object]:
-    match = re.search(
-        r'<script id="approval-view-metadata" type="application/json">(.*?)</script>',
-        html_text,
-        re.DOTALL,
-    )
-    if not match:
-        fail("HTML approval view missing approval-view-metadata JSON block")
-    try:
-        return json.loads(unescape(match.group(1)))
-    except json.JSONDecodeError:
-        fail("HTML approval view metadata JSON is invalid")
-
-
-def approval_view_title(review_type: str, canonical_artifact: str | None = None, spec_pack_root: str | None = None) -> str:
-    if review_type == "Artifact":
-        if canonical_artifact:
-            artifact_name = Path(canonical_artifact).name or canonical_artifact
-            return f"Artifact Approval View: {artifact_name}"
-        return "Artifact Approval View"
-    if review_type == "Pack":
-        if spec_pack_root:
-            pack_name = Path(spec_pack_root).name or spec_pack_root
-            return f"Pack Approval View: {pack_name}"
-        return "Pack Approval View"
-    fail(f"Unsupported review type for HTML title: {review_type}")
-
-
-def extract_html_value(html_text: str, pattern: str, error_message: str) -> str:
-    match = re.search(pattern, html_text, re.DOTALL)
-    if not match:
-        fail(error_message)
-    return unescape(match.group(1)).strip()
 
 
 def group_top_level_bullets(lines: list[str]) -> list[list[str]]:
@@ -497,17 +339,213 @@ def count_meaningful_groups(lines: list[str]) -> int:
     return len(meaningful)
 
 
-def validator_pass_count(lines: list[str]) -> int:
-    return len(re.findall(r"^  - Result: Passed$", "\n".join(lines), re.MULTILINE))
+def validate_list_like_section(lines: list[str], title: str) -> None:
+    if count_meaningful_groups(lines) == 0 and "- None" not in lines:
+        fail(f"{title} must contain one or more top-level bullets or '- None'")
+
+
+def validate_paired_lists(lines: list[str], title: str) -> None:
+    if count_meaningful_groups(lines) < 2:
+        fail(f"{title} must contain at least two contrasted top-level list groups")
+
+
+def has_markdown_table(lines: list[str]) -> bool:
+    for index in range(len(lines) - 1):
+        if lines[index].strip().startswith("|") and MARKDOWN_TABLE_SEPARATOR_PATTERN.match(lines[index + 1].strip()):
+            return True
+    return False
+
+
+def validate_matrix(lines: list[str], title: str) -> None:
+    if has_markdown_table(lines):
+        return
+    if count_meaningful_groups(lines) == 0:
+        fail(f"{title} must contain a Markdown table or a deterministic bullet-row fallback")
+
+
+def parse_traceability(lines: list[str]) -> list[TraceEntry]:
+    entries: list[TraceEntry] = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if not line.strip():
+            i += 1
+            continue
+        claim_match = re.match(r"^- \[([^\]]+)\] Claim: (.+)$", line)
+        if not claim_match:
+            fail(f"Invalid Traceability Map entry: {line}")
+        if i + 2 >= len(lines):
+            fail(f"Incomplete Traceability Map entry for {claim_match.group(1).strip()}")
+        source_match = re.match(r"^  - Source: (.+?) :: (.+)$", lines[i + 1])
+        quote_match = re.match(r'^  - Evidence quote: "(.*)"$', lines[i + 2])
+        if not source_match:
+            fail(f"Traceability entry {claim_match.group(1).strip()} missing valid Source line")
+        if not quote_match:
+            fail(f"Traceability entry {claim_match.group(1).strip()} missing valid Evidence quote line")
+        entries.append(
+            TraceEntry(
+                claim_id=claim_match.group(1).strip(),
+                claim=claim_match.group(2).strip(),
+                source_path=source_match.group(1).strip(),
+                heading=source_match.group(2).strip(),
+                evidence_quote=quote_match.group(1),
+            )
+        )
+        i += 3
+
+    if not entries:
+        fail("Traceability Map must include at least one substantive claim")
+
+    return entries
+
+
+def parse_heading_blocks(markdown_text: str) -> dict[str, str]:
+    lines = markdown_text.splitlines()
+    headings: list[tuple[int, int, str]] = []
+    blocks: dict[str, str] = {}
+
+    for index, line in enumerate(lines):
+        match = re.match(r"^(#{1,6})\s+(.+)$", line)
+        if match:
+            headings.append((index, len(match.group(1)), match.group(2).strip()))
+
+    for idx, (start_index, level, title) in enumerate(headings):
+        if title in blocks:
+            fail(f"Canonical artifact contains duplicate heading title: {title}")
+        end_index = len(lines)
+        for next_index in range(idx + 1, len(headings)):
+            candidate_index, candidate_level, _ = headings[next_index]
+            if candidate_level <= level:
+                end_index = candidate_index
+                break
+        blocks[title] = "\n".join(lines[start_index:end_index])
+
+    return blocks
+
+
+def validate_traceability(entries: list[TraceEntry], allowed_paths: set[str], canonical_texts: dict[str, str]) -> None:
+    heading_cache = {path: parse_heading_blocks(text) for path, text in canonical_texts.items()}
+    for entry in entries:
+        resolved_source = str(Path(entry.source_path).resolve())
+        if resolved_source not in allowed_paths:
+            fail(f"Traceability entry {entry.claim_id} references an out-of-scope canonical artifact")
+        heading_blocks = heading_cache[resolved_source]
+        if entry.heading not in heading_blocks:
+            fail(f"Traceability entry {entry.claim_id} references missing heading '{entry.heading}' in {resolved_source}")
+        if entry.evidence_quote not in heading_blocks[entry.heading]:
+            fail(
+                f"Traceability entry {entry.claim_id} quote not found in heading '{entry.heading}' of {resolved_source}"
+            )
+
+
+def validate_validator_status(lines: list[str], mode: str) -> None:
+    text = "\n".join(lines)
+    canonical_block = re.search(r"- Canonical validator:\n  - Command: (.+)\n  - Result: (.+)", text)
+    approval_block = re.search(r"- Approval-view validator:\n  - Command: (.+)\n  - Result: (.+)", text)
+    if not canonical_block:
+        fail("Validator Status must include Canonical validator command and result")
+    if not approval_block:
+        fail("Validator Status must include Approval-view validator command and result")
+
+    canonical_result = canonical_block.group(2).strip()
+    approval_command = approval_block.group(1).strip()
+    approval_result = approval_block.group(2).strip()
+
+    if canonical_result != "Passed":
+        fail("Canonical validator result must be Passed")
+    if approval_result != "Passed":
+        fail("Approval-view validator result must be Passed")
+    if "validate_approval_view.sh" not in approval_command:
+        fail("Approval-view validator command must call validate_approval_view.sh")
+    if mode not in approval_command:
+        fail(f"Approval-view validator command must include the current mode: {mode}")
+
+
+def validate_placeholders(markdown_text: str) -> None:
+    if re.search(r"\[(?:TODO|todo):[^\]]+\]", markdown_text):
+        fail("Approval view still contains unresolved [TODO: ...] placeholders")
+    if re.search(r"<[^>\n]+>", markdown_text):
+        fail("Approval view still contains unresolved <...> placeholders")
+
+
+def extract_html_metadata(html_text: str) -> dict[str, object]:
+    match = re.search(r'<script id="approval-view-metadata" type="application/json">(.*?)</script>', html_text, re.DOTALL)
+    if not match:
+        fail("HTML approval view missing approval-view-metadata JSON block")
+    try:
+        return json.loads(unescape(match.group(1)))
+    except json.JSONDecodeError:
+        fail("HTML approval view metadata JSON is invalid")
+
+
+def approval_view_title(review_type: str, canonical_artifact: str | None = None, spec_pack_root: str | None = None) -> str:
+    if review_type == "Artifact":
+        if canonical_artifact:
+            artifact_name = Path(canonical_artifact).name or canonical_artifact
+            return f"Artifact Approval View: {artifact_name}"
+        return "Artifact Approval View"
+    if review_type == "Pack":
+        if spec_pack_root:
+            pack_name = Path(spec_pack_root).name or spec_pack_root
+            return f"Pack Approval View: {pack_name}"
+        return "Pack Approval View"
+    fail(f"Unsupported review type for HTML title: {review_type}")
+
+
+def extract_html_value(html_text: str, pattern: str, error_message: str) -> str:
+    match = re.search(pattern, html_text, re.DOTALL)
+    if not match:
+        fail(error_message)
+    return unescape(match.group(1)).strip()
+
+
+def parse_headings(markdown_text: str) -> list[tuple[int, str]]:
+    headings: list[tuple[int, str]] = []
+    for line in markdown_text.splitlines():
+        match = re.match(r"^(#{1,6})\s+(.+)$", line)
+        if match:
+            headings.append((len(match.group(1)), match.group(2).strip()))
+    return headings
+
+
+def count_heading_prefix(canonical_snapshots: list[CanonicalSnapshot], extractor: dict[str, object]) -> int:
+    heading_level = int(extractor.get("heading_level") or 3)
+    prefix = str(extractor.get("heading_prefix") or "")
+    count = 0
+    for snapshot in canonical_snapshots:
+        for level, title in parse_headings(snapshot.text):
+            if level != heading_level:
+                continue
+            if prefix and not title.startswith(prefix):
+                continue
+            count += 1
+    return count
 
 
 def count_visual_evidence_items(markdown_text: str) -> int:
     return len(re.findall(r"^- Source: ", markdown_text, re.MULTILINE))
 
 
-def glance_metric_value(card: dict[str, object], markdown_text: str, sections: dict[str, list[str]], expected_specs: list[dict[str, object]]) -> int:
+def snapshot_canonical_sources(review_type: str, canonical_files: list[Path]) -> list[CanonicalSnapshot]:
+    return [CanonicalSnapshot(path=str(path.resolve()), text=read_text(path)) for path in canonical_files]
+
+
+def glance_metric_value(
+    card: dict[str, object],
+    markdown_text: str,
+    sections: dict[str, list[str]],
+    expected_specs: list[dict[str, object]],
+    canonical_snapshots: list[CanonicalSnapshot],
+) -> int:
     metric = str(card.get("metric") or "groups")
+    source = str(card.get("source") or "approval")
     section_title = str(card.get("section_title") or "")
+
+    if source == "canonical":
+        extractor = dict(card.get("extractor") or {})
+        if metric == "count-heading-prefix":
+            return count_heading_prefix(canonical_snapshots, extractor)
+        return 0
 
     if metric == "groups":
         return count_meaningful_groups(sections.get(section_title, []))
@@ -515,14 +553,14 @@ def glance_metric_value(card: dict[str, object], markdown_text: str, sections: d
         lines = sections.get(section_title, []) if section_title else []
         if not lines:
             traceability_spec = next(spec for spec in expected_specs if spec["kind"] == "traceability")
-            lines = sections[traceability_spec["title"]]
+            lines = sections[str(traceability_spec["title"])]
         return len(parse_traceability(lines))
     if metric == "validator_checks":
         lines = sections.get(section_title, []) if section_title else []
         if not lines:
             validator_spec = next(spec for spec in expected_specs if spec["kind"] == "validator")
-            lines = sections[validator_spec["title"]]
-        return validator_pass_count(lines)
+            lines = sections[str(validator_spec["title"])]
+        return len(re.findall(r"^  - Result: Passed$", "\n".join(lines), re.MULTILINE))
     if metric == "visuals":
         return count_visual_evidence_items(markdown_text)
     return 0
@@ -533,11 +571,16 @@ def derive_expected_rich_metadata(
     expected_specs: list[dict[str, object]],
     sections: dict[str, list[str]],
     profile: dict[str, object],
+    revised: bool,
+    canonical_files: list[Path],
 ) -> dict[str, object]:
+    canonical_snapshots = snapshot_canonical_sources(str(profile["review_type"]), canonical_files)
     glance = {}
-    for raw_card in profile.get("glance_cards", []):
+    for raw_card in glance_cards_for_mode(profile, revised):
         card = dict(raw_card)
-        glance[str(card.get("label") or "Review")] = str(glance_metric_value(card, markdown_text, sections, expected_specs))
+        glance[str(card.get("label") or "Review")] = str(
+            glance_metric_value(card, markdown_text, sections, expected_specs, canonical_snapshots)
+        )
     return {
         "sections": [
             {
@@ -545,6 +588,8 @@ def derive_expected_rich_metadata(
                 "key": spec["key"],
                 "title": spec["title"],
                 "kind": spec["kind"],
+                "tone": spec["tone"],
+                "emphasis": spec["emphasis"],
             }
             for spec in expected_specs
         ],
@@ -552,6 +597,35 @@ def derive_expected_rich_metadata(
         "has_mermaid": bool(MERMAID_FENCE_PATTERN.search(markdown_text)),
         "has_toc": len(expected_specs) >= 4,
     }
+
+
+def unique_preserving_order(values: list[str]) -> list[str]:
+    seen: set[str] = set()
+    output: list[str] = []
+    for value in values:
+        if value in seen:
+            continue
+        seen.add(value)
+        output.append(value)
+    return output
+
+
+def validate_visual_placement(sections: dict[str, list[str]], expected_specs: list[dict[str, object]], profile: dict[str, object]) -> None:
+    default_key = str(profile.get("default_visual_section") or "").strip()
+    if not default_key:
+        return
+
+    visual_titles = [title for title, lines in sections.items() if any(line.startswith("- Source: ") for line in lines)]
+    if not visual_titles:
+        return
+
+    matching_spec = next((spec for spec in expected_specs if str(spec["key"]) == default_key), None)
+    if matching_spec is None:
+        fail(f"default_visual_section '{default_key}' not found in expected specs")
+
+    expected_title = str(matching_spec["title"])
+    if any(title != expected_title for title in visual_titles):
+        fail(f"Visual Evidence must appear in the preferred default_visual_section '{expected_title}' when visuals are present")
 
 
 def validate_html(
@@ -563,6 +637,8 @@ def validate_html(
     expected_title: str,
     review_type: str,
     profile: dict[str, object],
+    revised: bool,
+    canonical_files: list[Path],
 ) -> None:
     metadata = extract_html_metadata(html_text)
     for key, value in expected_metadata.items():
@@ -578,7 +654,7 @@ def validate_html(
     if not isinstance(derived, dict):
         fail("HTML metadata missing derived rich-view metadata")
 
-    expected_derived = derive_expected_rich_metadata(markdown_text, expected_specs, sections, profile)
+    expected_derived = derive_expected_rich_metadata(markdown_text, expected_specs, sections, profile, revised, canonical_files)
     for key, value in expected_derived.items():
         if derived.get(key) != value:
             fail(f"HTML derived metadata mismatch for {key}")
@@ -599,11 +675,11 @@ def validate_html(
         fail("HTML approval view missing one or more glance summary cards")
 
     section_markup = re.findall(
-        r'<section[^>]+id="([^"]+)"[^>]+data-section-role="([^"]+)"[^>]+data-section-kind="([^"]+)"[^>]+data-section-style="([^"]+)"',
+        r'<section[^>]+id="([^"]+)"[^>]+data-section-role="([^"]+)"[^>]+data-section-kind="([^"]+)"[^>]+data-section-style="([^"]+)"[^>]+data-section-tone="([^"]+)"[^>]+data-section-emphasis="([^"]+)"',
         html_text,
     )
     expected_section_markup = [
-        (f"section-{spec['key']}", spec["key"], spec["kind"], spec["style"])
+        (f"section-{spec['key']}", spec["key"], spec["kind"], spec["style"], spec["tone"], spec["emphasis"])
         for spec in expected_specs
     ]
     if section_markup != expected_section_markup:
@@ -616,19 +692,28 @@ def validate_html(
         title = str(spec["title"])
         if title not in html_text:
             fail(f"HTML approval view missing section title: {title}")
+        why = str(spec.get("why") or "").strip()
+        if why and why not in html_text:
+            fail(f"HTML approval view missing visible section why text for {title}")
+
+    if sum(1 for spec in expected_specs if str(spec.get("why") or "").strip()) > html_text.count('data-section-why'):
+        fail("HTML approval view missing one or more visible section why markers")
 
     if expected_derived["has_toc"]:
         if 'id="approval-toc"' not in html_text:
             fail("HTML approval view missing responsive section navigation")
         toc_links = re.findall(r'<a[^>]+href="#([^"]+)"[^>]+data-toc-link', html_text)
+        unique_links = unique_preserving_order(toc_links)
         expected_ids = [f"section-{spec['key']}" for spec in expected_specs]
-        if toc_links != expected_ids:
+        if unique_links != expected_ids:
             fail("HTML approval view TOC links do not match the selected approval profile")
 
     for spec in expected_specs:
         kind = str(spec["kind"])
         key = str(spec["key"])
         title = str(spec["title"])
+        if kind == "change-summary" and f'data-change-summary="{key}"' not in html_text:
+            fail(f"HTML approval view missing change-summary layout for {title}")
         if kind == "scope" and f'data-scope-grid="{key}"' not in html_text:
             fail(f"HTML approval view missing scope split layout for {title}")
         if kind == "validator":
@@ -648,6 +733,18 @@ def validate_html(
             fail(f"HTML approval view missing callout stack for {title}")
         if kind == "summary" and f'data-summary-section="{key}"' not in html_text:
             fail(f"HTML approval view missing summary layout for {title}")
+        if kind == "diagram-led-summary" and f'data-diagram-led-summary="{key}"' not in html_text:
+            fail(f"HTML approval view missing diagram-led-summary layout for {title}")
+        if kind == "paired-lists" and f'data-paired-lists="{key}"' not in html_text:
+            fail(f"HTML approval view missing paired-lists layout for {title}")
+        if kind == "checklist" and f'data-checklist="{key}"' not in html_text:
+            fail(f"HTML approval view missing checklist layout for {title}")
+        if kind == "ledger" and f'data-ledger="{key}"' not in html_text:
+            fail(f"HTML approval view missing ledger layout for {title}")
+        if kind == "matrix" and f'data-matrix="{key}"' not in html_text:
+            fail(f"HTML approval view missing matrix layout for {title}")
+        if kind == "roster" and f'data-roster="{key}"' not in html_text:
+            fail(f"HTML approval view missing roster layout for {title}")
 
     if review_type == "Pack" and 'data-snapshot-table' not in html_text:
         fail("Pack approval HTML must render included snapshots as a semantic table")
@@ -669,6 +766,7 @@ def validate_common_sections(
     sections: dict[str, list[str]],
     mode: str,
     expected_specs: list[dict[str, object]],
+    profile: dict[str, object],
 ) -> list[TraceEntry]:
     traceability: list[TraceEntry] = []
 
@@ -682,11 +780,18 @@ def validate_common_sections(
             validate_change_summary(lines)
         elif kind == "scope":
             validate_scope(lines)
+        elif kind == "paired-lists":
+            validate_paired_lists(lines, title)
+        elif kind in {"checklist", "ledger", "roster", "cards", "callouts", "timeline"}:
+            validate_list_like_section(lines, title)
+        elif kind == "matrix":
+            validate_matrix(lines, title)
         elif kind == "traceability":
             traceability = parse_traceability(lines)
         elif kind == "validator":
             validate_validator_status(lines, mode)
 
+    validate_visual_placement(sections, expected_specs, profile)
     return traceability
 
 
@@ -703,7 +808,7 @@ def validate_artifact_mode(mode: str, canonical_file: Path, approval_md: Path, a
     approval_html_text = read_text(approval_html)
     validate_placeholders(approval_md_text)
 
-    profile = load_review_profile("artifact", canonical_file)
+    profile = load_review_profile("artifact", canonical_path=canonical_file)
     expected_specs = section_specs(profile, revised)
     require_sections(approval_md_text, expected_specs)
     sections = section_map(approval_md_text)
@@ -717,7 +822,7 @@ def validate_artifact_mode(mode: str, canonical_file: Path, approval_md: Path, a
     if snapshot["canonical_updated_at"] != expected_updated_at:
         fail("Canonical updated_at does not match canonical artifact frontmatter")
 
-    traceability = validate_common_sections(sections, mode, expected_specs)
+    traceability = validate_common_sections(sections, mode, expected_specs, profile)
     allowed_path = str(canonical_file.resolve())
     validate_traceability(traceability, {allowed_path}, {allowed_path: canonical_text})
 
@@ -741,6 +846,8 @@ def validate_artifact_mode(mode: str, canonical_file: Path, approval_md: Path, a
         expected_title,
         "Artifact",
         profile,
+        revised,
+        [canonical_file],
     )
 
 
@@ -759,13 +866,13 @@ def validate_pack_mode(mode: str, approval_md: Path, approval_html: Path, canoni
     approval_html_text = read_text(approval_html)
     validate_placeholders(approval_md_text)
 
-    profile = load_review_profile("pack")
+    profile = load_review_profile("pack", canonical_paths=canonical_files)
     expected_specs = section_specs(profile, revised)
     require_sections(approval_md_text, expected_specs)
     sections = section_map(approval_md_text)
     snapshot_title = str(section_spec_by_kind(profile, revised)["snapshot"]["title"])
     snapshot = parse_snapshot_identity_pack(sections[snapshot_title], canonical_files, revised)
-    traceability = validate_common_sections(sections, mode, expected_specs)
+    traceability = validate_common_sections(sections, mode, expected_specs, profile)
 
     canonical_texts = {str(path.resolve()): read_text(path) for path in canonical_files}
     validate_traceability(traceability, set(canonical_texts.keys()), canonical_texts)
@@ -790,6 +897,8 @@ def validate_pack_mode(mode: str, approval_md: Path, approval_html: Path, canoni
         expected_title,
         "Pack",
         profile,
+        revised,
+        canonical_files,
     )
 
 

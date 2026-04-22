@@ -79,4 +79,5 @@ Produce `requirements.md` from repository evidence. Reconstruct implemented obli
 - evidence-backed constraints on inputs, validation, integrations, and operations
 - low-confidence requirement areas and any inferred-versus-observed distinction
 - findings that pressure reconciliation with reconstructed technical design
-- approval-shell layout lives in `./assets/approval-view-profile.json`; use it instead of the generic approval template
+- artifact approval profile owned here lives in `./assets/approval-view-profile.json`
+- keep that profile aligned with this skill's review framing; do not rely on a generic template

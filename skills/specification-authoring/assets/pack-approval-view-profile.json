@@ -1,0 +1,124 @@
+{
+  "profile_id": "specification-authoring-pack-approval-v1",
+  "display_name": "Specification Authoring Pack Approval",
+  "subtitle": "Review authored pack coherence, scope continuity, and final decision gates before implementation planning starts.",
+  "review_type": "pack",
+  "sections": [
+    {
+      "key": "cross-artifact-coherence",
+      "title": "Cross-Artifact Coherence",
+      "kind": "summary",
+      "label": "Pack Coherence",
+      "style": "hero",
+      "tone": "accent",
+      "emphasis": "dominant",
+      "why": "Lead with the authored pack-level read before drilling into artifact links."
+    },
+    {
+      "key": "scope-continuity-matrix",
+      "title": "Scope Continuity Matrix",
+      "kind": "matrix",
+      "label": "Continuity",
+      "style": "elevated",
+      "tone": "info",
+      "why": "Use a matrix to review continuity from charter through design."
+    },
+    {
+      "key": "decision-gates-before-implementation",
+      "title": "Decision Gates before Implementation",
+      "kind": "checklist",
+      "label": "Decision Gate",
+      "style": "elevated",
+      "tone": "success",
+      "item_label": "Gate",
+      "why": "Frame final pack approval as explicit gates before planning or build starts."
+    },
+    {
+      "key": "unresolved-cross-artifact-pressure-points",
+      "title": "Unresolved Cross-Artifact Pressure Points",
+      "kind": "callouts",
+      "label": "Pressure Point",
+      "style": "elevated",
+      "tone": "warning",
+      "item_label": "Pressure Point",
+      "why": "Keep unresolved cross-artifact pressure visible."
+    },
+    {
+      "key": "downstream-impact-if-approved",
+      "title": "Downstream Impact if Approved",
+      "kind": "timeline",
+      "label": "Impact",
+      "style": "default",
+      "tone": "info",
+      "item_label": "Impact",
+      "why": "Clarify what downstream planning or implementation may now treat as fixed."
+    },
+    {
+      "key": "traceability-map",
+      "title": "Traceability Map",
+      "kind": "traceability",
+      "label": "Evidence",
+      "style": "default",
+      "tone": "info",
+      "why": "Tie substantive approval claims to exact canonical evidence."
+    },
+    {
+      "key": "validator-status",
+      "title": "Validator Status",
+      "kind": "validator",
+      "label": "Validation",
+      "style": "elevated",
+      "tone": "success",
+      "why": "Show canonical and approval-view validation status together."
+    },
+    {
+      "key": "snapshot-identity",
+      "title": "Snapshot Identity",
+      "kind": "snapshot",
+      "label": "Snapshot",
+      "style": "recessed",
+      "tone": "neutral",
+      "emphasis": "recessed",
+      "why": "End with exact snapshot identity."
+    }
+  ],
+  "glance_cards": [
+    {
+      "label": "Decision gates",
+      "metric": "groups",
+      "hint": "Final gates before implementation planning starts.",
+      "tone": "success",
+      "source": "approval",
+      "section_title": "Decision Gates before Implementation"
+    },
+    {
+      "label": "Pressure points",
+      "metric": "groups",
+      "hint": "Cross-artifact tensions still visible in the pack.",
+      "tone": "warning",
+      "source": "approval",
+      "section_title": "Unresolved Cross-Artifact Pressure Points"
+    },
+    {
+      "label": "Evidence claims",
+      "metric": "traceability_claims",
+      "hint": "Claims backed by exact artifact quotes.",
+      "tone": "info",
+      "source": "approval"
+    },
+    {
+      "label": "Validator checks",
+      "metric": "validator_checks",
+      "hint": "Recorded validator passes.",
+      "tone": "success",
+      "source": "approval"
+    },
+    {
+      "label": "Visuals",
+      "metric": "visuals",
+      "hint": "Visual evidence carried into the pack review.",
+      "tone": "info",
+      "source": "approval"
+    }
+  ]
+}

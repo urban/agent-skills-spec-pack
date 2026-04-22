@@ -4,32 +4,71 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from approval_profiles import load_review_profile, section_specs
+from approval_profiles import glance_cards_for_mode, load_review_profile, section_specs
 
 
 USAGE = """Usage:
   scaffold_approval_view.py artifact <canonical-file>
   scaffold_approval_view.py artifact-revised <canonical-file>
-  scaffold_approval_view.py pack
-  scaffold_approval_view.py pack-revised
+  scaffold_approval_view.py pack [<canonical-file> ...]
+  scaffold_approval_view.py pack-revised [<canonical-file> ...]
 """
 
 
-def section_template(spec: dict[str, str], mode: str, review_type: str) -> str:
+def infer_paired_labels(title: str) -> tuple[str, str]:
+    normalized = title.replace("/", " and ")
+    for separator in (" and ", " vs ", " versus "):
+        if separator in normalized:
+            left, right = [part.strip(" :") for part in normalized.split(separator, 1)]
+            if left and right:
+                return left, right
+    return ("First list", "Second list")
+
+
+def wants_visual_placeholder(spec: dict[str, str], profile: dict[str, object]) -> bool:
+    default_visual_section = str(profile.get("default_visual_section") or "").strip()
+    if default_visual_section:
+        return str(spec["key"]) == default_visual_section
+    return spec["kind"] in {"summary", "diagram-led-summary"}
+
+
+def visual_placeholder_block(spec: dict[str, str], profile: dict[str, object]) -> str:
+    if not wants_visual_placeholder(spec, profile):
+        return ""
+    return (
+        "\n\n### Visual Evidence\n\n"
+        "- Source: [TODO: resolved canonical path] :: [TODO: exact heading]\n"
+        "- [TODO: copy in-scope Mermaid or other visual content here exactly; delete this subsection if none are in scope]"
+    )
+
+
+def section_template(spec: dict[str, str], mode: str, review_type: str, profile: dict[str, object]) -> str:
     title = spec["title"]
     kind = spec["kind"]
     item_label = spec.get("item_label", "Item")
     empty_state = spec.get("empty_state", "None")
 
     if kind == "change-summary":
-        return f"## {title}\n\n- Previous snapshot SHA-256: [TODO: previous approved snapshot hash]\n- [TODO: one delta per bullet; use `- None` only when no substantive change exists]"
+        return (
+            f"## {title}\n\n"
+            "- Previous snapshot SHA-256: [TODO: previous approved snapshot hash]\n"
+            "- [TODO: one delta per bullet; use `- None` only when no substantive change exists]"
+        )
 
     if kind == "summary":
         return (
             f"## {title}\n\n"
-            "- [TODO: 1-3 concise bullets aligned to this artifact's approval focus]\n\n"
-            "### Visual Evidence\n\n"
-            "- [TODO: copy in-scope Mermaid or other visual sections here when material; delete this subsection if none are in scope]"
+            "- [TODO: 1-3 concise bullets aligned to this artifact's review focus]"
+            f"{visual_placeholder_block(spec, profile)}"
+        )
+
+    if kind == "diagram-led-summary":
+        return (
+            f"## {title}\n\n"
+            "- [TODO: concise architecture or runtime framing bullets]\n"
+            f"{visual_placeholder_block(spec, profile)}\n\n"
+            "### Review Notes\n\n"
+            "- [TODO: note the seams, boundaries, or claims the reviewer should inspect first]"
         )
 
     if kind == "scope":
@@ -41,8 +80,50 @@ def section_template(spec: dict[str, str], mode: str, review_type: str) -> str:
             "  - [TODO: what this review does not settle]"
         )
 
+    if kind == "paired-lists":
+        left_label, right_label = infer_paired_labels(title)
+        return (
+            f"## {title}\n\n"
+            f"- {left_label}:\n"
+            "  - [TODO: first contrasted item]\n"
+            f"- {right_label}:\n"
+            "  - [TODO: second contrasted item]"
+        )
+
     if kind == "cards":
         return f"## {title}\n\n- [TODO: one {item_label.lower()} per bullet; start with the reviewable point]"
+
+    if kind == "checklist":
+        return (
+            f"## {title}\n\n"
+            f"- [TODO: one {item_label.lower()} or checkpoint per bullet]\n"
+            "  - [TODO: optional nested detail]\n"
+            f"- [TODO: another {item_label.lower()}]"
+        )
+
+    if kind == "ledger":
+        return (
+            f"## {title}\n\n"
+            f"- [TODO: one {item_label.lower()} row per bullet; keep the row label terse]\n"
+            "  - [TODO: nested supporting detail when needed]"
+        )
+
+    if kind == "matrix":
+        return (
+            f"## {title}\n\n"
+            "| Focus | Detail | Notes |\n"
+            "| --- | --- | --- |\n"
+            "| [TODO] | [TODO] | [TODO] |\n\n"
+            "- If a Markdown table is not practical, use one top-level bullet per row with nested `Column: value` details."
+        )
+
+    if kind == "roster":
+        return (
+            f"## {title}\n\n"
+            f"- [TODO: named {item_label.lower()} or actor]\n"
+            "  - Role: [TODO]\n"
+            "  - Relevance: [TODO]"
+        )
 
     if kind == "callouts":
         return f"## {title}\n\n- [TODO: one {item_label.lower()} or unresolved item per bullet; use `- {empty_state}` when clear]"
@@ -102,7 +183,7 @@ def section_template(spec: dict[str, str], mode: str, review_type: str) -> str:
 
 
 def main() -> int:
-    if len(sys.argv) not in {2, 3}:
+    if len(sys.argv) < 2:
         print(USAGE, file=sys.stderr)
         return 1
 
@@ -111,23 +192,27 @@ def main() -> int:
         print(USAGE, file=sys.stderr)
         return 1
 
-    if mode.startswith("artifact") and len(sys.argv) != 3:
-        print(USAGE, file=sys.stderr)
-        return 1
-    if mode.startswith("pack") and len(sys.argv) != 2:
-        print(USAGE, file=sys.stderr)
-        return 1
-
     review_type = "artifact" if mode.startswith("artifact") else "pack"
     revised = mode.endswith("revised")
-    canonical_path = Path(sys.argv[2]).resolve() if review_type == "artifact" else None
-    profile = load_review_profile(review_type, canonical_path)
+
+    canonical_path = None
+    canonical_paths: list[Path] | None = None
+    if review_type == "artifact":
+        if len(sys.argv) != 3:
+            print(USAGE, file=sys.stderr)
+            return 1
+        canonical_path = Path(sys.argv[2]).resolve()
+    else:
+        canonical_paths = [Path(arg).resolve() for arg in sys.argv[2:]]
+
+    profile = load_review_profile(review_type, canonical_path=canonical_path, canonical_paths=canonical_paths)
+    _ = glance_cards_for_mode(profile, revised)
 
     lines = ["# Approval View", ""]
     for index, spec in enumerate(section_specs(profile, revised)):
         if index > 0:
             lines.append("")
-        lines.append(section_template(spec, mode, review_type))
+        lines.append(section_template(spec, mode, review_type, profile))
 
     print("\n".join(lines))
     return 0

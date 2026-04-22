@@ -91,6 +91,7 @@ Do not add extra source-artifact keys casually.
 - If final pack review fails, revise the affected canonical artifact(s), rerun consistency checks, and regenerate the affected approval views plus the final pack approval view.
 - Persist per-artifact approval views and the final pack approval view under `<spec-pack-root>/approval/` in both Markdown and HTML.
 - When asking for approval on an HTML review surface in the terminal, include the resolved HTML path and the matching absolute `file://` URI for that file.
+- workflow pack approval profile owned here lives in `./assets/pack-approval-view-profile.json`
 - Approval views must derive from the canonical artifact only and trace substantive claims back to exact canonical locations.
 
 ## Validation

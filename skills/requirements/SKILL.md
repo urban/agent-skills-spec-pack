@@ -72,4 +72,5 @@ Produce `requirements.md` from approved charter and story context. Translate app
 - integration contracts, data rules, and validation hotspots
 - non-functional constraints most likely to shape technical design
 - any `TODO: Confirm` item that would distort downstream design if left vague
-- approval-shell layout lives in `./assets/approval-view-profile.json`; use it instead of the generic approval template
+- artifact approval profile owned here lives in `./assets/approval-view-profile.json`
+- keep that profile aligned with this skill's review framing; do not rely on a generic template

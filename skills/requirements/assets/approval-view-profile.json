@@ -1,43 +1,48 @@
 {
-  "profile_id": "requirements-approval-v1",
+  "profile_id": "requirements-approval-v2",
   "display_name": "Requirements Approval",
-  "subtitle": "Review product obligations and high-impact constraints before freezing design inputs.",
+  "subtitle": "Review obligations, design-shaping constraints, and validation hotspots before design freezes them.",
   "review_type": "artifact",
   "sections": [
     {
-      "key": "obligations-that-define-scope",
-      "title": "Obligations that Define Scope",
-      "kind": "summary",
-      "label": "Obligations",
+      "key": "highest-impact-obligations",
+      "title": "Highest-Impact Obligations",
+      "kind": "ledger",
+      "label": "Obligation",
       "style": "hero",
-      "why": "Lead with the highest-impact obligations under approval."
+      "tone": "accent",
+      "emphasis": "dominant",
+      "item_label": "Obligation",
+      "why": "Lead with the obligations most likely to constrain design and scope."
     },
     {
-      "key": "integration-data-and-validation-hotspots",
-      "title": "Integration, Data, and Validation Hotspots",
-      "kind": "cards",
+      "key": "data-integration-and-validation-hotspots",
+      "title": "Data, Integration, and Validation Hotspots",
+      "kind": "matrix",
       "label": "Hotspots",
-      "style": "default",
-      "item_label": "Hotspot",
-      "why": "Keep external contracts and rule hotspots scan-friendly."
+      "style": "elevated",
+      "tone": "info",
+      "why": "Use a matrix when multiple dimensions of coverage need to be scanned together."
     },
     {
-      "key": "non-functional-and-technical-constraints",
-      "title": "Non-Functional and Technical Constraints",
-      "kind": "cards",
-      "label": "Constraints",
+      "key": "constraints-that-shape-design",
+      "title": "Constraints that Shape Design",
+      "kind": "checklist",
+      "label": "Constraint",
       "style": "elevated",
+      "tone": "success",
       "item_label": "Constraint",
-      "why": "Show the constraints most likely to shape design."
+      "why": "Frame constraints as explicit checks the design must satisfy."
     },
     {
       "key": "decisions-required-for-approval",
       "title": "Decisions Required for Approval",
-      "kind": "cards",
+      "kind": "ledger",
       "label": "Decision Gate",
       "style": "default",
+      "tone": "neutral",
       "item_label": "Decision",
-      "why": "State the requirement-level yes/no calls explicitly."
+      "why": "Keep requirement-level approval calls dense and direct."
     },
     {
       "key": "requirement-risks-and-todo-confirm-items",
@@ -45,8 +50,9 @@
       "kind": "callouts",
       "label": "Open Issues",
       "style": "elevated",
+      "tone": "warning",
       "item_label": "Risk",
-      "why": "Expose unresolved details that would distort technical design."
+      "why": "Keep unresolved details visible before they distort design."
     },
     {
       "key": "traceability-map",
@@ -54,7 +60,8 @@
       "kind": "traceability",
       "label": "Evidence",
       "style": "default",
-      "why": "Tie approval claims to exact requirement evidence."
+      "tone": "info",
+      "why": "Tie substantive approval claims to exact canonical evidence."
     },
     {
       "key": "validator-status",
@@ -62,7 +69,8 @@
       "kind": "validator",
       "label": "Validation",
       "style": "elevated",
-      "why": "Show requirements and approval-view validation status."
+      "tone": "success",
+      "why": "Show canonical and approval-view validation status together."
     },
     {
       "key": "downstream-impact-if-approved",
@@ -70,8 +78,9 @@
       "kind": "timeline",
       "label": "Impact",
       "style": "default",
+      "tone": "info",
       "item_label": "Impact",
-      "why": "Clarify what technical design may now treat as fixed."
+      "why": "Clarify what downstream work may now treat as fixed."
     },
     {
       "key": "snapshot-identity",
@@ -79,49 +88,57 @@
       "kind": "snapshot",
       "label": "Snapshot",
       "style": "recessed",
+      "tone": "neutral",
+      "emphasis": "recessed",
       "why": "End with exact snapshot identity."
     }
   ],
   "glance_cards": [
     {
-      "label": "Obligation anchors",
-      "section_title": "Obligations that Define Scope",
+      "label": "Obligations",
       "metric": "groups",
       "hint": "Highest-impact obligations under review.",
-      "tone": "accent"
-    },
-    {
-      "label": "Hotspots",
-      "section_title": "Integration, Data, and Validation Hotspots",
-      "metric": "groups",
-      "hint": "Integration, data, or validation pressure points.",
-      "tone": "info"
+      "tone": "accent",
+      "source": "approval",
+      "section_title": "Highest-Impact Obligations"
     },
     {
       "label": "Constraints",
-      "section_title": "Non-Functional and Technical Constraints",
       "metric": "groups",
-      "hint": "Design-shaping constraints.",
-      "tone": "muted"
+      "hint": "Explicit design-shaping checks.",
+      "tone": "success",
+      "source": "approval",
+      "section_title": "Constraints that Shape Design"
+    },
+    {
+      "label": "Decision gates",
+      "metric": "groups",
+      "hint": "Approvals that fix the requirement baseline.",
+      "tone": "neutral",
+      "source": "approval",
+      "section_title": "Decisions Required for Approval"
     },
     {
       "label": "Open issues",
-      "section_title": "Requirement Risks and TODO: Confirm Items",
       "metric": "groups",
-      "hint": "Unresolved items that could skew design.",
-      "tone": "warning"
+      "hint": "Risks or TODO: Confirm items still in play.",
+      "tone": "warning",
+      "source": "approval",
+      "section_title": "Requirement Risks and TODO: Confirm Items"
     },
     {
       "label": "Evidence claims",
       "metric": "traceability_claims",
       "hint": "Claims backed by exact requirement quotes.",
-      "tone": "info"
+      "tone": "info",
+      "source": "approval"
     },
     {
       "label": "Validators",
       "metric": "validator_checks",
       "hint": "Recorded validator passes.",
-      "tone": "success"
+      "tone": "success",
+      "source": "approval"
     }
   ]
 }

@@ -1,52 +1,58 @@
 {
-  "profile_id": "derive-user-stories-approval-v1",
+  "profile_id": "derive-user-stories-approval-v2",
   "display_name": "Derived User Stories Approval",
-  "subtitle": "Review recovered user-visible behavior with confidence, gaps, and inference pressure in the open.",
+  "subtitle": "Review recovered stories with explicit evidence pressure and confidence gaps before using them downstream.",
   "review_type": "artifact",
   "sections": [
     {
-      "key": "capability-map-and-highest-value-recovered-stories",
-      "title": "Capability Map and Highest-Value Recovered Stories",
-      "kind": "summary",
-      "label": "Recovered Value",
+      "key": "capability-map-and-recovered-stories",
+      "title": "Capability Map and Recovered Stories",
+      "kind": "roster",
+      "label": "Recovered Capability",
       "style": "hero",
-      "why": "Lead with the strongest recovered behavior map before weak areas."
+      "tone": "accent",
+      "emphasis": "dominant",
+      "item_label": "Capability",
+      "why": "Lead with recovered capability areas before individual story detail."
     },
     {
-      "key": "boundary-and-failure-coverage",
-      "title": "Boundary and Failure Coverage",
-      "kind": "cards",
-      "label": "Boundary Coverage",
+      "key": "recovered-story-anchors",
+      "title": "Recovered Story Anchors",
+      "kind": "ledger",
+      "label": "Recovered Story",
       "style": "default",
-      "item_label": "Boundary",
-      "why": "Show where operator-visible edge behavior is actually evidenced."
+      "tone": "info",
+      "item_label": "Story",
+      "why": "Keep recovered story anchors dense and evidence-oriented."
     },
     {
-      "key": "coverage-gaps-and-evidence-weakness",
-      "title": "Coverage Gaps and Evidence Weakness",
-      "kind": "callouts",
-      "label": "Evidence Gaps",
+      "key": "boundary-and-failure-reconciliation",
+      "title": "Boundary and Failure Reconciliation",
+      "kind": "matrix",
+      "label": "Coverage",
       "style": "elevated",
+      "tone": "info",
+      "why": "Use a matrix when reviewing recovered edge coverage and missing failure behavior."
+    },
+    {
+      "key": "low-confidence-stories-and-evidence-gaps",
+      "title": "Low-Confidence Stories and Evidence Gaps",
+      "kind": "callouts",
+      "label": "Evidence Gap",
+      "style": "elevated",
+      "tone": "warning",
       "item_label": "Gap",
-      "why": "Expose missing or weak support around likely user-facing behavior."
-    },
-    {
-      "key": "low-confidence-stories-and-inferred-vs-observed-pressure-points",
-      "title": "Low-Confidence Stories and Inferred-vs-Observed Pressure Points",
-      "kind": "callouts",
-      "label": "Confidence",
-      "style": "elevated",
-      "item_label": "Hotspot",
-      "why": "Separate inferred stories from directly observed behavior."
+      "why": "Separate weakly supported stories from strong observed behavior."
     },
     {
       "key": "decisions-required-for-approval",
       "title": "Decisions Required for Approval",
-      "kind": "cards",
+      "kind": "ledger",
       "label": "Decision Gate",
       "style": "default",
+      "tone": "neutral",
       "item_label": "Decision",
-      "why": "State what the reviewer must accept despite recovery uncertainty."
+      "why": "State the calls that let downstream artifacts trust recovered stories."
     },
     {
       "key": "traceability-map",
@@ -54,7 +60,8 @@
       "kind": "traceability",
       "label": "Evidence",
       "style": "default",
-      "why": "Tie recovered story claims to exact repository evidence."
+      "tone": "info",
+      "why": "Tie substantive approval claims to exact canonical evidence."
     },
     {
       "key": "validator-status",
@@ -62,7 +69,8 @@
       "kind": "validator",
       "label": "Validation",
       "style": "elevated",
-      "why": "Show validation status for the derived report and approval view."
+      "tone": "success",
+      "why": "Show canonical and approval-view validation status together."
     },
     {
       "key": "downstream-impact-if-approved",
@@ -70,8 +78,9 @@
       "kind": "timeline",
       "label": "Impact",
       "style": "default",
+      "tone": "info",
       "item_label": "Impact",
-      "why": "Clarify what derived requirements may now treat as stable behavior."
+      "why": "Clarify what downstream work may now treat as fixed."
     },
     {
       "key": "snapshot-identity",
@@ -79,49 +88,57 @@
       "kind": "snapshot",
       "label": "Snapshot",
       "style": "recessed",
+      "tone": "neutral",
+      "emphasis": "recessed",
       "why": "End with exact snapshot identity."
     }
   ],
   "glance_cards": [
     {
-      "label": "Recovered anchors",
-      "section_title": "Capability Map and Highest-Value Recovered Stories",
+      "label": "Recovered capabilities",
       "metric": "groups",
-      "hint": "Strongest recovered capability or story anchors.",
-      "tone": "accent"
+      "hint": "Recovered capability areas in scope.",
+      "tone": "accent",
+      "source": "approval",
+      "section_title": "Capability Map and Recovered Stories"
     },
     {
-      "label": "Boundary coverage",
-      "section_title": "Boundary and Failure Coverage",
+      "label": "Recovered stories",
       "metric": "groups",
-      "hint": "Observed edge and failure behavior.",
-      "tone": "muted"
+      "hint": "Recovered story anchors under review.",
+      "tone": "info",
+      "source": "approval",
+      "section_title": "Recovered Story Anchors"
     },
     {
       "label": "Evidence gaps",
-      "section_title": "Coverage Gaps and Evidence Weakness",
       "metric": "groups",
-      "hint": "Likely user-facing areas with weak support.",
-      "tone": "warning"
+      "hint": "Low-confidence or weakly supported stories.",
+      "tone": "warning",
+      "source": "approval",
+      "section_title": "Low-Confidence Stories and Evidence Gaps"
     },
     {
-      "label": "Low-confidence",
-      "section_title": "Low-Confidence Stories and Inferred-vs-Observed Pressure Points",
+      "label": "Decision gates",
       "metric": "groups",
-      "hint": "Stories that depend on inference.",
-      "tone": "warning"
+      "hint": "Approvals that let downstream artifacts trust the set.",
+      "tone": "neutral",
+      "source": "approval",
+      "section_title": "Decisions Required for Approval"
     },
     {
       "label": "Evidence claims",
       "metric": "traceability_claims",
-      "hint": "Claims backed by exact evidence quotes.",
-      "tone": "info"
+      "hint": "Claims backed by exact source quotes.",
+      "tone": "info",
+      "source": "approval"
     },
     {
       "label": "Validators",
       "metric": "validator_checks",
       "hint": "Recorded validator passes.",
-      "tone": "success"
+      "tone": "success",
+      "source": "approval"
     }
   ]
 }

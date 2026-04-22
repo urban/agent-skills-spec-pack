@@ -71,4 +71,5 @@ Produce `charter.md` from approved product framing. Capture the approved scope b
 - personas or actors that will shape downstream stories
 - measurable success criteria and obvious scope risks
 - any `TODO: Confirm` item that would distort downstream artifacts if treated as settled
-- approval-shell layout lives in `./assets/approval-view-profile.json`; use it instead of the generic approval template
+- artifact approval profile owned here lives in `./assets/approval-view-profile.json`
+- keep that profile aligned with this skill's review framing; do not rely on a generic template

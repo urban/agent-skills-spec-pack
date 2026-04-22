@@ -13,7 +13,7 @@ source_artifacts:
   [TODO: workflow-owned lineage key]: [TODO: resolved artifact path]
 ---
 
-> For derived design, recover the runtime architecture the code proves. Name execution-relevant constraints, ownership, and escape hatches without turning the document into a directory tour.
+# Technical Design
 
 ## Architecture Summary
 

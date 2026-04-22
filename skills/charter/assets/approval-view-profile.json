@@ -1,52 +1,48 @@
 {
-  "profile_id": "charter-approval-v1",
+  "profile_id": "charter-approval-v2",
   "display_name": "Charter Approval",
-  "subtitle": "Review scope edges, actors, and done criteria before downstream stories or requirements.",
+  "subtitle": "Review scope edges, actors, done criteria, and early approval calls before downstream specs branch out.",
   "review_type": "artifact",
   "sections": [
     {
-      "key": "goals-at-a-glance",
-      "title": "Goals at a Glance",
-      "kind": "summary",
-      "label": "Goals",
+      "key": "goals-and-non-goals",
+      "title": "Goals and Non-Goals",
+      "kind": "paired-lists",
+      "label": "Scope Edge",
       "style": "hero",
-      "why": "Lead with the intended outcomes under approval."
+      "tone": "accent",
+      "emphasis": "dominant",
+      "why": "Lead with intended outcomes and explicit exclusions in one scan."
     },
     {
-      "key": "non-goals-scope-exclusions",
-      "title": "Non-Goals / Scope Exclusions",
-      "kind": "cards",
-      "label": "Boundary",
-      "style": "elevated",
-      "item_label": "Non-goal",
-      "why": "Make scope edges explicit before approval."
-    },
-    {
-      "key": "personas-actors-that-matter",
-      "title": "Personas / Actors that Matter",
-      "kind": "cards",
+      "key": "actors-and-personas",
+      "title": "Actors and Personas in Scope",
+      "kind": "roster",
       "label": "Actors",
       "style": "default",
+      "tone": "info",
       "item_label": "Actor",
-      "why": "Show who receives value or constrains scope."
+      "why": "Make the named people, roles, or systems shaping scope obvious."
     },
     {
       "key": "success-criteria-that-define-done",
       "title": "Success Criteria that Define Done",
-      "kind": "timeline",
-      "label": "Done",
-      "style": "default",
+      "kind": "checklist",
+      "label": "Done Criteria",
+      "style": "elevated",
+      "tone": "success",
       "item_label": "Criterion",
-      "why": "Keep measurable done criteria scan-friendly."
+      "why": "Frame approval as explicit done checks, not loose aspirations."
     },
     {
       "key": "decisions-required-for-approval",
       "title": "Decisions Required for Approval",
-      "kind": "cards",
+      "kind": "ledger",
       "label": "Decision Gate",
       "style": "default",
+      "tone": "neutral",
       "item_label": "Decision",
-      "why": "State the exact yes/no calls tied to this charter."
+      "why": "Keep approval calls dense and scan-fast."
     },
     {
       "key": "scope-risks-and-open-questions",
@@ -54,8 +50,9 @@
       "kind": "callouts",
       "label": "Open Issues",
       "style": "elevated",
+      "tone": "warning",
       "item_label": "Risk",
-      "why": "Keep risky or unresolved framing visible before downstream work."
+      "why": "Keep risky edges and unresolved framing visible."
     },
     {
       "key": "traceability-map",
@@ -63,7 +60,8 @@
       "kind": "traceability",
       "label": "Evidence",
       "style": "default",
-      "why": "Tie approval claims to exact charter evidence."
+      "tone": "info",
+      "why": "Tie substantive approval claims to exact canonical evidence."
     },
     {
       "key": "validator-status",
@@ -71,7 +69,8 @@
       "kind": "validator",
       "label": "Validation",
       "style": "elevated",
-      "why": "Show canonical and approval validation status."
+      "tone": "success",
+      "why": "Show canonical and approval-view validation status together."
     },
     {
       "key": "downstream-impact-if-approved",
@@ -79,8 +78,9 @@
       "kind": "timeline",
       "label": "Impact",
       "style": "default",
+      "tone": "info",
       "item_label": "Impact",
-      "why": "Clarify what later artifacts may now treat as settled."
+      "why": "Clarify what downstream work may now treat as fixed."
     },
     {
       "key": "snapshot-identity",
@@ -88,49 +88,57 @@
       "kind": "snapshot",
       "label": "Snapshot",
       "style": "recessed",
+      "tone": "neutral",
+      "emphasis": "recessed",
       "why": "End with exact snapshot identity."
     }
   ],
   "glance_cards": [
     {
-      "label": "Goals",
-      "section_title": "Goals at a Glance",
+      "label": "Scope edges",
       "metric": "groups",
-      "hint": "Scope-setting outcomes under review.",
-      "tone": "accent"
-    },
-    {
-      "label": "Non-goals",
-      "section_title": "Non-Goals / Scope Exclusions",
-      "metric": "groups",
-      "hint": "Explicit exclusions that protect scope.",
-      "tone": "muted"
+      "hint": "Goals and exclusions called out explicitly.",
+      "tone": "accent",
+      "source": "approval",
+      "section_title": "Goals and Non-Goals"
     },
     {
       "label": "Actors",
-      "section_title": "Personas / Actors that Matter",
       "metric": "groups",
-      "hint": "People or roles shaping downstream work.",
-      "tone": "info"
+      "hint": "Named actors or personas shaping downstream work.",
+      "tone": "info",
+      "source": "approval",
+      "section_title": "Actors and Personas in Scope"
     },
     {
-      "label": "Success criteria",
-      "section_title": "Success Criteria that Define Done",
+      "label": "Done checks",
       "metric": "groups",
-      "hint": "Measurable done checks in scope.",
-      "tone": "success"
+      "hint": "Success criteria the reviewer should confirm.",
+      "tone": "success",
+      "source": "approval",
+      "section_title": "Success Criteria that Define Done"
+    },
+    {
+      "label": "Decision gates",
+      "metric": "groups",
+      "hint": "Explicit approvals needed to lock scope.",
+      "tone": "neutral",
+      "source": "approval",
+      "section_title": "Decisions Required for Approval"
     },
     {
       "label": "Evidence claims",
       "metric": "traceability_claims",
       "hint": "Claims backed by exact charter quotes.",
-      "tone": "info"
+      "tone": "info",
+      "source": "approval"
     },
     {
       "label": "Visuals",
       "metric": "visuals",
       "hint": "Visual evidence carried into review.",
-      "tone": "info"
+      "tone": "info",
+      "source": "approval"
     }
   ]
 }

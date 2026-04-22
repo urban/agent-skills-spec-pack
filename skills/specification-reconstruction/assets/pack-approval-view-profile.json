@@ -1,0 +1,124 @@
+{
+  "profile_id": "specification-reconstruction-pack-approval-v1",
+  "display_name": "Specification Reconstruction Pack Approval",
+  "subtitle": "Review recovered pack confidence, inferred-vs-observed pressure, and evidence gaps before using it downstream.",
+  "review_type": "pack",
+  "sections": [
+    {
+      "key": "confidence-and-recovery-posture",
+      "title": "Confidence and Recovery Posture",
+      "kind": "summary",
+      "label": "Recovery Posture",
+      "style": "hero",
+      "tone": "accent",
+      "emphasis": "dominant",
+      "why": "Lead with the overall confidence and recovery posture of the reconstructed pack."
+    },
+    {
+      "key": "inferred-vs-observed-reconciliation",
+      "title": "Inferred-vs-Observed Reconciliation",
+      "kind": "matrix",
+      "label": "Reconciliation",
+      "style": "elevated",
+      "tone": "info",
+      "why": "Use a matrix when pack-level recovered claims need observed-versus-inferred comparison."
+    },
+    {
+      "key": "recovered-findings-under-review",
+      "title": "Recovered Findings under Review",
+      "kind": "ledger",
+      "label": "Recovered Finding",
+      "style": "default",
+      "tone": "neutral",
+      "item_label": "Finding",
+      "why": "Keep recovered cross-artifact findings dense and reviewable."
+    },
+    {
+      "key": "evidence-gaps-and-weakly-supported-claims",
+      "title": "Evidence Gaps and Weakly Supported Claims",
+      "kind": "callouts",
+      "label": "Evidence Gap",
+      "style": "elevated",
+      "tone": "warning",
+      "item_label": "Gap",
+      "why": "Keep weak support visible instead of smoothing it away."
+    },
+    {
+      "key": "downstream-impact-if-approved",
+      "title": "Downstream Impact if Approved",
+      "kind": "timeline",
+      "label": "Impact",
+      "style": "default",
+      "tone": "info",
+      "item_label": "Impact",
+      "why": "Clarify what downstream work may treat as stable despite reconstruction limits."
+    },
+    {
+      "key": "traceability-map",
+      "title": "Traceability Map",
+      "kind": "traceability",
+      "label": "Evidence",
+      "style": "default",
+      "tone": "info",
+      "why": "Tie substantive approval claims to exact canonical evidence."
+    },
+    {
+      "key": "validator-status",
+      "title": "Validator Status",
+      "kind": "validator",
+      "label": "Validation",
+      "style": "elevated",
+      "tone": "success",
+      "why": "Show canonical and approval-view validation status together."
+    },
+    {
+      "key": "snapshot-identity",
+      "title": "Snapshot Identity",
+      "kind": "snapshot",
+      "label": "Snapshot",
+      "style": "recessed",
+      "tone": "neutral",
+      "emphasis": "recessed",
+      "why": "End with exact snapshot identity."
+    }
+  ],
+  "glance_cards": [
+    {
+      "label": "Recovered findings",
+      "metric": "groups",
+      "hint": "Recovered pack-level findings in review.",
+      "tone": "neutral",
+      "source": "approval",
+      "section_title": "Recovered Findings under Review"
+    },
+    {
+      "label": "Evidence gaps",
+      "metric": "groups",
+      "hint": "Weakly supported claims or gaps across the pack.",
+      "tone": "warning",
+      "source": "approval",
+      "section_title": "Evidence Gaps and Weakly Supported Claims"
+    },
+    {
+      "label": "Evidence claims",
+      "metric": "traceability_claims",
+      "hint": "Claims backed by exact artifact quotes.",
+      "tone": "info",
+      "source": "approval"
+    },
+    {
+      "label": "Validator checks",
+      "metric": "validator_checks",
+      "hint": "Recorded validator passes.",
+      "tone": "success",
+      "source": "approval"
+    },
+    {
+      "label": "Visuals",
+      "metric": "visuals",
+      "hint": "Visual evidence carried into the pack review.",
+      "tone": "info",
+      "source": "approval"
+    }
+  ]
+}

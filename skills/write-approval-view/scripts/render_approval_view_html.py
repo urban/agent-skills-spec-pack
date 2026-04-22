@@ -7,8 +7,9 @@ import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Iterable
 
-from approval_profiles import load_review_profile, section_spec_by_title, section_specs
+from approval_profiles import glance_cards_for_mode, load_review_profile, section_spec_by_title
 
 INLINE_CODE_PATTERN = re.compile(r"`([^`]+)`")
 INLINE_STRONG_PATTERN = re.compile(r"\*\*([^*]+)\*\*")
@@ -19,6 +20,7 @@ TRACEABILITY_PATTERN = re.compile(r"^- \[([^\]]+)\] Claim: (.+)$")
 SOURCE_PATTERN = re.compile(r"^  - Source: (.+?) :: (.+)$")
 QUOTE_PATTERN = re.compile(r'^  - Evidence quote: "(.*)"$')
 MERMAID_FENCE_PATTERN = re.compile(r"^```mermaid\s*$", re.IGNORECASE | re.MULTILINE)
+MARKDOWN_TABLE_SEPARATOR_PATTERN = re.compile(r"^\|?(\s*:?-{3,}:?\s*\|)+\s*:?-{3,}:?\s*\|?$")
 
 MERMAID_COUNTER = 0
 
@@ -57,6 +59,12 @@ class SnapshotRecord:
     path: str
     sha256: str
     updated_at: str
+
+
+@dataclass
+class CanonicalSnapshot:
+    path: str
+    text: str
 
 
 def usage() -> None:
@@ -127,6 +135,29 @@ def normalize_label(label: str) -> str:
     return normalized
 
 
+def parse_snapshot_fields(lines: list[str]) -> tuple[list[tuple[str, str]], list[SnapshotRecord]]:
+    fields: list[tuple[str, str]] = []
+    records: list[SnapshotRecord] = []
+
+    for line in lines:
+        included_match = re.match(r"^  - (.+?) \| SHA-256: ([0-9a-f]{64}) \| updated_at: (.+)$", line)
+        if included_match:
+            records.append(
+                SnapshotRecord(
+                    path=included_match.group(1).strip(),
+                    sha256=included_match.group(2).strip(),
+                    updated_at=included_match.group(3).strip(),
+                )
+            )
+            continue
+
+        bullet_match = re.match(r"^- ([^:]+):\s*(.+)$", line)
+        if bullet_match:
+            fields.append((bullet_match.group(1).strip(), bullet_match.group(2).strip()))
+
+    return fields, records
+
+
 def extract_snapshot_metadata(sections: list[Section]) -> dict[str, object]:
     metadata: dict[str, object] = {}
     if not sections:
@@ -161,21 +192,30 @@ def approval_view_title(markdown_text: str, metadata: dict[str, object]) -> str:
 
 
 def approval_view_subtitle(profile: dict[str, object]) -> str:
-    return str(profile.get("subtitle") or "Glance-first approval surface with traceable evidence, structured review gates, and final snapshot metadata.")
+    return str(
+        profile.get("subtitle")
+        or "Glance-first approval surface with traceable evidence, structured review gates, and final snapshot metadata."
+    )
 
 
-def resolve_review_profile(metadata: dict[str, object]) -> tuple[dict[str, object], bool]:
+def resolve_review_profile(metadata: dict[str, object]) -> tuple[dict[str, object], bool, list[Path]]:
     review_type_value = str(metadata.get("review_type", "")).strip()
     revised = str(metadata.get("approval_mode", "")).strip() == "Revised"
 
     if review_type_value == "Artifact":
         canonical_artifact = str(metadata.get("canonical_artifact", "")).strip()
-        canonical_path = Path(canonical_artifact).resolve() if canonical_artifact else None
-        return load_review_profile("artifact", canonical_path), revised
-    if review_type_value == "Pack":
-        return load_review_profile("pack"), revised
+        canonical_paths = [Path(canonical_artifact).resolve()] if canonical_artifact else []
+        canonical_path = canonical_paths[0] if canonical_paths else None
+        return load_review_profile("artifact", canonical_path=canonical_path), revised, canonical_paths
 
-    return load_review_profile("artifact"), revised
+    if review_type_value == "Pack":
+        canonical_paths: list[Path] = []
+        for record in metadata.get("included_snapshots", []):
+            if isinstance(record, dict) and record.get("path"):
+                canonical_paths.append(Path(str(record["path"])).resolve())
+        return load_review_profile("pack", canonical_paths=canonical_paths), revised, canonical_paths
+
+    return load_review_profile("artifact"), revised, []
 
 
 def render_inline(text: str) -> str:
@@ -218,13 +258,11 @@ def parse_list_items(lines: list[str], start: int = 0, indent: int = 0) -> tuple
         if current_item is None:
             break
 
-        stripped = line
         required_prefix = " " * (indent + 2)
         if line.startswith(required_prefix):
-            stripped = line[indent + 2 :]
+            current_item.continuation.append(line[indent + 2 :])
         else:
-            stripped = line.strip()
-        current_item.continuation.append(stripped)
+            current_item.continuation.append(line.strip())
         index += 1
 
     return items, index
@@ -331,7 +369,7 @@ def render_fragment(lines: list[str], heading_level: int = 4) -> str:
         if heading_match:
             flush_paragraph()
             level = min(heading_level, 6)
-            output.append(f"<h{level} class=\"subheading\">{html.escape(heading_match.group(2).strip())}</h{level}>")
+            output.append(f'<h{level} class="subheading">{html.escape(heading_match.group(2).strip())}</h{level}>')
             index += 1
             continue
 
@@ -535,7 +573,7 @@ def render_summary_points(groups: list[list[str]]) -> str:
     return f'<div class="summary-points">{"".join(cards)}</div>'
 
 
-def render_change_summary(lines: list[str]) -> str:
+def render_change_summary(lines: list[str], section_key: str) -> str:
     groups = group_top_level_bullets(lines)
     previous_hash = "Unknown"
     deltas: list[list[str]] = []
@@ -562,7 +600,7 @@ def render_change_summary(lines: list[str]) -> str:
         )
 
     return f'''
-<div class="hero-stack" data-hero-section>
+<div class="hero-stack" data-hero-section data-change-summary="{html.escape(section_key)}">
   <div class="hero-note">
     <span class="hero-note__label">Previous snapshot</span>
     <code>{html.escape(previous_hash)}</code>
@@ -574,7 +612,7 @@ def render_change_summary(lines: list[str]) -> str:
 '''.strip()
 
 
-def render_summary_section(lines: list[str], section_key: str, empty_state: str) -> str:
+def render_summary_like(lines: list[str], section_key: str, empty_state: str, visual_first: bool = False) -> str:
     main_lines, extra_subsections, visual_lines = partition_section_lines(lines)
     intro_lines: list[str] = []
     bullet_lines: list[str] = []
@@ -591,19 +629,28 @@ def render_summary_section(lines: list[str], section_key: str, empty_state: str)
     summary_points = render_summary_points(group_top_level_bullets(bullet_lines))
     intro_html = render_fragment(trim_blank_lines(intro_lines), heading_level=5) if trim_blank_lines(intro_lines) else ""
     extra_html = render_extra_subsections(extra_subsections)
-    text_html = "".join(part for part in [intro_html, summary_points, extra_html] if part)
-    if not text_html:
-        text_html = render_empty_state(empty_state)
-
+    text_html = "".join(part for part in [intro_html, summary_points, extra_html] if part) or render_empty_state(empty_state)
     visuals_html = render_visual_evidence(visual_lines)
-    if visuals_html:
+
+    if visual_first and visuals_html:
         return f'''
-<div class="split-hero" data-summary-section="{html.escape(section_key)}">
+<div class="diagram-led" data-diagram-led-summary="{html.escape(section_key)}">
+  <div class="diagram-led__visual">{visuals_html}</div>
+  <div class="diagram-led__text">{text_html}</div>
+</div>
+'''.strip()
+
+    if visuals_html:
+        marker = "data-diagram-led-summary" if visual_first else "data-summary-section"
+        return f'''
+<div class="split-hero" {marker}="{html.escape(section_key)}">
   <div class="split-hero__main">{text_html}</div>
   <div class="split-hero__visual">{visuals_html}</div>
 </div>
 '''.strip()
 
+    if visual_first:
+        return f'<div class="hero-stack" data-hero-section data-diagram-led-summary="{html.escape(section_key)}">{text_html}</div>'
     return f'<div class="hero-stack" data-hero-section data-summary-section="{html.escape(section_key)}">{text_html}</div>'
 
 
@@ -643,41 +690,226 @@ def render_scope(lines: list[str], section_key: str) -> str:
 '''.strip()
 
 
-def render_card_grid_section(lines: list[str], label_prefix: str, grid_class: str, section_key: str, empty_state: str) -> str:
+def render_cards(lines: list[str], label_prefix: str, section_key: str, empty_state: str, marker: str, variant: str) -> str:
     main_lines, extra_subsections, visual_lines = partition_section_lines(lines)
-    groups = group_top_level_bullets(main_lines)
-    meaningful_groups = [group for group in groups if not is_none_group(group)]
+    groups = [group for group in group_top_level_bullets(main_lines) if not is_none_group(group)]
 
-    if not meaningful_groups:
-        cards_html = render_empty_state(empty_state)
+    if not groups:
+        content_html = render_empty_state(empty_state)
     else:
         cards = []
-        for index, group in enumerate(meaningful_groups, start=1):
+        for index, group in enumerate(groups, start=1):
             cards.append(
                 f'''
-<article class="review-card review-card--{grid_class}">
+<article class="review-card review-card--{variant}">
   <div class="review-card__label">{html.escape(label_prefix)} {index:02d}</div>
   <div class="review-card__body">{render_fragment(group, heading_level=5)}</div>
 </article>
 '''.strip()
             )
-        cards_html = f'<div class="review-card-grid review-card-grid--{grid_class}" data-card-grid="{html.escape(section_key)}">{"".join(cards)}</div>'
+        content_html = f'<div class="review-card-grid review-card-grid--{variant}" {marker}="{html.escape(section_key)}">{"".join(cards)}</div>'
 
-    extras_html = render_extra_subsections(extra_subsections)
-    visuals_html = render_visual_evidence(visual_lines)
-    return "".join(part for part in [cards_html, extras_html, visuals_html] if part)
+    return "".join(
+        part
+        for part in [content_html, render_extra_subsections(extra_subsections), render_visual_evidence(visual_lines)]
+        if part
+    )
+
+
+def parse_named_panels(lines: list[str]) -> list[ListItem]:
+    items, _ = parse_list_items(lines, 0, 0)
+    return items
+
+
+def render_paired_lists(lines: list[str], section_key: str, empty_state: str) -> str:
+    main_lines, extra_subsections, visual_lines = partition_section_lines(lines)
+    panels = parse_named_panels(main_lines)
+
+    if not panels:
+        panels_html = render_empty_state(empty_state)
+    else:
+        rendered_panels = []
+        for item in panels:
+            panel_body_parts: list[str] = []
+            continuation = trim_blank_lines(item.continuation)
+            if continuation:
+                panel_body_parts.append(render_fragment(continuation, heading_level=5))
+            if item.children:
+                panel_body_parts.append(render_list_items(item.children, depth=0))
+            panel_body = "".join(panel_body_parts) or render_empty_state("None")
+            rendered_panels.append(
+                f'''
+<article class="paired-panel">
+  <h3>{html.escape(item.text.rstrip(':'))}</h3>
+  <div class="paired-panel__body">{panel_body}</div>
+</article>
+'''.strip()
+            )
+        panels_html = f'<div class="paired-grid" data-paired-lists="{html.escape(section_key)}">{"".join(rendered_panels)}</div>'
+
+    return "".join(
+        part
+        for part in [panels_html, render_extra_subsections(extra_subsections), render_visual_evidence(visual_lines)]
+        if part
+    )
+
+
+def render_checklist(lines: list[str], section_key: str, empty_state: str) -> str:
+    main_lines, extra_subsections, visual_lines = partition_section_lines(lines)
+    groups = [group for group in group_top_level_bullets(main_lines) if not is_none_group(group)]
+
+    if not groups:
+        checklist_html = render_empty_state(empty_state)
+    else:
+        items = []
+        for index, group in enumerate(groups, start=1):
+            items.append(
+                f'''
+<li class="checklist-item">
+  <div class="checklist-item__marker">{index:02d}</div>
+  <div class="checklist-item__body">{render_fragment(group, heading_level=5)}</div>
+</li>
+'''.strip()
+            )
+        checklist_html = f'<ol class="checklist" data-checklist="{html.escape(section_key)}">{"".join(items)}</ol>'
+
+    return "".join(
+        part
+        for part in [checklist_html, render_extra_subsections(extra_subsections), render_visual_evidence(visual_lines)]
+        if part
+    )
+
+
+def render_ledger(lines: list[str], section_key: str, empty_state: str) -> str:
+    main_lines, extra_subsections, visual_lines = partition_section_lines(lines)
+    groups = [group for group in group_top_level_bullets(main_lines) if not is_none_group(group)]
+
+    if not groups:
+        ledger_html = render_empty_state(empty_state)
+    else:
+        rows = []
+        for index, group in enumerate(groups, start=1):
+            rows.append(
+                f'''
+<article class="ledger-row">
+  <div class="ledger-row__index">{index:02d}</div>
+  <div class="ledger-row__body">{render_fragment(group, heading_level=5)}</div>
+</article>
+'''.strip()
+            )
+        ledger_html = f'<div class="ledger" data-ledger="{html.escape(section_key)}">{"".join(rows)}</div>'
+
+    return "".join(
+        part
+        for part in [ledger_html, render_extra_subsections(extra_subsections), render_visual_evidence(visual_lines)]
+        if part
+    )
+
+
+def render_roster(lines: list[str], section_key: str, empty_state: str) -> str:
+    main_lines, extra_subsections, visual_lines = partition_section_lines(lines)
+    groups = [group for group in group_top_level_bullets(main_lines) if not is_none_group(group)]
+
+    if not groups:
+        roster_html = render_empty_state(empty_state)
+    else:
+        entries = []
+        for group in groups:
+            title = bullet_text(group)
+            details = render_fragment(group[1:], heading_level=5) if len(group) > 1 else ""
+            entries.append(
+                f'''
+<article class="roster-entry">
+  <h3>{render_inline(title)}</h3>
+  <div class="roster-entry__body">{details or render_empty_state("No additional role detail.")}</div>
+</article>
+'''.strip()
+            )
+        roster_html = f'<div class="roster" data-roster="{html.escape(section_key)}">{"".join(entries)}</div>'
+
+    return "".join(
+        part
+        for part in [roster_html, render_extra_subsections(extra_subsections), render_visual_evidence(visual_lines)]
+        if part
+    )
+
+
+def split_table_row(line: str) -> list[str]:
+    trimmed = line.strip().strip("|")
+    return [cell.strip() for cell in trimmed.split("|")]
+
+
+def extract_markdown_table(lines: list[str]) -> tuple[list[str], list[str], list[list[str]], list[str]]:
+    for index in range(len(lines) - 1):
+        if not lines[index].strip().startswith("|"):
+            continue
+        if not MARKDOWN_TABLE_SEPARATOR_PATTERN.match(lines[index + 1].strip()):
+            continue
+        end = index + 2
+        while end < len(lines) and lines[end].strip().startswith("|"):
+            end += 1
+        headers = split_table_row(lines[index])
+        rows = [split_table_row(line) for line in lines[index + 2 : end]]
+        before = trim_blank_lines(lines[:index])
+        after = trim_blank_lines(lines[end:])
+        return before, headers, rows, after
+    return trim_blank_lines(lines), [], [], []
+
+
+def render_matrix(lines: list[str], section_key: str, empty_state: str) -> str:
+    main_lines, extra_subsections, visual_lines = partition_section_lines(lines)
+    intro_lines, headers, rows, after_lines = extract_markdown_table(main_lines)
+
+    intro_html = render_fragment(intro_lines, heading_level=5) if intro_lines else ""
+    trailing_html = render_fragment(after_lines, heading_level=5) if after_lines else ""
+
+    if headers:
+        header_html = "".join(f"<th>{render_inline(header)}</th>" for header in headers)
+        row_html = []
+        for row in rows:
+            padded = row + [""] * max(0, len(headers) - len(row))
+            row_html.append("<tr>" + "".join(f"<td>{render_inline(cell)}</td>" for cell in padded[: len(headers)]) + "</tr>")
+        matrix_html = f'''
+<div class="table-wrap" data-matrix="{html.escape(section_key)}">
+  <table class="matrix-table">
+    <thead><tr>{header_html}</tr></thead>
+    <tbody>{"".join(row_html)}</tbody>
+  </table>
+</div>
+'''.strip()
+    else:
+        groups = [group for group in group_top_level_bullets(main_lines) if not is_none_group(group)]
+        if not groups:
+            matrix_html = render_empty_state(empty_state)
+        else:
+            rows_html = []
+            for index, group in enumerate(groups, start=1):
+                rows_html.append(
+                    f'''
+<article class="matrix-fallback-row">
+  <div class="matrix-fallback-row__index">{index:02d}</div>
+  <div class="matrix-fallback-row__body">{render_fragment(group, heading_level=5)}</div>
+</article>
+'''.strip()
+                )
+            matrix_html = f'<div class="matrix-fallback" data-matrix="{html.escape(section_key)}">{"".join(rows_html)}</div>'
+
+    return "".join(
+        part
+        for part in [intro_html, matrix_html, trailing_html, render_extra_subsections(extra_subsections), render_visual_evidence(visual_lines)]
+        if part
+    )
 
 
 def render_callout_section(lines: list[str], label_prefix: str, section_key: str, empty_state: str) -> str:
     main_lines, extra_subsections, visual_lines = partition_section_lines(lines)
-    groups = group_top_level_bullets(main_lines)
-    meaningful_groups = [group for group in groups if not is_none_group(group)]
+    groups = [group for group in group_top_level_bullets(main_lines) if not is_none_group(group)]
 
-    if not meaningful_groups:
+    if not groups:
         stack_html = render_empty_state(empty_state)
     else:
         callouts = []
-        for index, group in enumerate(meaningful_groups, start=1):
+        for index, group in enumerate(groups, start=1):
             callouts.append(
                 f'''
 <article class="callout callout--warning">
@@ -688,21 +920,22 @@ def render_callout_section(lines: list[str], label_prefix: str, section_key: str
             )
         stack_html = f'<div class="callout-stack" data-callout-stack="{html.escape(section_key)}">{"".join(callouts)}</div>'
 
-    extras_html = render_extra_subsections(extra_subsections)
-    visuals_html = render_visual_evidence(visual_lines)
-    return "".join(part for part in [stack_html, extras_html, visuals_html] if part)
+    return "".join(
+        part
+        for part in [stack_html, render_extra_subsections(extra_subsections), render_visual_evidence(visual_lines)]
+        if part
+    )
 
 
 def render_timeline_section(lines: list[str], section_key: str, empty_state: str) -> str:
     main_lines, extra_subsections, visual_lines = partition_section_lines(lines)
-    groups = group_top_level_bullets(main_lines)
-    meaningful_groups = [group for group in groups if not is_none_group(group)]
+    groups = [group for group in group_top_level_bullets(main_lines) if not is_none_group(group)]
 
-    if not meaningful_groups:
+    if not groups:
         timeline_html = render_empty_state(empty_state)
     else:
         items = []
-        for index, group in enumerate(meaningful_groups, start=1):
+        for index, group in enumerate(groups, start=1):
             items.append(
                 f'''
 <article class="timeline-item">
@@ -713,9 +946,11 @@ def render_timeline_section(lines: list[str], section_key: str, empty_state: str
             )
         timeline_html = f'<div class="impact-timeline" data-timeline="{html.escape(section_key)}">{"".join(items)}</div>'
 
-    extras_html = render_extra_subsections(extra_subsections)
-    visuals_html = render_visual_evidence(visual_lines)
-    return "".join(part for part in [timeline_html, extras_html, visuals_html] if part)
+    return "".join(
+        part
+        for part in [timeline_html, render_extra_subsections(extra_subsections), render_visual_evidence(visual_lines)]
+        if part
+    )
 
 
 def parse_traceability(lines: list[str]) -> list[TraceEntry]:
@@ -812,44 +1047,12 @@ def render_validator_status(lines: list[str], section_key: str) -> str:
     return f'<div class="validator-grid" data-validator-grid="{html.escape(section_key)}">{"".join(cards)}</div>'
 
 
-def parse_snapshot_fields(lines: list[str]) -> tuple[list[tuple[str, str]], list[SnapshotRecord]]:
-    fields: list[tuple[str, str]] = []
-    records: list[SnapshotRecord] = []
-    in_included = False
-
-    for line in lines:
-        included_match = re.match(r"^  - (.+?) \| SHA-256: ([0-9a-f]{64}) \| updated_at: (.+)$", line)
-        if included_match:
-            records.append(
-                SnapshotRecord(
-                    path=included_match.group(1).strip(),
-                    sha256=included_match.group(2).strip(),
-                    updated_at=included_match.group(3).strip(),
-                )
-            )
-            continue
-
-        bullet_match = re.match(r"^- ([^:]+):\s*(.+)$", line)
-        if not bullet_match:
-            continue
-        label, value = bullet_match.groups()
-        label = label.strip()
-        value = value.strip()
-        if label == "Included snapshots":
-            in_included = True
-            continue
-        if in_included and label:
-            in_included = False
-        fields.append((label, value))
-
-    return fields, records
-
-
 def render_snapshot_identity(lines: list[str], section_key: str) -> str:
     fields, records = parse_snapshot_fields(lines)
     rows = []
+    mono_labels = {"Snapshot SHA-256", "Pack snapshot SHA-256", "Canonical artifact", "Spec-pack root", "Approval view generated_at", "Canonical updated_at"}
     for label, value in fields:
-        value_class = "snapshot-grid__value snapshot-grid__value--mono" if "SHA-256" in label or label.endswith("artifact") or label.endswith("root") or label.endswith("generated_at") or label.endswith("updated_at") else "snapshot-grid__value"
+        value_class = "snapshot-grid__value snapshot-grid__value--mono" if label in mono_labels else "snapshot-grid__value"
         rows.append(
             f'''
 <div class="snapshot-grid__row">
@@ -901,19 +1104,22 @@ def render_snapshot_identity(lines: list[str], section_key: str) -> str:
 
 def fallback_section_spec(title: str) -> dict[str, object]:
     for review_type in ("artifact", "pack"):
-        for revised in (False, True):
-            mapping = section_spec_by_title(load_review_profile(review_type), revised)
-            spec = mapping.get(title)
-            if spec is not None:
-                return spec
+        profile = load_review_profile(review_type)
+        mapping = section_spec_by_title(profile, False)
+        spec = mapping.get(title)
+        if spec is not None:
+            return spec
     return {
         "key": slugify(title),
         "title": title,
         "kind": "fragment",
         "label": title,
         "style": "default",
+        "tone": "neutral",
+        "emphasis": "standard",
         "item_label": "Item",
         "empty_state": "None",
+        "why": "",
     }
 
 
@@ -927,18 +1133,33 @@ def render_section(section: Section, index: int, profile: dict[str, object], rev
     role = str(spec["key"])
     kind = str(spec["kind"])
     style = str(spec.get("style") or "default")
+    tone = str(spec.get("tone") or "neutral")
+    emphasis = str(spec.get("emphasis") or "standard")
     label = str(spec.get("label") or title)
     item_label = str(spec.get("item_label") or "Item")
     empty_state = str(spec.get("empty_state") or "None")
+    why = str(spec.get("why") or "").strip()
 
     if kind == "change-summary":
-        body_html = render_change_summary(section.lines)
+        body_html = render_change_summary(section.lines, role)
     elif kind == "summary":
-        body_html = render_summary_section(section.lines, role, empty_state)
+        body_html = render_summary_like(section.lines, role, empty_state, visual_first=False)
+    elif kind == "diagram-led-summary":
+        body_html = render_summary_like(section.lines, role, empty_state, visual_first=True)
     elif kind == "scope":
         body_html = render_scope(section.lines, role)
     elif kind == "cards":
-        body_html = render_card_grid_section(section.lines, item_label, role, role, empty_state)
+        body_html = render_cards(section.lines, item_label, role, empty_state, "data-card-grid", role)
+    elif kind == "paired-lists":
+        body_html = render_paired_lists(section.lines, role, empty_state)
+    elif kind == "checklist":
+        body_html = render_checklist(section.lines, role, empty_state)
+    elif kind == "ledger":
+        body_html = render_ledger(section.lines, role, empty_state)
+    elif kind == "matrix":
+        body_html = render_matrix(section.lines, role, empty_state)
+    elif kind == "roster":
+        body_html = render_roster(section.lines, role, empty_state)
     elif kind == "callouts":
         body_html = render_callout_section(section.lines, item_label, role, empty_state)
     elif kind == "traceability":
@@ -952,8 +1173,9 @@ def render_section(section: Section, index: int, profile: dict[str, object], rev
     else:
         body_html = render_fragment(section.lines, heading_level=5)
 
+    why_html = f'<p class="section-why" data-section-why>{render_inline(why)}</p>' if why else ""
     return f'''
-<section class="approval-section approval-section--{role}" id="section-{role}" data-section-role="{role}" data-section-kind="{kind}" data-section-style="{style}" style="--section-index:{index}">
+<section class="approval-section approval-section--{role}" id="section-{role}" data-section-role="{role}" data-section-kind="{kind}" data-section-style="{style}" data-section-tone="{tone}" data-section-emphasis="{emphasis}" style="--section-index:{index}">
   <div class="section-top">
     <div class="section-heading">
       <div class="section-kicker">
@@ -961,6 +1183,7 @@ def render_section(section: Section, index: int, profile: dict[str, object], rev
         <span>{html.escape(label)}</span>
       </div>
       <h2>{html.escape(title)}</h2>
+      {why_html}
     </div>
   </div>
   <div class="section-content">{body_html}</div>
@@ -972,16 +1195,72 @@ def validator_pass_count(lines: list[str]) -> int:
     return len(re.findall(r"^  - Result: Passed$", "\n".join(lines), re.MULTILINE))
 
 
-def count_visual_evidence_items(sections: list[Section]) -> int:
+def count_visual_evidence_items(sections: Iterable[Section]) -> int:
     count = 0
     for section in sections:
         count += len(re.findall(r"^- Source: ", "\n".join(section.lines), re.MULTILINE))
     return count
 
 
-def glance_metric_value(card: dict[str, str], section_map: dict[str, list[str]], sections: list[Section]) -> int:
+def parse_headings(markdown_text: str) -> list[tuple[int, str]]:
+    headings: list[tuple[int, str]] = []
+    for line in markdown_text.splitlines():
+        match = re.match(r"^(#{1,6})\s+(.+)$", line)
+        if match:
+            headings.append((len(match.group(1)), match.group(2).strip()))
+    return headings
+
+
+def count_heading_prefix(canonical_snapshots: list[CanonicalSnapshot], extractor: dict[str, object]) -> int:
+    heading_level = int(extractor.get("heading_level") or 3)
+    prefix = str(extractor.get("heading_prefix") or "")
+    count = 0
+    for snapshot in canonical_snapshots:
+        for level, title in parse_headings(snapshot.text):
+            if level != heading_level:
+                continue
+            if prefix and not title.startswith(prefix):
+                continue
+            count += 1
+    return count
+
+
+def snapshot_canonical_sources(metadata: dict[str, object]) -> list[CanonicalSnapshot]:
+    snapshots: list[CanonicalSnapshot] = []
+    review_type = str(metadata.get("review_type") or "").strip()
+    paths: list[str] = []
+    if review_type == "Artifact":
+        canonical_path = str(metadata.get("canonical_artifact") or "").strip()
+        if canonical_path:
+            paths.append(canonical_path)
+    else:
+        for record in metadata.get("included_snapshots", []):
+            if isinstance(record, dict) and record.get("path"):
+                paths.append(str(record["path"]))
+
+    for raw_path in paths:
+        path = Path(raw_path).resolve()
+        if not path.is_file():
+            continue
+        snapshots.append(CanonicalSnapshot(path=str(path), text=read_text(path)))
+    return snapshots
+
+
+def glance_metric_value(
+    card: dict[str, object],
+    section_map: dict[str, list[str]],
+    sections: list[Section],
+    canonical_snapshots: list[CanonicalSnapshot],
+) -> int:
     metric = str(card.get("metric") or "groups")
+    source = str(card.get("source") or "approval")
     section_title = str(card.get("section_title") or "")
+
+    if source == "canonical":
+        extractor = dict(card.get("extractor") or {})
+        if metric == "count-heading-prefix":
+            return count_heading_prefix(canonical_snapshots, extractor)
+        return 0
 
     if metric == "groups":
         return count_meaningful_groups(section_map.get(section_title, []))
@@ -1006,17 +1285,19 @@ def glance_metric_value(card: dict[str, str], section_map: dict[str, list[str]],
     return 0
 
 
-def derive_glance_cards(profile: dict[str, object], sections: list[Section]) -> list[dict[str, str]]:
+def derive_glance_cards(profile: dict[str, object], revised: bool, sections: list[Section], metadata: dict[str, object]) -> list[dict[str, str]]:
     section_map = {section.title: section.lines for section in sections}
+    canonical_snapshots = snapshot_canonical_sources(metadata)
     cards: list[dict[str, str]] = []
-    for raw_card in profile.get("glance_cards", []):
+    for raw_card in glance_cards_for_mode(profile, revised):
         card = dict(raw_card)
         cards.append(
             {
                 "label": str(card.get("label") or "Review"),
-                "value": str(glance_metric_value(card, section_map, sections)),
+                "value": str(glance_metric_value(card, section_map, sections, canonical_snapshots)),
                 "hint": str(card.get("hint") or ""),
                 "tone": str(card.get("tone") or "info"),
+                "source": str(card.get("source") or "approval"),
             }
         )
     return cards
@@ -1027,7 +1308,7 @@ def render_glance_cards(cards: list[dict[str, str]]) -> str:
     for card in cards:
         rendered.append(
             f'''
-<article class="glance-card glance-card--{html.escape(card["tone"])}" data-glance-card>
+<article class="glance-card glance-card--{html.escape(card["tone"])}" data-glance-card data-glance-source="{html.escape(card.get("source", "approval"))}">
   <div class="glance-card__label">{html.escape(card["label"])}</div>
   <div class="glance-card__value">{html.escape(card["value"])}</div>
   <p>{html.escape(card["hint"])}</p>
@@ -1048,8 +1329,14 @@ def render_toc(sections: list[Section], profile: dict[str, object], revised: boo
     return "".join(links)
 
 
-def build_metadata(markdown_text: str, sections: list[Section], profile: dict[str, object], revised: bool) -> dict[str, object]:
-    metadata = extract_snapshot_metadata(sections)
+def build_metadata(
+    markdown_text: str,
+    sections: list[Section],
+    profile: dict[str, object],
+    revised: bool,
+    snapshot_metadata: dict[str, object],
+) -> dict[str, object]:
+    metadata = dict(snapshot_metadata)
     metadata["profile_id"] = profile.get("profile_id")
     metadata["profile_source"] = profile.get("source")
 
@@ -1062,12 +1349,15 @@ def build_metadata(markdown_text: str, sections: list[Section], profile: dict[st
                 "key": spec["key"],
                 "title": section.title,
                 "kind": spec["kind"],
+                "tone": spec.get("tone"),
+                "emphasis": spec.get("emphasis"),
             }
         )
 
+    glance = derive_glance_cards(profile, revised, sections, snapshot_metadata)
     metadata["derived"] = {
         "sections": derived_sections,
-        "glance": {card["label"]: card["value"] for card in derive_glance_cards(profile, sections)},
+        "glance": {card["label"]: card["value"] for card in glance},
         "has_mermaid": bool(MERMAID_FENCE_PATTERN.search(markdown_text)),
         "has_toc": len(sections) >= 4,
     }
@@ -1095,13 +1385,13 @@ def main() -> int:
     markdown_body = first_h1_removed(markdown_text)
     sections = parse_sections(markdown_body)
     snapshot_metadata = extract_snapshot_metadata(sections)
-    profile, revised = resolve_review_profile(snapshot_metadata)
-    metadata = build_metadata(markdown_body, sections, profile, revised)
+    profile, revised, _ = resolve_review_profile(snapshot_metadata)
+    metadata = build_metadata(markdown_body, sections, profile, revised, snapshot_metadata)
     title = approval_view_title(markdown_text, metadata)
     subtitle = approval_view_subtitle(profile)
     view_label = str(profile.get("display_name") or "Approval View")
     toc_html = render_toc(sections, profile, revised)
-    glance_html = render_glance_cards(derive_glance_cards(profile, sections))
+    glance_html = render_glance_cards(derive_glance_cards(profile, revised, sections, snapshot_metadata))
     body_html = "\n".join(render_section(section, index, profile, revised) for index, section in enumerate(sections, start=1))
 
     html_text = (

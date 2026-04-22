@@ -75,4 +75,5 @@ Produce `execution-plan.md` from an approved specification pack. Turn approved s
 - runtime-edge obligations and how they are preserved into implementation
 - validation checkpoints most likely to catch false progress
 - blockers or `TODO: Confirm` items that could distort task generation
-- approval-shell layout lives in `./assets/approval-view-profile.json`; use it instead of the generic approval template
+- artifact approval profile owned here lives in `./assets/approval-view-profile.json`
+- keep that profile aligned with this skill's review framing; do not rely on a generic template

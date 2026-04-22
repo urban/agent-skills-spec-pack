@@ -72,7 +72,8 @@ Produce `execution-tasks.md` from an approved execution plan. Decompose plan str
 - runtime-edge tasks where structural work could be mistaken for verified behavior
 - blockers and ambiguous task boundaries most likely to stall implementation
 - traceability gaps that would make execution drift from the approved plan
-- approval-shell layout lives in `./assets/approval-view-profile.json`; use it instead of the generic approval template
+- artifact approval profile owned here lives in `./assets/approval-view-profile.json`
+- keep that profile aligned with this skill's review framing; do not rely on a generic template
 
 ## References
 

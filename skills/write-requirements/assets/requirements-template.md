@@ -13,7 +13,7 @@ source_artifacts:
   [TODO: workflow-owned lineage key]: [TODO: resolved artifact path]
 ---
 
-> For derived requirements, recover implementation-enforced constraints that materially shape execution. Phrase them as verifiable obligations, not implementation trivia.
+# Requirements
 
 ## Functional Requirements
 

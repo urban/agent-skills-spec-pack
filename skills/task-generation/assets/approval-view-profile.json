@@ -1,43 +1,58 @@
 {
-  "profile_id": "task-generation-approval-v1",
-  "display_name": "Task Tracking Approval",
-  "subtitle": "Review execution slices, dependencies, and drift risks before implementation starts.",
+  "profile_id": "task-generation-approval-v2",
+  "display_name": "Task Generation Approval",
+  "subtitle": "Review task groupings, hand-offs, and readiness checks before implementation starts from them.",
   "review_type": "artifact",
   "sections": [
     {
-      "key": "highest-risk-task-groups",
-      "title": "Highest-Risk Task Groups",
-      "kind": "summary",
-      "label": "Task Groups",
+      "key": "task-groups-at-a-glance",
+      "title": "Task Groups at a Glance",
+      "kind": "ledger",
+      "label": "Task Group",
       "style": "hero",
-      "why": "Lead with the task groups carrying the most execution risk."
+      "tone": "accent",
+      "emphasis": "dominant",
+      "item_label": "Task Group",
+      "why": "Lead with the grouped task shape rather than isolated individual tasks."
     },
     {
-      "key": "dependency-chains-and-runtime-edge-work",
-      "title": "Dependency Chains and Runtime-Edge Work",
-      "kind": "cards",
-      "label": "Dependencies",
+      "key": "dependency-chains-and-handoffs",
+      "title": "Dependency Chains and Hand-Offs",
+      "kind": "matrix",
+      "label": "Dependency",
+      "style": "elevated",
+      "tone": "info",
+      "why": "Use a matrix when sequencing and hand-offs need side-by-side review."
+    },
+    {
+      "key": "readiness-checks-and-acceptance-handholds",
+      "title": "Readiness Checks and Acceptance Handholds",
+      "kind": "checklist",
+      "label": "Readiness Check",
+      "style": "elevated",
+      "tone": "success",
+      "item_label": "Check",
+      "why": "Frame acceptance handholds as explicit implementation checks."
+    },
+    {
+      "key": "decisions-required-for-approval",
+      "title": "Decisions Required for Approval",
+      "kind": "ledger",
+      "label": "Decision Gate",
       "style": "default",
-      "item_label": "Chain",
-      "why": "Keep the most critical dependency and runtime-edge work visible."
+      "tone": "neutral",
+      "item_label": "Decision",
+      "why": "Keep task-level approval calls dense and direct."
     },
     {
       "key": "ambiguous-boundaries-and-drift-risks",
       "title": "Ambiguous Boundaries and Drift Risks",
       "kind": "callouts",
-      "label": "Drift Risks",
+      "label": "Drift Risk",
       "style": "elevated",
+      "tone": "warning",
       "item_label": "Risk",
-      "why": "Expose ambiguous task boundaries before execution drifts."
-    },
-    {
-      "key": "decisions-required-for-approval",
-      "title": "Decisions Required for Approval",
-      "kind": "cards",
-      "label": "Decision Gate",
-      "style": "default",
-      "item_label": "Decision",
-      "why": "State the execution-slicing calls the reviewer is approving."
+      "why": "Keep boundary ambiguity and drift risk visible before coding starts."
     },
     {
       "key": "traceability-map",
@@ -45,7 +60,8 @@
       "kind": "traceability",
       "label": "Evidence",
       "style": "default",
-      "why": "Tie approval claims to exact task-tracking evidence."
+      "tone": "info",
+      "why": "Tie substantive approval claims to exact canonical evidence."
     },
     {
       "key": "validator-status",
@@ -53,7 +69,8 @@
       "kind": "validator",
       "label": "Validation",
       "style": "elevated",
-      "why": "Show validation status for tasks and approval view."
+      "tone": "success",
+      "why": "Show canonical and approval-view validation status together."
     },
     {
       "key": "downstream-impact-if-approved",
@@ -61,8 +78,9 @@
       "kind": "timeline",
       "label": "Impact",
       "style": "default",
+      "tone": "info",
       "item_label": "Impact",
-      "why": "Clarify what implementation may now treat as execution-ready."
+      "why": "Clarify what downstream work may now treat as fixed."
     },
     {
       "key": "snapshot-identity",
@@ -70,49 +88,57 @@
       "kind": "snapshot",
       "label": "Snapshot",
       "style": "recessed",
+      "tone": "neutral",
+      "emphasis": "recessed",
       "why": "End with exact snapshot identity."
     }
   ],
   "glance_cards": [
     {
       "label": "Task groups",
-      "section_title": "Highest-Risk Task Groups",
       "metric": "groups",
-      "hint": "Highest-risk slices in scope.",
-      "tone": "accent"
+      "hint": "Grouped execution slices under review.",
+      "tone": "accent",
+      "source": "approval",
+      "section_title": "Task Groups at a Glance"
     },
     {
-      "label": "Dependencies",
-      "section_title": "Dependency Chains and Runtime-Edge Work",
+      "label": "Readiness checks",
       "metric": "groups",
-      "hint": "Critical dependency chains or runtime-edge tasks.",
-      "tone": "info"
+      "hint": "Checks implementation can lean on.",
+      "tone": "success",
+      "source": "approval",
+      "section_title": "Readiness Checks and Acceptance Handholds"
+    },
+    {
+      "label": "Decision gates",
+      "metric": "groups",
+      "hint": "Approvals needed before task execution starts.",
+      "tone": "neutral",
+      "source": "approval",
+      "section_title": "Decisions Required for Approval"
     },
     {
       "label": "Drift risks",
-      "section_title": "Ambiguous Boundaries and Drift Risks",
       "metric": "groups",
-      "hint": "Ambiguity that could stall or skew execution.",
-      "tone": "warning"
-    },
-    {
-      "label": "Decisions",
-      "section_title": "Decisions Required for Approval",
-      "metric": "groups",
-      "hint": "Execution-slicing calls under review.",
-      "tone": "muted"
+      "hint": "Boundary ambiguity or drift pressure points.",
+      "tone": "warning",
+      "source": "approval",
+      "section_title": "Ambiguous Boundaries and Drift Risks"
     },
     {
       "label": "Evidence claims",
       "metric": "traceability_claims",
       "hint": "Claims backed by exact task quotes.",
-      "tone": "info"
+      "tone": "info",
+      "source": "approval"
     },
     {
       "label": "Validators",
       "metric": "validator_checks",
       "hint": "Recorded validator passes.",
-      "tone": "success"
+      "tone": "success",
+      "source": "approval"
     }
   ]
 }

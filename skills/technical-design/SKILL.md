@@ -78,4 +78,5 @@ Produce `technical-design.md` from approved specification context. Translate app
 - key boundaries, interface contracts, and data-flow hotspots
 - implementation-strategy consequences, operational seams, and major risks or tradeoffs
 - any `TODO: Confirm` item that could mislead downstream implementation
-- approval-shell layout lives in `./assets/approval-view-profile.json`; use it instead of the generic approval template
+- artifact approval profile owned here lives in `./assets/approval-view-profile.json`
+- keep that profile aligned with this skill's review framing; do not rely on a generic template

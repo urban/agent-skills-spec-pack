@@ -1,0 +1,125 @@
+{
+  "profile_id": "specification-to-execution-pack-approval-v1",
+  "display_name": "Specification to Execution Pack Approval",
+  "subtitle": "Review execution readiness, dependency realism, and implementation guardrails before coding starts from the pack.",
+  "review_type": "pack",
+  "sections": [
+    {
+      "key": "execution-readiness-at-a-glance",
+      "title": "Execution Readiness at a Glance",
+      "kind": "summary",
+      "label": "Execution Readiness",
+      "style": "hero",
+      "tone": "accent",
+      "emphasis": "dominant",
+      "why": "Lead with the pack-level execution read before tasking begins."
+    },
+    {
+      "key": "dependency-and-ownership-matrix",
+      "title": "Dependency and Ownership Matrix",
+      "kind": "matrix",
+      "label": "Dependency",
+      "style": "elevated",
+      "tone": "info",
+      "why": "Use a matrix when ordering and ownership realism matter more than prose."
+    },
+    {
+      "key": "execution-slices-and-handoffs",
+      "title": "Execution Slices and Hand-Offs",
+      "kind": "ledger",
+      "label": "Execution Slice",
+      "style": "default",
+      "tone": "neutral",
+      "item_label": "Slice",
+      "why": "Keep cross-artifact execution slices dense and easy to compare."
+    },
+    {
+      "key": "implementation-readiness-checks",
+      "title": "Implementation Readiness Checks",
+      "kind": "checklist",
+      "label": "Readiness Check",
+      "style": "elevated",
+      "tone": "success",
+      "item_label": "Check",
+      "why": "Frame final execution approval as explicit readiness checks."
+    },
+    {
+      "key": "blockers-and-unresolved-execution-risks",
+      "title": "Blockers and Unresolved Execution Risks",
+      "kind": "callouts",
+      "label": "Execution Risk",
+      "style": "elevated",
+      "tone": "warning",
+      "item_label": "Risk",
+      "why": "Keep blockers and unresolved execution risk visible before implementation starts."
+    },
+    {
+      "key": "traceability-map",
+      "title": "Traceability Map",
+      "kind": "traceability",
+      "label": "Evidence",
+      "style": "default",
+      "tone": "info",
+      "why": "Tie substantive approval claims to exact canonical evidence."
+    },
+    {
+      "key": "validator-status",
+      "title": "Validator Status",
+      "kind": "validator",
+      "label": "Validation",
+      "style": "elevated",
+      "tone": "success",
+      "why": "Show canonical and approval-view validation status together."
+    },
+    {
+      "key": "snapshot-identity",
+      "title": "Snapshot Identity",
+      "kind": "snapshot",
+      "label": "Snapshot",
+      "style": "recessed",
+      "tone": "neutral",
+      "emphasis": "recessed",
+      "why": "End with exact snapshot identity."
+    }
+  ],
+  "glance_cards": [
+    {
+      "label": "Execution slices",
+      "metric": "groups",
+      "hint": "Cross-artifact execution slices under review.",
+      "tone": "neutral",
+      "source": "approval",
+      "section_title": "Execution Slices and Hand-Offs"
+    },
+    {
+      "label": "Readiness checks",
+      "metric": "groups",
+      "hint": "Checks implementation can treat as the last gate.",
+      "tone": "success",
+      "source": "approval",
+      "section_title": "Implementation Readiness Checks"
+    },
+    {
+      "label": "Execution risks",
+      "metric": "groups",
+      "hint": "Blockers or unresolved risks still in view.",
+      "tone": "warning",
+      "source": "approval",
+      "section_title": "Blockers and Unresolved Execution Risks"
+    },
+    {
+      "label": "Evidence claims",
+      "metric": "traceability_claims",
+      "hint": "Claims backed by exact artifact quotes.",
+      "tone": "info",
+      "source": "approval"
+    },
+    {
+      "label": "Validator checks",
+      "metric": "validator_checks",
+      "hint": "Recorded validator passes.",
+      "tone": "success",
+      "source": "approval"
+    }
+  ]
+}

@@ -13,6 +13,8 @@ source_artifacts:
   [TODO: workflow-owned lineage key]: [TODO: resolved artifact path]
 ---
 
+# Exection Plan
+
 ## Execution Summary
 
 [TODO: Summarize what implementation this plan coordinates.]
